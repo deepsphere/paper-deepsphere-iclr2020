@@ -50,22 +50,31 @@ Address \\
 \maketitle
 
 \begin{abstract}
-No
+story / main point:
+
+* method development: tool that solve a need (balance btw the desiderata: equiv vs cost)\\
+* research question: anisotropy (highlight from the start or leave it as a dangling question in the end)\\
+
+contributions:\\
+* theory => convergence (better graph)\\
+* experiments on relevant problems (not spherical MNIST) => check the desiderata\\
+  * surprising: anisotropy doesn't seem useful\\
+
 \end{abstract}
 
 \section{Introduction [2 pages]}
-Get inspiration from DeepSphere V1
+Get inspiration from DeepSphere V1\\
 
-Why are spherical CNNs important? What are the application?
-See DeepSphere workshop paper
+Why are spherical CNNs important? What are the application?\\
+See DeepSphere workshop paper\\
 
-Desiderata:
-* respect the domain
-  * rotational equivariance
-  * deformation (e.g., on the icosahedron for gauge)
-* powerful / generality => isotropic vs anisotropic
-* scale: computational cost \& memory usage (feature maps)
-* flexible (samplings, irregular), simplicity (implementation)
+Desiderata:\\
+* respect the domain\\
+  * rotational equivariance\\
+  * deformation (e.g., on the icosahedron for gauge)\\
+* powerful / generality => isotropic vs anisotropic\\
+* scale: computational cost \& memory usage (feature maps)\\
+* flexible (samplings, irregular), simplicity (implementation)\\
 
 \begin{table}[h!]
     \centering
@@ -88,26 +97,35 @@ Desiderata:
     \label{tab:my_label}
 \end{table}
 
-Present the different spherical CNNs with pro and cons => mostly scale vs generality
-* 2D CNN => doesn't respect geometry and equivariance
-* Cohen spherical CNN => most general, but doesn't scale
-* Cohen gauge => fixes scale, at the price of deformation (sphere => icosahedron)
+On the one side, we have Cohen which is computationally very expensive but perfectly equivariant, on the other we have cube sphere which computationl very good but not equivariant at all. Other methods are tradedoff between these two. What is a good tradeoff? We think that DeepSphere is
+
+Present the different spherical CNNs with pro and cons => mostly scale vs generality\\
+* 2D CNN => doesn't respect geometry and equivariance\\
+* Cohen spherical CNN => most general, but doesn't scale\\
+* Cohen gauge => fixes scale, at the price of deformation (sphere => icosahedron)\\
 * Esteves => ?
-* Jiang => need a global coordinate system (ok for planets, not projections like cosmo)
+* Jiang => need a global coordinate system (ok for planets, not projections like cosmo)\\
 
-\cite{perraudin2019deepsphere}
+\section{Method [1 pages]}
 
-\section{Method [2 pages]}
-
-* HEALPix: improvement from DeepSphere v1
+* HEALPix: improvement from DeepSphere v1 \cite{perraudin2019deepsphere}
 * equiangular: Renata \& Pascal
 
-\section{Rotation equivariance [2 pages]}
+\section{Rotation equivariance [2.5 pages]}
+
 \subsection{Link with the Laplace-Beltrami Operator}
 
 \subsection{Convergence theorem}
 
+\subsection{Equivariance error}
+
+* define a measure of equiv error\\
+* show convergence empirically\\
+* improved upon V1\\
+* no difference in practice (see experiment xx) => NNs are resilient to equiv error\\
+
 \section{Experiments [2 pages]}
+Which experience show that DeepSphere V1 and V2 are equivalent in practice.
 
 \subsection{3D object recognition}
 
@@ -120,22 +138,29 @@ other sphercial CNNs cannot scale to 10M pixels (tested on 10k at most)
 
 \subsection{Climate event detection}
 
-* small: better perf than gauge and Jiang. due to icosahedron distortion? to be confirmed
-* cannot compare with Mudigonda (16 vs 1 input channel)
-* full: we scale => lead to better perf?
+* small: better perf than gauge and Jiang. due to icosahedron distortion? to be confirmed\\
+* cannot compare with Mudigonda (16 vs 1 input channel)\\
+* full: we scale (50B pixels, 20TB) => lead to better perf?\\
 
-\section{Conclusion}
+\subsection{GHCN}
 
-* DeepSphere seems to be in the sweet spot of tradeoffs. Recall the desiderata.
-  * Not the most general, but sufficient empirically
-  * scales linearly => cannot do better ($n^1.25$ for HEALPix)
-  * flexible => independent of the sampsamples can be 
-* anisotropy (most general) doesn't help. research question: when can it be useful?
+* task is artificial, but it shows DeepSphere's flexibility\\
+* structure (looking around) help for prediction\\
 
-future work:
-* when anisotropy needed?
-* irregular sampling while respecting the geometry
-* beyond the sphere, any manifold
+\section{Conclusion [0.5 pages]}
+
+* DeepSphere seems to be in the sweet spot of tradeoffs. Recall the desiderata.\\
+  * respect geometry: No need for a very precise equivariance, i.e. a very good graph...\\
+  * Not the most general (restricted to isotropic filters), but didn't hurt perf in any experiment\\
+  * scales linearly => cannot do better ($n^1.25$ for best HEALPix, linear for not optimal)\\
+  * flexible => independent of the sampling\\
+
+future work:\\
+* when anisotropy useful? (research question)\\
+* irregular sampling while respecting the geometry\\
+* beyond the sphere, any manifold\\
+
+
 
 
 \newpage
@@ -154,10 +179,13 @@ acknowledgments, including those to funding agencies, go at the end of the paper
 
 \newpage
 
+{\LARGE \sc {Title of the paper: Supplementary Material}}
 \appendix
-\section{Appendix}
+\section{Proof of theorem}
 
-\subsection{}
+
+\section{Experiments details}
+
 
 
 
