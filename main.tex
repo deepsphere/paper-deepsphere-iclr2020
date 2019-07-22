@@ -46,11 +46,11 @@ Address \\
 %\iclrfinalcopy % Uncomment for camera-ready version, but NOT for submission.
 \begin{document}
 
-
 \maketitle
 
 \begin{abstract}
-story / main point:
+
+story: there are tradeoffs when designing a spherical CNN
 
 * method development: tool that solve a need (balance btw the desiderata: equiv vs cost)\\
 * research question: anisotropy (highlight from the start or leave it as a dangling question in the end)\\
@@ -103,7 +103,7 @@ Present the different spherical CNNs with pro and cons => mostly scale vs genera
 * 2D CNN => doesn't respect geometry and equivariance\\
 * Cohen spherical CNN => most general, but doesn't scale\\
 * Cohen gauge => fixes scale, at the price of deformation (sphere => icosahedron)\\
-* Esteves => ?
+* Esteves => ? \\
 * Jiang => need a global coordinate system (ok for planets, not projections like cosmo)\\
 
 \section{Method [1 pages]}
@@ -115,26 +115,35 @@ Present the different spherical CNNs with pro and cons => mostly scale vs genera
 
 \subsection{Link with the Laplace-Beltrami Operator}
 
-\subsection{Convergence theorem}
+\subsection{HEALPix: convergence theorem}
+
+\subsection{Equiangular}
+
+explain rapidly Renata \& Pascal
 
 \subsection{Equivariance error}
 
 * define a measure of equiv error\\
-* show convergence empirically\\
+* show convergence empirically (for Nside up to 1024) \\
 * improved upon V1\\
 * no difference in practice (see experiment xx) => NNs are resilient to equiv error\\
 
 \section{Experiments [2 pages]}
-Which experience show that DeepSphere V1 and V2 are equivalent in practice.
+
+Show: \\
+* meet the desiderata \\
+* DeepSphere V1 and V2 are equivalent in practice \\
+* anisotropy doesn't help \\
 
 \subsection{3D object recognition}
 
-* same perf as other spherical CNNs, but 40 times faster
-* compare the two samplings => not much difference
+* same perf as other spherical CNNs, but 40 times faster \\
+* compare the two samplings => not much difference \\
 
 \subsection{cosmo}
 
-other sphercial CNNs cannot scale to 10M pixels (tested on 10k at most)
+* other sphercial CNNs cannot scale to 10M pixels (tested on 10k at most) \\
+* redo the experiment with the optimal graph (cannot just copy the old results) and compare \\
 
 \subsection{Climate event detection}
 
@@ -160,19 +169,16 @@ future work:\\
 * irregular sampling while respecting the geometry\\
 * beyond the sphere, any manifold\\
 
-
-
-
 \newpage
-
 \subsubsection*{Author Contributions}
-If you'd like to, you may include  a section for author contributions as is done
-in many journals. This is optional and at the discretion of the authors.
+Left blank for anonymity reason
+% If you'd like to, you may include  a section for author contributions as is done
+% in many journals. This is optional and at the discretion of the authors.
 
 \subsubsection*{Acknowledgments}
-Use unnumbered third level headings for the acknowledgments. All
-acknowledgments, including those to funding agencies, go at the end of the paper.
-
+Left blank for anonymity reason
+% Use unnumbered third level headings for the acknowledgments. All
+% acknowledgments, including those to funding agencies, go at the end of the paper.
 
 \bibliography{references}
 \bibliographystyle{iclr2020_conference}
@@ -181,6 +187,7 @@ acknowledgments, including those to funding agencies, go at the end of the paper
 
 {\LARGE \sc {Title of the paper: Supplementary Material}}
 \appendix
+
 \section{Proof of theorem}
 
 
