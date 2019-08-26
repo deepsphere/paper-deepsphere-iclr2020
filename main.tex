@@ -140,6 +140,39 @@ Show: \\
 * same perf as other spherical CNNs, but 40 times faster \\
 * compare the two samplings => not much difference \\
 
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{l|c c r r}
+        \multicolumn{1}{l}{} & \multicolumn{2}{c}{performance} & \multicolumn{2}{c}{speed}\\
+        \cmidrule(lr){2-3} \cmidrule(lr){5-6}
+        \multicolumn{1}{l}{Method} & Accuracy & F1-score & inference & training \\ \hline
+        Cohen \emph{s2cnn} & - & - & 38ms & 50h\\
+        % Cohen \emph{s2cnn\_simple} & 78.59 & 78.85 & 400k & 12ms & 32h\\
+        Esteves \emph{sphericalcnn} & 79.18 & 79.36 & 9.8ms & 2h52\\ \hline
+        Deepsphere \emph{Equiangular} & 79.25 & 79.36 & 0.98ms & 2h33m \\
+        Deepsphere \emph{HEALPix} & 80.42 & 80.65 & 1.0ms & 48m
+    \end{tabular}
+    \caption{Performance of different models}
+    \label{tab:SHREC17_class}
+\end{table}
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{l|c c c c|c c c c}
+     & \multicolumn{4}{c|}{micro (label average)} & \multicolumn{4}{c}{macro (instance average)} \\
+    Method & P@N & R@N & F1@N & mAP & P@N & R@N & F1@N & mAP \\ \hline
+    Cohen \emph{s2cnn} & 0.701 & 0.711 & 0.699 & 0.676 & - & - & - & - \\
+    % Cohen \emph{s2cnn\_simple} & 0.704 & 0.701 & 0.696 & 0.665 & 0.430 & 0.480 & 0.429 & 0.385\\
+    Esteves \emph{sphericalcnn} & 0.717 & 0.737 & - & 0.685 & 0.450 & 0.550 & - & 0.444\\ \hline
+    Deepsphere \emph{Equiangular} & 0.709 & 0.700 & 0.698 & 0.665 & 0.439 & 0.489 & 0.439 & 0.403 \\
+    Deepsphere \emph{HEALPix} & 0.725 & 0.717 & 0.715 & 0.686 & 0.475 & 0.508 & 0.468 & 0.428
+    \end{tabular}
+    \caption{Performance of different models over SHREC17 perturbed dataset as a retrieval task, using the official script of the competition.}
+    \label{tab:SHREC17_retriev}
+\end{table}
+* add MN40 too?
+* add improved graph results too?
+
 \subsection{cosmo}
 
 * other sphercial CNNs cannot scale to 10M pixels (tested on 10k at most) \\
@@ -151,10 +184,76 @@ Show: \\
 * cannot compare with Mudigonda (16 vs 1 input channel)\\
 * full: we scale (50B pixels, 20TB) => lead to better perf?\\
 
+\begin{table}[!ht]
+\begin{tabular}{l|c c c c c c c c c}
+        \multicolumn{1}{l}{} & \multicolumn{4}{c}{Accuracy} & \multicolumn{3}{c}{Average Precision} & \multicolumn{2}{c}{Speed}\\
+        \cmidrule(lr){2-5}\cmidrule(lr){6-8}\cmidrule(lr){9-10}
+        \multicolumn{1}{l}{Method} & BG & TC & AR & mean & TC & AR & mean & inference & training \\ \hline
+        %Mudigonda et al. & 97 & 74 & 65 & 78.67 & - & - & - \\
+        Jiang et al. & 97 & 94 & 93 & 94.67 & - & - & - & - & -\\
+        Jiang (bsize 64) & 95.2 & 93.9 & 95.7 & 94.95 & 11.08 & 65.21 & 38.41 & 10.2 ms & 10h14m\\
+        % 328'339
+        Cohen et al. (S2R) & 97.3 & 97.8 & 97.3 & 97.5 & - & -& 68.6\\
+        Cohen et al. (R2R) & 97.4 & 97.9 & 97.8 & 97.7 & - & -& 75.9\\ \hline
+        DS (ico) & $98.2\pm 0.5$ & $97.4\pm 1.1$ & $97.7\pm 0.7$ & $97.8\pm 0.3$ & $58.88\pm 3.17$ & $95.41\pm 1.51$ & $77.15\pm 1.94$ & 25 ms & 25h \\
+        %DS (non-weighted) & 99.8 & 73.3 & 90.2 & 87.81 & 79.29 & 97.93 & 88.61 & 30ms & 3h50m\\
+        DS (non-weighted) & 99.6 & 66.6 & 96.1 & 87.41 & 83.66 & 97.57 & 90.62 & 30ms & 12h20m\\ \hline
+        % 12'926'432
+        DeepSphere (equi non-weighted) & 99.9 & 31.3 & 75.2 & 68.80 & 55.53 & 94.85 & 75.19 & 567 ms & 48h
+    \end{tabular}
+    \caption{Climate pattern segmentation accuracy (\%) for BG, TC
+and AR classes plus mean accuracy, average precision for positive classes and mean as well.}
+\end{table}
+
+trade off between AP and accuracy in the case of TC class, it seems.
+
 \subsection{GHCN}
 
 * task is artificial, but it shows DeepSphere's flexibility\\
 * structure (looking around) help for prediction\\
+
+dense regression
+\begin{table}[!ht]
+    \centering
+    \begin{tabular}{c|ccc}
+        order & MSE & MAE & R2 \\ \hline 
+        0 & 10.88 & 2.42 & 0.896\\
+        1 & 8.91 & 2.20 & 0.906\\
+        4 & 8.20 & 2.11 & 0.919\\
+        9 & 8.38 & 2.12 & 0.915\\
+    \end{tabular}
+    \caption{The task is to find the temperature for the day T, knowing the temperature of the 5 previous days. Evolution of performance in respect of the order of the filter}
+    \label{tab:future_results}
+    ~\\[1cm]
+    \begin{tabular}{c|ccc}
+        order & MSE & MAE & R2 \\ \hline 
+        1 & 134.01 & 10.51 & -0.319\\
+        4 & 129.48 & 10.31 & -0.274\\
+        9 & 141.68 & 10.82 & -0.389\\
+    \end{tabular}
+    \caption{Predicting the present day (T-1) instead of the future day T}
+    \label{tab:present_results}
+\end{table}
+
+global regression
+\begin{table}[!ht]
+    \centering
+    \begin{tabular}{c|ccc}
+        order & MSE & MAE & R2 \\ \hline 
+        0 & 0.58 & 0.42 & -0.92\\
+        4 & 0.50 & 0.18 & 0.597\\
+    \end{tabular}
+    \caption{Find day in year using precipitation}
+    \label{tab:future_results}
+    ~\\[1cm]
+    \begin{tabular}{c|ccc}
+        order & MSE & MAE & R2 \\ \hline 
+        0 & 0.10 & 0.10 & 0.881\\
+        4 & - & - & -\\
+    \end{tabular}
+    \caption{Using temperature feature that are already periodical}
+    \label{tab:present_results}
+\end{table}
 
 \section{Conclusion [0.5 pages]}
 
@@ -192,8 +291,17 @@ Left blank for anonymity reason
 
 
 \section{Experiments details}
+* Network architecture and details
+\subsection{3D object Recognition}
+HEALPix sampling, Nside = 32
 
+\subsection{cosmo}
+HEALPix sampling, Nside = 1024, with improved graph
 
+\subsection{climate event detection}
+icosahedron sampling, level-5 resolution
 
+\subsection{GHCN}
+non-regular sampling
 
 \end{document}
