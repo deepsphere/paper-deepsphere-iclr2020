@@ -6,6 +6,23 @@
 
 \usepackage{hyperref}
 \usepackage{url}
+\usepackage{breqn}
+\usepackage{booktabs}
+
+
+% ------ Martino's usepackage ------
+\usepackage{graphicx}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{prop}{Proposition}
+\newtheorem*{remark}{Remark}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+% ----------------------------------
+
+
 
 
 \title{Which spherical CNN should you use?\\ DeepSphere V2}
@@ -116,16 +133,75 @@ Present the different spherical CNNs with pro and cons => mostly scale vs genera
 \subsection{Link with the Laplace-Beltrami Operator}
 
 \subsection{HEALPix: convergence theorem}
-
+We need now to define some geometrical quantities that we'll need. Given a sampling $x_0, ..., x_{n-1}$ define $\sigma_i$ to be the patch of the surface of the sphere corresponding to the $i$th point of the sampling, define $A_i$ to be its corresponding area and $d_i$ to be the radius of the smallest ball in $\mathbb R^3$ containing the i-th patch. Define $d^{(n)} := \max_{i=0, ..., n}d_i$ and $A^{(n)}=\max_{i=0, ..., n}A_i$.\\
+	\begin{theorem}
+		For a sampling $\mathcal P = \{x_i\in\mathbb S^2\}_{i=0}^{n-1}$ of the sphere that is equi area and such that $d^{(n)})\leq \frac{C}{\sqrt{n}}$, for all $f: \mathbb S^2 \rightarrow \mathbb R$ Lipschitz with respect to the euclidean distance in $\mathbb R^3$, for all $y\in\mathbb S^2$, there exists a sequence $t_n = n^\beta$ such that the rescaled Heat Kernel Graph Laplacian operator $\frac{|\mathbb S^2|}{4\pi t_n}L^t_n$ converges pointwise to the Laplace Beltrami operator on the sphere $\triangle_{\mathbb S^2}$  for $n\to\infty$:
+		$$ \lim_{n\to\infty}\frac{|\mathbb S^2|}{4\pi t_n} L_n^{t_n}f(y) =  \triangle_{\mathbb S^2}f(y).$$
+		\label{theo:pointwise convergence in the healpix case}
+	\end{theorem}
+	
 \subsection{Equiangular}
+Khasanova et al. \cite{Frossard2017GraphBasedCO} designed a discrete Laplacian that is explicitly intended to work on the sphere with the equiangular sampling. They studied a way to build a graph to analyze images produced by omnidirectional cameras. In their work they assume that the image is sampled on the sphere on the equiangular sampling. They consider the set $\mathcal G$ of all the possible graphs where each node is connected only to four of its nearest neighbours (North, Sud, West, East) and propose a weighting scheme $w_{ij}$ that minimizes the difference in the response to the polynomial spectral filter $\mathcal F = \mathbf L$ evaluated on images of the same object seen at different latitudes. In other words, they solve the minimization problem
 
-explain rapidly Renata \& Pascal
+\begin{equation}\label{eq:minimization frossard}
+	\min_{W\in\mathcal G} \left|\mathcal{F}\left(\mathbf{y}\left(v_{ e}\right)\right)-\mathcal{F}\left(\mathbf{y}\left(v_{ i}\right)\right)\right|
+\end{equation}
+for the adjacency matrix $W$, where $\mathbf y(v_i)$ is the image of the object on the sphere centered on the vertex $v_i$, and $\mathcal F (\mathbf y(v_e))$ is the response of the filter at the vertex $v_e$ that lies at the same longitude of the vertex $v_i$ but on the equator. In their work they prove that the optimal weights solving the minimization problem (\ref{eq:minimization frossard}) are given by weights $w_{ij}$ inversely proportional to the Euclidean distance between vertices:
+\begin{equation}\label{eq:frossard weights}
+	w_{ij} = \frac{1}{\norm{x_i-x_j}}
+\end{equation}
+This construction is interesting since it is adapted to the equiangular sampling, and leads to a very sparse graph with only 4 neighbors per vertex. Furthermore, to obtain the weights (\ref{eq:frossard weights}) every calculation was done in the \textit{spatial domain}, without any consideration about the spectral interpretation of the filter. In order to compare it to the HKGL we show the equivariance error by spherical harmonic degree in figure \ref{fig:Equivariance error of the Frossard-Khasanove graph}. It can be appreciated how this construction performs a little worse that the full HKGL for low bandwidth samplings, but converges faster than the \textit{full} HKGL, and its spectrum looks much more similar to the one of $\Delta_{\mathbb S^2}$.
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=\textwidth]{figures/KhasanovaFrossardgraphonequiangularsampling.png}
+
+	\caption{\label{fig:Equivariance error of the Frossard-Khasanove graph}Equivariance error of the Khasanova-Frossard graph on the equiangular sampling with bandwidth $b=8$ by spherical harmonic degree $\ell$.}
+\end{figure}
+
+The Khasanova-Frossard graph showed us that it is possible to do better than the HKGL on the equiangular sampling. We asked ourself if there's a general way of building a more equivariant graph than the HKGL that is straightforward to implement on any sampling scheme of the sphere. To answer this question in the next section we study a more complex way to approximate the Laplace-Beltrami operator $\Delta_{\mathbb S^2}$: the linear FEM Laplacian. We will see that the comparison between the FEM Laplacian and the graph Laplacian will give us precious insights to better understand the limitations of graph Laplacians when it comes to deal with non uniform samplings of the sphere.
 
 \subsection{Equivariance error}
 
 * define a measure of equiv error\\
+Take a sampling scheme $V=\{v_i\in\mathbb S^2, i=0, ..., n\}$ of the sphere, a weighted undirected graph $G(V, E, \mathbf W)$, a signal $f: \mathbb S^2\to\mathbb R$ and its sampled representation $\mathbf f:\ f_i=f(v_i)$. Suppose that there exists a sampling operator $T_V: L^2(\mathbb S^2) \supset F\to \mathbb R^n,\  T_V(f) = \mathbf f$ defined on a suitable subspace $F$ of $L^2(\mathbb S^2)$ such that it is invertible, i.e., we can unambiguously reconstruct the function $f\in F$ from its sampled values $\mathbf f$. The existence of such subspace depends on the sampling scheme $V$, and its characterization is a common problem in signal processing \cite{Driscoll:1994:CFT:184069.184073}. Define the rotation operator $\Lambda(g), g\in SO(3)$: $\Lambda(g) f(\omega)=f\left(g^{-1} \omega\right)$.\\
+
+We now want to understand how to set the edges and the weights of $G$ such that
+\begin{equation}\label{eq:equivariance}
+T \Lambda(g) T^{-1} \Omega_k T f = \Omega_k T \Lambda(g) f
+\end{equation}
+i.e., the graph convolution $\Omega_k$ and any rotation $\Lambda(g)$ commute.
+
+Verifying equation (\ref{eq:equivariance}) is really hard in practice, due to the fact that for almost all samplings schemes $V$ it is not known if there exists a space $F$ in which $T$ is invertible. A special case is the \textit{equiangular sampling} scheme where a sampling theorem holds \cite{Driscoll:1994:CFT:184069.184073}. With all the other sampling schemes, there are no sampling theorems available, but there are implementations of discrete SHT to reconstruct a sampled signal $\mathbf f$, thus providing a way to approximate $T^{-1}$. Thanks to this we are able, for a given sampling, a given function $f$, a given rotation $g$, and a given kernel $k$, to compute the \textit{normalized equivariance error} 
+\begin{equation}\label{eq:equivariance error}
+E_{G}(f, g) = \left(\frac{ \norm {T \Lambda(g) T^{-1} \Omega_k Tf - \Omega_k T \Lambda(g) f}_{L^2(\mathbb R^2)}}{\norm {Tf}_{L^2(\mathbb R^2)}}\right)^2
+\end{equation}
+where $T^{-1}$ is substituted with a discrete SHT in case $T$ is not invertible.
+A measure of how equivariant a graph is with respect to rotations will then be given by the \textit{mean equivariance error}
+\begin{equation}\label{eq:mean equivariance error}
+\overline E_G = \mathbb E_{f, g}\ 	E_G(f, g) 
+\end{equation}
+In practice the expected value is obtained by averaging over a finite number of random functions and random rotations. The mean equivariance error $\overline E_G$ gives us an indication of how close the graph $G$ is from being equivariant to rotations. Now we state an intuitive concept that explains how to construct rotation invariant graphs, i.e. graphs such that $\overline{E_G}$ is small.
+The mean equivariance error $\overline{E_G}$ will be small if the scalar product $\mathbf f^T \mathbf v_{i(\ell, m)}$ well approximates $\hat {f}(\ell,m)$ i.e., the $L^2$ scalar product of the continuous signal \\
+	$\hat {f}(\ell,m)= \int_{\eta \in \mathbb S^2}f(\eta)Y_\ell^m(\eta)d\mu(\eta)$.
+	
+	\textit{If $V$ is an equal area sampling scheme}, i.e. the area around each pixel $v_i$ is the same, $\overline{E_G}$ will be small if the graph Laplacian $\mathbf L$ is such that its eigenvectors $\mathbf v_i$ well approximate the eigenfunctions of the Laplace-Beltrami operator $\Delta_{\mathbb S^2}$ evaluated in the points of the sampling scheme, i.e., 
+	$$
+	\mathbf v_{i(\ell, m)} \approx Y_\ell^m(x_i)
+	$$
+
+In this way we framed the problem of constructing a rotation invariant graph with the more general problem of coming up with a matrix $\mathbf L$ with some specific spectral properties.
+
 * show convergence empirically (for Nside up to 1024) \\
 * improved upon V1\\
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\textwidth]{figures/DeepSphereonHEALPix.png}	
+	\includegraphics[width=\textwidth]{figures/OptimalHKGLonHEALPix.png}	
+	\caption{\label{fig:DeepSphere equivariance error}Mean equivariance error of the diffusion filter $\exp(-\Lambda)$ for $G$, $G'$ and the full HKGL, by spherical harmonic degree. Notice the difference in the scale of the y axis for DeepSphere, that reaches errors up to 30\%.}
+\end{figure}
+
 * no difference in practice (see experiment xx) => NNs are resilient to equiv error\\
 
 \section{Experiments [2 pages]}
@@ -144,7 +220,7 @@ Show: \\
     \centering
     \begin{tabular}{l|c c r r}
         \multicolumn{1}{l}{} & \multicolumn{2}{c}{performance} & \multicolumn{2}{c}{speed}\\
-        \cmidrule(lr){2-3} \cmidrule(lr){5-6}
+        \cmidrule(lr){2-3} \cmidrule(lr){4-5}
         \multicolumn{1}{l}{Method} & Accuracy & F1-score & inference & training \\ \hline
         Cohen \emph{s2cnn} & - & - & 38ms & 50h\\
         % Cohen \emph{s2cnn\_simple} & 78.59 & 78.85 & 400k & 12ms & 32h\\
@@ -207,6 +283,9 @@ and AR classes plus mean accuracy, average precision for positive classes and me
 
 trade off between AP and accuracy in the case of TC class, it seems.
 
+% jiang like correct: 99.81631631, 13.18655162, 52.62412867, 55.20899887;  0.3990812 , 0.80056251, 0.59982186; 4 ms; 2h40
+% more feat: 99.67871329, 38.78607557, 66.37910064, 68.2812965: 0.99981102, 0.60714174, 0.83236147, 0.71975161; 12ms; 6h20
+
 \subsection{GHCN}
 
 * task is artificial, but it shows DeepSphere's flexibility\\
@@ -244,7 +323,7 @@ global regression
         4 & 0.50 & 0.18 & 0.597\\
     \end{tabular}
     \caption{Find day in year using precipitation}
-    \label{tab:future_results}
+    \label{tab:glob_prec}
     ~\\[1cm]
     \begin{tabular}{c|ccc}
         order & MSE & MAE & R2 \\ \hline 
@@ -252,7 +331,7 @@ global regression
         4 & - & - & -\\
     \end{tabular}
     \caption{Using temperature feature that are already periodical}
-    \label{tab:present_results}
+    \label{tab:glob_all}
 \end{table}
 
 \section{Conclusion [0.5 pages]}
@@ -290,18 +369,236 @@ Left blank for anonymity reason
 \section{Proof of theorem}
 
 
+\begin{definition}{}(Heat Kernel Graph Laplacian operator)\\
+	\label{def:Heat Kernel Graph Laplacian operator}
+	\text{Given a sampling $\{x_i\in\mathcal M\}_{i=0}^{n-1}$ of the manifold we define the \textbf{operator} }$L_n^t$ such that
+	$$L_n^tf(y) := \frac{1}{n}\left[ \sum_{i=0}^{n-1} \exp{-\frac{||x_i-y||^2}{4t}}\left(f(y)-f(x_i)\right)\right]$$
+\end{definition}
+\begin{definition}{}(from \cite[Belkin et al. ]{Belkin:2005:TTF:2138147.2138189}Functional approximation to the Laplace-Beltrami operator)\\ \label{eq: my L^t} Let $\mu$ be the uniform probability measure on the manifold $\mathcal M$, where $\text{vol}(\mathcal M)$ is the volume of $\mathcal M$. We define the functional approximation to the Laplace-Beltrami operator to be the operator $L^t: L^{2}(\mathcal{M}) \rightarrow L^{2}(\mathcal{M})$ such that
+	\label{def:Functional approximation to the Laplace-Beltrami operator}
+	$$ L^tf(y) = \int_{\mathcal M}e^{-\frac{||y-x||^2}{4t}}\left(f(y)-f(x)\right)d\mu(x)$$
+\end{definition}
+
+The core of the work of Belkin et al. is the proof, that we will not discuss, of the following proposition.
+
+\begin{prop} 	Let $\mathcal M$ be a $k$-dimensional compact smooth manifold embedded in some euclidean space $\mathbb R^N$, and fix $p\in\mathcal M$. Let the data points $x_1, ... x_n$ be sampled form a uniform distribution on the manifold $\mathcal M$. Set $t_n=n^{-\frac{1}{k+2+\alpha}}$, for any $\alpha>0$ and let $f\in\mathcal C_\infty(\mathcal M)$. Then
+	$$\frac{1}{t}\frac{1}{(4\pi t)^{k/2}} L^tf(p) \xrightarrow{t\to 0 } \frac{1}{\text{vol}(\mathcal M)}\triangle_{\mathcal M}f(p).$$
+	\label{prop:3}
+\end{prop}
+
+Our first goal is to prove the following Proposition: 
+\vspace{0.5cm}
+\begin{prop}\label{prop:1}
+	For an equal area sampling $\{x_i\in\mathbb S^2\}_{i=0}^{n-1}: A_i=A_j \forall i,j$ of the sphere it is true that for all $f: \mathbb S^2 \rightarrow \mathbb R$ Lipschitz with respect to the euclidean distance $||\cdot||$ with Lipschitz constant $\mathcal L_f$ 
+	$$
+	\left| \int_{\mathbb S^2}f({ x})\text{d}{\mu(x)} - \frac{1}{n}\sum_i f( x_i)\right|\leq \mathcal L_fd^{(n)}.
+	$$
+	Furthermore, for all $y\in\mathbb S^2$ the Heat Kernel Graph Laplacian operator $L^t_n$ converges pointwise to the functional approximation of the Laplace Beltrami operator $L^t$
+	$$ L_n^tf(y)\xrightarrow{n\to\infty} L^tf(y).$$
+\end{prop} 
+\vspace{0.5cm}
+
+
+\begin{proof}
+
+
+	Let us assume that the function $f:\mathbb R^3\rightarrow \mathbb R$ is Lipschitz with Lipschitz constant $\mathcal L_f$, we have 
+	
+	$$\left| \int_{\sigma_{i}}f({ x})\text{d}{\mu(x)} - \frac{1}{n}f( x_i)\right| \leq \mathcal L_fd^{(n)}\frac{1}{n} $$
+
+	So, by triangular inequality and by summing all the contributions of all the $n$ patches
+	$$\left| \int_{\mathbb S^2}f({ x})\text{d}{\mu(x)} - \frac{1}{n}\sum_i f( x_i)\right| \leq \sum_i \left| \int_{\sigma_{i}}f({ x})\text{d}{\mu(x)} - \frac{1}{n}f( x_i)\right|\leq n  \mathcal L_fd^{(n)}\frac{1}{n} = \mathcal L_fd^{(n)}$$	
+	Thanks to this result, we have the following two pointwise convergences
+	
+	$$\forall f \text{ Lipschiz,}\quad \forall y\in\mathbb S^2,  \quad\quad \frac{1}{n}\sum_i e^{-\frac{||x_i-y||^2}{4t}}\rightarrow \int e^{-\frac{||x-y||^2}{4t}}d\mu(x)$$
+	$$\forall f \text{ Lipschiz,}\quad \forall y\in\mathbb S^2,  \quad\quad \frac{1}{n}\sum_i e^{-\frac{||x_i-y||^2}{4t}}f(x_i)\rightarrow \int e^{-\frac{||x-y||^2}{4t}}f(x)d\mu(x)$$
+	
+	Definitions \ref{def:Heat Kernel Graph Laplacian operator} and \ref{def:Functional approximation to the Laplace-Beltrami operator} end the proof.
+\end{proof}
+\vspace{0.5cm}
+
+Now, we just proved that \textit{keeping t fixed} $L_n^tf(x)\rightarrow L^tf(x)$. Now our goal is to prove that:
+
+\vspace{0.5cm}
+\begin{prop}\label{prop:2}
+	Given a sampling regular enough i.e., for which we assume $A_i=A_j \ \forall i,j\text{ and }d^{(n)}\leq \frac{C}{\sqrt{n}}$, for a fixed $t>0$, a fixed Lipschitz function $f$ and a fixed point $y\in\mathbb S^2$ there exists a sequence $t_n = n^\beta, \beta<0$ such that 
+$$
+\forall f \text{ Lipschitz, } \forall x\in\mathbb S^2 \quad \left|\frac{1}{4\pi t_n^2}\left(L_n^{t_n}f(x) - L^{t_n}f(x)\right)\right|\xrightarrow{n\to \infty}0.
+$$
+\end{prop}
+\vspace{0.5cm}
+
+The main result of this section, theorem  \ref{theo:pointwise convergence in the healpix case}, is then an immediate consequence of Proposition \ref{prop:2} and Proposition \ref{prop:3}.
+
+
+\begin{proof}[Proof of Proposition \ref{prop:2}]
+	
+We define for simplicity of notation
+\begin{align}
+	\phi^t(x;y) &:= e^{-\frac{||x-y||^2}{4t}}\left(f(y)-f(x)\right)\\
+	K^t(x,y) &:=  e^{-\frac{||x-y||^2}{4t}}
+\end{align}
+We start by writing the following chain of inequalities
+\begin{align*}
+	||L_n^tf-L^tf||_\infty &= \max _{y\in \mathbb S^2} \left|L_n^tf(y)-L^tf(y)\right|\\
+	&= \max _{y\in \mathbb S^2} \left| \frac{1}{n} \sum_{i=1}^n \phi^t(x_i; y)- \int_{\mathbb S^2} \phi^t(x;y)d\mu(x) \right|\\
+	&\leq \max _{y\in \mathbb S^2}  \sum_{i=1}^n   \left| \frac{1}{n}  \phi^t(x_i; y)- \int_{\sigma_i} \phi^t(x;y)d\mu(x) \right|\\
+	&\leq  \max _{y\in \mathbb S^2} \left[\mathcal L_{\phi^t_y}d^{(n)} \right]\\
+\end{align*}
+where $\mathcal L_{\phi^t_y}$ is the Lipschitz constant of $x \rightarrow \phi^t(x, y)$ and where we used for the last inequality Proposition \ref{prop:1}. If we assume $d^{(n)}\leq \frac{C}{\sqrt{n}}$ we have that
+
+$$||L_n^tf-L^tf||_\infty  \leq  \max _{y\in \mathbb S^2} \left[ \mathcal L_{\phi^t_y} \frac{C}{\sqrt{n}} \right]$$
+
+Let's now find the explicit dependence $t\rightarrow \mathcal L_{\phi^t_y}$
+\begin{align*}
+	\mathcal L_{\phi^t_y} &= ||\partial_x\phi^t(\cdot;y)||_\infty\\&
+	= ||\partial_x\left(K^t(\cdot;y)f\right)||_\infty\\&
+	= ||\partial_x K^t(\cdot;y)f + K^t(\cdot;y)\partial_x f||_\infty\\&
+	\leq ||\partial_x K^t(\cdot;y)f||_\infty + ||K^t(\cdot;y)\partial_x f||_\infty\\&
+	\leq  ||\partial_x K^t(\cdot;y)||_\infty||f||_\infty + ||K^t(\cdot;y)||_\infty||\partial_x f||_\infty\\&
+	= ||\partial_x K^t(\cdot;y)||_\infty||f||_\infty + ||\partial_x f||_\infty\\&
+	= \mathcal L_{K^t_y} ||f||_\infty + ||\partial_xf||_\infty\\&
+	= \mathcal L_{K^t_y} ||f||_\infty + \mathcal L_f
+\end{align*}
+where $\mathcal L_{K^t_y}$ is the Lipschitz constant of $x\rightarrow K^t(x;y)$. We can observe that such constant does not depend on $y$:
+
+$\mathcal L_{K^t_y} = \norm{\partial_x e^{-\frac{x^2}{4t}}}_\infty = \norm{\frac{x}{2t}e^{-\frac{x^2}{4t}}}_\infty = \left. \frac{x}{2t}e^{-\frac{x^2}{4t}}\right|_{x=\sqrt{2t}}=(2et)^{-\frac{1}{2}}\propto t ^ {-\frac{1}{2}}$
+
+So we can continue
+$$\begin{aligned}
+	\max _{y\in \mathbb S^2} \left[  \mathcal L_{\phi^t_y} \frac{C}{\sqrt{n}} \right]
+	&\leq  \frac{C}{\sqrt{n}} \left( (2et)^{-\frac{1}{2}} \norm{f}_\infty + \mathcal L_f \right)\\
+	&\leq \frac{C\norm{f}_\infty}{\sqrt{n}(2et)^{1/2}} +   \frac{C}{\sqrt{n}}\mathcal L_f\\
+\end{aligned}$$
+So we have that, rescaling by a factor $\frac{1}{4\pi t^2}$
+\begin{align*}
+	\norm{\frac{1}{4\pi t^2}\left(L_n^tf-L^tf\right)}_\infty&\leq \frac{1}{4\pi t^2}\norm{\left(L_n^tf-L^tf\right)}_\infty \\
+	&\leq \frac{C}{4\pi}\left[\frac{\norm{f}_\infty}{\sqrt{2e}}\frac{1}{\sqrt{n}t^{5/2}} + \frac{\mathcal L_f}{\sqrt{n}t^2}\right]
+\end{align*}
+
+we want $\begin{cases}
+t \rightarrow 0\\
+n \rightarrow \infty\\
+\sqrt{n}t^{5/2} \rightarrow \infty\\
+\sqrt{n}t^2 \rightarrow \infty
+\end{cases}$ in order for $ \frac{C}{4\pi}\left[\frac{\norm{f}_\infty}{\sqrt{2e}}\frac{1}{\sqrt{n}t^{5/2}} + \frac{\mathcal L_f}{\sqrt{n}t^2}\right] \xrightarrow[t\to 0 ]{n\to\infty}0$
+
+This is true if $\begin{cases}
+t(n) = n^\beta, &\beta\in(-\frac{1}{5}, 0) \\
+t(n) = n^\beta, &\beta\in(-\frac{1}{4}, 0)
+\end{cases} \implies t(n) = n^\beta, \quad \beta\in(-\frac{1}{5}, 0)$
+
+Indeed 
+
+$\sqrt{n}t^{5/2}=n^{5/2\beta+1/2}\xrightarrow{n \to \infty} \infty$ since $\frac{5}{2}\beta+1/2>0 \iff \beta>-\frac{1}{5}$
+
+$\sqrt{n}t^2=n^{2\beta+1/2}\xrightarrow {N \to \infty} \infty$ since $2\beta+1/2>0 \iff \beta>-\frac{1}{4}$
+
+So, for $t=n^\beta$ with $\beta\in(-\frac{1}{5}, 0)$ we have that 
+
+$$\begin{cases}
+(t_n)\xrightarrow{n\to\infty}0\\
+\norm{\frac{1}{4\pi t_n^2}L_n^{t_n}f-\frac{1}{4\pi t_n^2}L^{t_n}f}_\infty  \xrightarrow{n\to\infty}0
+\end{cases}$$
+	
+\end{proof}
+
+The proof of theorem \ref{theo:pointwise convergence in the healpix case} is now trivial:
+\begin{proof}[Proof of Theorem \ref{theo:pointwise convergence in the healpix case}]
+	Thanks to Proposition \ref{prop:2} and Proposition \ref{prop:3}	we conclude that $\forall y\in\mathbb S^2 $
+	$$\lim_{n\to\infty}\frac{1}{4\pi t_n^2} L_n^{t_n}f(y) =  \lim_{n\to\infty}\frac{1}{4\pi t_n^2} L^{t_n}f(y) = \frac{1}{|\mathbb S^2|}\triangle_{\mathbb S^2}f(y) $$
+\end{proof}
+
+The proof of this result is instructive since it shows that we need to impose some regularity conditions on the sampling. If the sampling is equal area as HEALPix, meaning that all the patches $\sigma_i$ have the same area, then we need to impose that $ d^{(n)}\leq \frac{1}{\sqrt{n}}$. If the sampling is not equal area, meaning that in general $A_i\neq A_j$, it can be shown that we need a slightly more complex condition: $\max_{i=0,...,n-1}d_iA_i\leq Cn^{-\frac{3}{2}}$.\\
+In the work of Belkin et al. \cite{Belkin:2005:TTF:2138147.2138189} the sampling is drawn form a uniform random distribution on the sphere, and their proof heavily relies on the uniformity properties of the distribution from which the sampling is drawn. In our case the sampling is deterministic, and the fact that for a sphere there doesn't exist a regular sampling with more than 12 points (the vertices of a icosahedron) is indeed a problem that we need to overcome by imposing the regularity conditions above. 
+
+
+To conclude, we can see that the result obtained has the same form than the result obtained in \cite{Belkin:2005:TTF:2138147.2138189}. Given the kernel density $t(n)=n^\beta$, if Belkin et al. proved convergence in the random case for $\beta \in (-\frac{1}{4}, 0)$, we proved convergence in the HEALPix case for $\beta \in (-\frac{1}{5}, 0)$. This kind of result can be interpreted in the following way. In order to have this pointwise convergence, we need to reduce the kernel width but \textit{not so fast} compared to the resolution of the graph. In other words, the kernel width has to be reduced but is somewhat limited by the resolution of the graph. In the next section we'll see how to set in practice a good kernel width $t$ given a graph resolution $n$.
+\begin{remark}
+	Pointwise convergence is just a necessary condition for spectral convergence.  Theorem \ref{theo:pointwise convergence in the healpix case} does not imply convergence of eigenvalues and eigenvectors.
+\end{remark}
+
+
 \section{Experiments details}
 * Network architecture and details
 \subsection{3D object Recognition}
-HEALPix sampling, Nside = 32
+\subsubsection*{HEALPix}
+HEALPix sampling, input signal at Nside = 32
 
+CNN having 5 convolutional layers, a global average pooling layer and a fully-connected layer at the end, such as this:
+\begin{dmath}
+    [GC_{16}\, +\, BN\, +\, ReLU]_{nside32}\, +\, \textrm{Pool}\, +\, [GC_{32}\, +\, BN\, +\, ReLU]_{nside16}\, +\, \textrm{Pool}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{nside8}\, +\, \textrm{Pool}\, +\, [GC_{128}\, +\, BN\, +\, ReLU]_{nside4}\, +\,\textrm{Pool}\, +\, [GC_{256}\, +\, BN\, +\, ReLU]_{nside2}\, +\, \textrm{Pool}\, +\, GAP\, +\, FCN\, +\, \textrm{softmax}
+\end{dmath}
+Each convolutional layer has a graph convolution using Chebyshev polynomial approximation, batch normalization and ReLU activation. The order of the Chebyshev polynomial is 4 for each layer, the number of feature maps are [16, 32, 64, 128, 256] respectively and down-sampling to the immediate smaller resolution for each layer.
+
+number of parameter: 190k TODO exact number?
+
+batch size 32, adam optimizer, constant learning rate of $5 \cdot 10^{-2}$
+cross-entropy loss, and add triplet loss from ``Esteves et al.´´
+\subsubsection*{Equiangular}
+Equiangular sampling with bandwidth of 64 in longitude and latitude.
+The architecture of the Neural Network is exactly the same, with a stride of [2, 2] for each pooling layer
 \subsection{cosmo}
 HEALPix sampling, Nside = 1024, with improved graph
 
 \subsection{climate event detection}
+\subsubsection*{Icosahedron}
 icosahedron sampling, level-5 resolution
 
-\subsection{GHCN}
-non-regular sampling
+CNN with encoder decoder architecture
+encoder:\\
+\begin{dmath}
+    [GC_{32}\, +\, BN\, +\, ReLU]_{L5}\,+\, [GC_{64}\, +\, BN\, +\, ReLU]_{L5}\, +\, \textrm{Pool}\, +\, [GC_{128}\, +\, BN\, +\, ReLU]_{L4}\, +\, \textrm{Pool}\, +\, [GC_{256}\, +\, BN\, +\, ReLU]_{L3}\, +\,\textrm{Pool}\, +\, [GC_{512}\, +\, BN\, +\, ReLU]_{L2} +\,\textrm{Pool}\, +\, [GC_{512}\, +\, BN\, +\, ReLU]_{L1} +\,\textrm{Pool}\, +\, [GC_{512}]_{L0}
+\end{dmath}
+decoder:\\
+\begin{dmath}
+    \textrm{Unpool}\, +\,[GC_{512}\, +\, BN\, +\, ReLU]_{L1}\, +\, \textrm{concat}\, +\, [GC_{512}\, +\, BN\, +\, ReLU]_{L1}\, +\, \textrm{Unpool}\, +\, [GC_{256}\, +\, BN\, +\, ReLU]_{L2}\, +\, \textrm{concat}\, +\, [GC_{256}\, +\, BN\, +\, ReLU]_{L2}\, +\, \textrm{Unpool}\, +\, [GC_{128}\, +\, BN\, +\, ReLU]_{L3}\, +\, \textrm{concat}\, +\, [GC_{128}\, +\, BN\, +\, ReLU]_{L3}\, +\,\textrm{Unpool}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{L4}\,+\, \textrm{concat}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{L4}\, +\,\textrm{Unpool}\,  +\, [GC_{32}\, +\, BN\, +\, ReLU]_{L5}\,+ \, [GC_3]_{L5}
+\end{dmath}
+number of parameters: 2,2M
 
+concat the results of the corresponding encoder layer after the pooling. Not similar to Jiang and 4 times the feature maps. Redo experiment WIP
+
+batch size 64, adam optimizer, constant learning rate of $1 \cdot 10{-3}$, cross-entropy loss, both weighted and non weighted. Weight chosen with scikit-learn "compute\_class\_weight" on the training set
+\subsubsection*{Correct Icosahedron}
+encoder:\\
+\begin{dmath}
+    [GC_{8}\, +\, BN\, +\, ReLU]_{L5}\,+\,\textrm{Pool}\,+\, [GC_{16}\, +\, BN\, +\, ReLU]_{L4}\, +\, \textrm{Pool}\, +\, [GC_{32}\, +\, BN\, +\, ReLU]_{L3}\, +\, \textrm{Pool}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{L2}\, +\,\textrm{Pool}\, +\, [GC_{128}\, +\, BN\, +\, ReLU]_{L1}\, +\, \textrm{Pool}\,  +\, [GC_{128}\, +\, BN\, +\, ReLU]_{L0}
+\end{dmath}
+decoder:\\
+\begin{dmath}
+    \textrm{Unpool}\, +\,[GC_{128}\, +\, BN\, +\, ReLU]_{L1}\, +\, \textrm{concat}\, +\, [GC_{128}\, +\, BN\, +\, ReLU]_{L1}\, +\, \textrm{Unpool}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{L2}\, +\, \textrm{concat}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{L2}\, +\, \textrm{Unpool}\, +\, [GC_{32}\, +\, BN\, +\, ReLU]_{L3}\, +\, \textrm{concat}\, +\, [GC_{32}\, +\, BN\, +\, ReLU]_{L3}\, +\,\textrm{Unpool}\, +\, [GC_{16}\, +\, BN\, +\, ReLU]_{L4}\,+\, \textrm{concat}\, +\, [GC_{16}\, +\, BN\, +\, ReLU]_{L4}\, +\,\textrm{Unpool}\,  +\, [GC_{8}\, +\, BN\, +\, ReLU]_{L5}\,+\,\textrm{concat}\, +\, [GC_{8}\, +\, BN\, +\, ReLU]_{L5}\, + \,[GC_3]_{L5}
+\end{dmath}
+number of parameters: 590'976  % more feat is 16 times more
+
+concat the results of the corresponding encoder layer after the graph convolution. Similar to ``Jiang et al.´´
+\subsubsection*{Equiangular}
+Equiangular sampling, with a latitude bandwidth 384 and longitude bandwidth 576.
+
+Due to memory problem, could not use the same architecture
+
+encoder:\\
+\begin{dmath}
+    [GC_{16}\, +\, BN\, +\, ReLU]_{bw}\,+\, [GC_{16}\, +\, BN\, +\, ReLU]_{bw}\, +\, \textrm{Pool}\, +\, [GC_{32}\, +\, BN\, +\, ReLU]_{bw/16}\, +\, \textrm{Pool}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{bw/64}\, +\, [GC_{128}\, +\, BN\, +\, ReLU]_{bw/64}
+\end{dmath}
+decoder:\\
+\begin{dmath}
+    \textrm{Unpool}\, +\,[GC_{128}\, +\, BN\, +\, ReLU]_{bw/64}\, +\, \textrm{concat}\, +\, [GC_{128}\, +\, BN\, +\, ReLU]_{bw/64}\, +\, \textrm{Unpool}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{bw/64}\, +\, \textrm{concat}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{bw/64}\, +\, \textrm{Unpool}\, +\, [GC_{32}\, +\, BN\, +\, ReLU]_{bw/16}\, +\, \textrm{concat}\, +\, [GC_{32}\, +\, BN\, +\, ReLU]_{bw/16}\, +\,\textrm{Unpool}\, +\, [GC_{16}\, +\, BN\, +\, ReLU]_{bw}\,+\, \textrm{concat}\, +\, [GC_{16}\, +\, BN\, +\, ReLU]_{bw}\, +\,\textrm{Unpool}\,  +\, [GC_{16}\, +\, BN\, +\, ReLU]_{bw}\,+\,[GC_3]_{bw}
+\end{dmath}
+
+batch size 1
+\subsection{GHCN}
+non-regular sampling, thus no pooling was used
+
+batch size 64, RMSprop optimizer, constant learning rate of $1 \cdot 10{-3}$, MSE loss, order of 5 for all layers
+\subsection*{Dense}
+
+\begin{dmath}
+    [GC_{50}\, +\, BN\, +\, ReLU]\, +\, [GC_{100}\, +\, BN\, +\, ReLU]\, +\, [GC_{100}\, +\, BN\, +\, ReLU]\, +\, [GC_{1}\, +\, BN\, +\, ReLU]
+\end{dmath}
+
+\subsubsection*{Global}
+
+\begin{dmath}
+    [GC_{50}\, +\, BN\, +\, ReLU]\, +\, [GC_{100}\, +\, BN\, +\, ReLU]\, +\, [GC_{100}\, +\, BN\, +\, ReLU]\, +\, GAP\, +\, FCN
+\end{dmath}
 \end{document}
