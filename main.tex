@@ -133,7 +133,7 @@ Present the different spherical CNNs with pro and cons => mostly scale vs genera
 \subsection{Link with the Laplace-Beltrami Operator}
 
 \subsection{HEALPix: convergence theorem}
-We need now to define some geometrical quantities that we'll need. Given a sampling $x_0, ..., x_{n-1}$ define $\sigma_i$ to be the patch of the surface of the sphere corresponding to the $i$th point of the sampling, define $A_i$ to be its corresponding area and $d_i$ to be the radius of the smallest ball in $\mathbb R^3$ containing the i-th patch. Define $d^{(n)} := \max_{i=0, ..., n}d_i$ and $A^{(n)}=\max_{i=0, ..., n}A_i$.\\
+Given a sampling $x_0, ..., x_{n-1}$ define $\sigma_i$ to be the patch of the surface of the sphere corresponding to the $i$th point of the sampling, define $A_i$ to be its corresponding area and $d_i$ to be the radius of the smallest ball in $\mathbb R^3$ containing the $i$th patch. Define $d^{(n)} := \max_{i=0, ..., n}d_i$ and $A^{(n)}=\max_{i=0, ..., n}A_i$.\\
 	\begin{theorem}
 		For a sampling $\mathcal P = \{x_i\in\mathbb S^2\}_{i=0}^{n-1}$ of the sphere that is equi area and such that $d^{(n)})\leq \frac{C}{\sqrt{n}}$, for all $f: \mathbb S^2 \rightarrow \mathbb R$ Lipschitz with respect to the euclidean distance in $\mathbb R^3$, for all $y\in\mathbb S^2$, there exists a sequence $t_n = n^\beta$ such that the rescaled Heat Kernel Graph Laplacian operator $\frac{|\mathbb S^2|}{4\pi t_n}L^t_n$ converges pointwise to the Laplace Beltrami operator on the sphere $\triangle_{\mathbb S^2}$  for $n\to\infty$:
 		$$ \lim_{n\to\infty}\frac{|\mathbb S^2|}{4\pi t_n} L_n^{t_n}f(y) =  \triangle_{\mathbb S^2}f(y).$$
@@ -141,7 +141,7 @@ We need now to define some geometrical quantities that we'll need. Given a sampl
 	\end{theorem}
 	
 \subsection{Equiangular}
-Khasanova et al. \cite{Frossard2017GraphBasedCO} designed a discrete Laplacian that is explicitly intended to work on the sphere with the equiangular sampling. They studied a way to build a graph to analyze images produced by omnidirectional cameras. In their work they assume that the image is sampled on the sphere on the equiangular sampling. They consider the set $\mathcal G$ of all the possible graphs where each node is connected only to four of its nearest neighbours (North, Sud, West, East) and propose a weighting scheme $w_{ij}$ that minimizes the difference in the response to the polynomial spectral filter $\mathcal F = \mathbf L$ evaluated on images of the same object seen at different latitudes. In other words, they solve the minimization problem
+Khasanova et al. \cite{Frossard2017GraphBasedCO} designed a discrete Laplacian that is explicitly intended to work on the sphere with the equiangular sampling. They consider the set $\mathcal G$ of all the possible graphs where each node is connected only to four of its nearest neighbours (North, Sud, West, East) and propose a weighting scheme $w_{ij}$ that minimizes the difference in the response to the polynomial spectral filter $\mathcal F = \mathbf L$ evaluated on images of the same object seen at different latitudes. In other words, they solve the minimization problem
 
 \begin{equation}\label{eq:minimization frossard}
 	\min_{W\in\mathcal G} \left|\mathcal{F}\left(\mathbf{y}\left(v_{ e}\right)\right)-\mathcal{F}\left(\mathbf{y}\left(v_{ i}\right)\right)\right|
@@ -159,7 +159,6 @@ This construction is interesting since it is adapted to the equiangular sampling
 	\caption{\label{fig:Equivariance error of the Frossard-Khasanove graph}Equivariance error of the Khasanova-Frossard graph on the equiangular sampling with bandwidth $b=8$ by spherical harmonic degree $\ell$.}
 \end{figure}
 
-The Khasanova-Frossard graph showed us that it is possible to do better than the HKGL on the equiangular sampling. We asked ourself if there's a general way of building a more equivariant graph than the HKGL that is straightforward to implement on any sampling scheme of the sphere. To answer this question in the next section we study a more complex way to approximate the Laplace-Beltrami operator $\Delta_{\mathbb S^2}$: the linear FEM Laplacian. We will see that the comparison between the FEM Laplacian and the graph Laplacian will give us precious insights to better understand the limitations of graph Laplacians when it comes to deal with non uniform samplings of the sphere.
 
 \subsection{Equivariance error}
 
@@ -172,7 +171,7 @@ T \Lambda(g) T^{-1} \Omega_k T f = \Omega_k T \Lambda(g) f
 \end{equation}
 i.e., the graph convolution $\Omega_k$ and any rotation $\Lambda(g)$ commute.
 
-Verifying equation (\ref{eq:equivariance}) is really hard in practice, due to the fact that for almost all samplings schemes $V$ it is not known if there exists a space $F$ in which $T$ is invertible. A special case is the \textit{equiangular sampling} scheme where a sampling theorem holds \cite{Driscoll:1994:CFT:184069.184073}. With all the other sampling schemes, there are no sampling theorems available, but there are implementations of discrete SHT to reconstruct a sampled signal $\mathbf f$, thus providing a way to approximate $T^{-1}$. Thanks to this we are able, for a given sampling, a given function $f$, a given rotation $g$, and a given kernel $k$, to compute the \textit{normalized equivariance error} 
+Verifying equation (\ref{eq:equivariance}) is really hard in practice, due to the fact that for almost all sampling schemes $V$ it is not known if there exists a space $F$ in which $T$ is invertible. A special case is the \textit{equiangular sampling} scheme where a sampling theorem holds \cite{Driscoll:1994:CFT:184069.184073}, and thus we have a closed form of $T^{-1}$. For sampling schemes where no such sampling theorem is available, there are implementations of discrete SHT to reconstruct a sampled signal $\mathbf f$, thus providing a way to approximate $T^{-1}$. Thanks to this we are able, for a given sampling, a given function $f$, a given rotation $g$, and a given kernel $k$, to compute the \textit{normalized equivariance error} 
 \begin{equation}\label{eq:equivariance error}
 E_{G}(f, g) = \left(\frac{ \norm {T \Lambda(g) T^{-1} \Omega_k Tf - \Omega_k T \Lambda(g) f}_{L^2(\mathbb R^2)}}{\norm {Tf}_{L^2(\mathbb R^2)}}\right)^2
 \end{equation}
@@ -181,9 +180,8 @@ A measure of how equivariant a graph is with respect to rotations will then be g
 \begin{equation}\label{eq:mean equivariance error}
 \overline E_G = \mathbb E_{f, g}\ 	E_G(f, g) 
 \end{equation}
-In practice the expected value is obtained by averaging over a finite number of random functions and random rotations. The mean equivariance error $\overline E_G$ gives us an indication of how close the graph $G$ is from being equivariant to rotations. Now we state an intuitive concept that explains how to construct rotation invariant graphs, i.e. graphs such that $\overline{E_G}$ is small.
-The mean equivariance error $\overline{E_G}$ will be small if the scalar product $\mathbf f^T \mathbf v_{i(\ell, m)}$ well approximates $\hat {f}(\ell,m)$ i.e., the $L^2$ scalar product of the continuous signal \\
-	$\hat {f}(\ell,m)= \int_{\eta \in \mathbb S^2}f(\eta)Y_\ell^m(\eta)d\mu(\eta)$.
+In practice the expected value is obtained by averaging over a finite number of random functions and random rotations. The mean equivariance error $\overline E_G$ gives us an indication of how close the graph $G$ is from being equivariant to rotations. Now we state an intuitive concept that explains how to construct rotation invariant graphs, i.e. graphs such that $\overline{E_G}$ is small.\\
+The mean equivariance error $\overline{E_G}$ will be small if the scalar product $\mathbf f^T \mathbf v_{i(\ell, m)}$ well approximates $\hat {f}(\ell,m)$ i.e., the $L^2$ scalar product of the continuous signal $\hat {f}(\ell,m)= \int_{\eta \in \mathbb S^2}f(\eta)Y_\ell^m(\eta)d\mu(\eta)$.
 	
 	\textit{If $V$ is an equal area sampling scheme}, i.e. the area around each pixel $v_i$ is the same, $\overline{E_G}$ will be small if the graph Laplacian $\mathbf L$ is such that its eigenvectors $\mathbf v_i$ well approximate the eigenfunctions of the Laplace-Beltrami operator $\Delta_{\mathbb S^2}$ evaluated in the points of the sampling scheme, i.e., 
 	$$
@@ -246,8 +244,8 @@ Show: \\
     \caption{Performance of different models over SHREC17 perturbed dataset as a retrieval task, using the official script of the competition.}
     \label{tab:SHREC17_retriev}
 \end{table}
-* add MN40 too?
-* add improved graph results too?
+* add MN40 too? \\
+* add improved graph results too? \\
 
 \subsection{cosmo}
 
@@ -261,24 +259,44 @@ Show: \\
 * full: we scale (50B pixels, 20TB) => lead to better perf?\\
 
 \begin{table}[!ht]
-\begin{tabular}{l|c c c c c c c c c}
-        \multicolumn{1}{l}{} & \multicolumn{4}{c}{Accuracy} & \multicolumn{3}{c}{Average Precision} & \multicolumn{2}{c}{Speed}\\
-        \cmidrule(lr){2-5}\cmidrule(lr){6-8}\cmidrule(lr){9-10}
-        \multicolumn{1}{l}{Method} & BG & TC & AR & mean & TC & AR & mean & inference & training \\ \hline
+\begin{tabular}{l|c c c c}
+        \multicolumn{1}{l}{} & \multicolumn{4}{c}{Accuracy}\\
+        \cmidrule(lr){2-5}
+        \multicolumn{1}{l}{Method} & BG & TC & AR & mean \\ \hline
         %Mudigonda et al. & 97 & 74 & 65 & 78.67 & - & - & - \\
-        Jiang et al. & 97 & 94 & 93 & 94.67 & - & - & - & - & -\\
-        Jiang (bsize 64) & 95.2 & 93.9 & 95.7 & 94.95 & 11.08 & 65.21 & 38.41 & 10.2 ms & 10h14m\\
+        Jiang et al. & 97 & 94 & 93 & 94.67\\
+        Jiang (bsize 64) & 95.2 & 93.9 & 95.7 & 94.95\\
         % 328'339
-        Cohen et al. (S2R) & 97.3 & 97.8 & 97.3 & 97.5 & - & -& 68.6\\
-        Cohen et al. (R2R) & 97.4 & 97.9 & 97.8 & 97.7 & - & -& 75.9\\ \hline
-        DS (ico) & $98.2\pm 0.5$ & $97.4\pm 1.1$ & $97.7\pm 0.7$ & $97.8\pm 0.3$ & $58.88\pm 3.17$ & $95.41\pm 1.51$ & $77.15\pm 1.94$ & 25 ms & 25h \\
+        Cohen et al. (S2R) & 97.3 & 97.8 & 97.3 & 97.5\\
+        Cohen et al. (R2R) & 97.4 & 97.9 & 97.8 & 97.7\\ \hline
+        DS (ico) & $98.2\pm 0.5$ & $97.4\pm 1.1$ & $97.7\pm 0.7$ & $97.8\pm 0.3$ \\
         %DS (non-weighted) & 99.8 & 73.3 & 90.2 & 87.81 & 79.29 & 97.93 & 88.61 & 30ms & 3h50m\\
-        DS (non-weighted) & 99.6 & 66.6 & 96.1 & 87.41 & 83.66 & 97.57 & 90.62 & 30ms & 12h20m\\ \hline
+        DS (non-weighted) & $99.7\pm 0.1$ & $69.2\pm 3.7$ & $94.5\pm 2.9$ & $87.8\pm 0.5$ \\ \hline
+        % DS (non-weighted) & 99.6 & 66.6 & 96.1 & 87.41\\ \hline
         % 12'926'432
-        DeepSphere (equi non-weighted) & 99.9 & 31.3 & 75.2 & 68.80 & 55.53 & 94.85 & 75.19 & 567 ms & 48h
+        DeepSphere (equi non-weighted) & 99.9 & 31.3 & 75.2 & 68.80
     \end{tabular}
     \caption{Climate pattern segmentation accuracy (\%) for BG, TC
-and AR classes plus mean accuracy, average precision for positive classes and mean as well.}
+and AR classes plus mean accuracy.}
+\end{table}
+
+\begin{table}[!ht]
+\begin{tabular}{l|c c c c c}
+        \multicolumn{1}{l}{} & \multicolumn{3}{c}{Average Precision} & \multicolumn{2}{c}{Speed}\\
+        \cmidrule(lr){2-4}\cmidrule(lr){5-6}
+        \multicolumn{1}{l}{Method} & TC & AR & mean & inference & training \\ \hline
+        %Mudigonda et al. & 97 & 74 & 65 & 78.67 & - & - & - \\
+        Jiang (bsize 64) & 11.08 & 65.21 & 38.41 & 10.2 ms & 10h14m\\
+        % 328'339
+        Cohen et al. (S2R) & - & -& 68.6 & - & - \\
+        Cohen et al. (R2R) & - & -& 75.9 & - & -\\ \hline
+        DS (ico) & $58.88\pm 3.17$ & $95.41\pm 1.51$ & $77.15\pm 1.94$ & 25 ms & 25h \\
+        DS (non-weighted) & $80.86\pm 2.42$ & $97.45\pm 0.38$ & $89.16\pm 1.37$ & 30 ms & 13h \\ \hline
+        % DS (non-weighted) & 83.66 & 97.57 & 90.62 & 30ms & 13h\\ \hline
+        % 12'926'432
+        DeepSphere (equi non-weighted) & 55.53 & 94.85 & 75.19 & 567 ms & 48h
+    \end{tabular}
+    \caption{Climate pattern segmentation average precision for positive classes and mean as wel, plus speed performance for inference (one training pass for one instance)  and training time.}
 \end{table}
 
 trade off between AP and accuracy in the case of TC class, it seems.
@@ -333,6 +351,8 @@ global regression
     \caption{Using temperature feature that are already periodical}
     \label{tab:glob_all}
 \end{table}
+
+
 
 \section{Conclusion [0.5 pages]}
 
@@ -535,6 +555,8 @@ number of parameter: 190k TODO exact number?
 
 batch size 32, adam optimizer, constant learning rate of $5 \cdot 10^{-2}$
 cross-entropy loss, and add triplet loss from ``Esteves et al.´´
+
+30 epochs with augmented dataset, 3 random translation perturbation, or 90 epochs over dataset that can be augmented
 \subsubsection*{Equiangular}
 Equiangular sampling with bandwidth of 64 in longitude and latitude.
 The architecture of the Neural Network is exactly the same, with a stride of [2, 2] for each pooling layer
@@ -556,9 +578,11 @@ decoder:\\
 \end{dmath}
 number of parameters: 2,2M
 
-concat the results of the corresponding encoder layer after the pooling. Not similar to Jiang and 4 times the feature maps. Redo experiment WIP
+concat the results of the corresponding encoder layer after the pooling. Not similar to Jiang and 4 times the feature maps.
 
 batch size 64, adam optimizer, constant learning rate of $1 \cdot 10{-3}$, cross-entropy loss, both weighted and non weighted. Weight chosen with scikit-learn "compute\_class\_weight" on the training set
+
+30 epochs
 \subsubsection*{Correct Icosahedron}
 encoder:\\
 \begin{dmath}
@@ -576,6 +600,8 @@ Equiangular sampling, with a latitude bandwidth 384 and longitude bandwidth 576.
 
 Due to memory problem, could not use the same architecture
 
+8 epochs
+
 encoder:\\
 \begin{dmath}
     [GC_{16}\, +\, BN\, +\, ReLU]_{bw}\,+\, [GC_{16}\, +\, BN\, +\, ReLU]_{bw}\, +\, \textrm{Pool}\, +\, [GC_{32}\, +\, BN\, +\, ReLU]_{bw/16}\, +\, \textrm{Pool}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{bw/64}\, +\, [GC_{128}\, +\, BN\, +\, ReLU]_{bw/64}
@@ -590,6 +616,8 @@ batch size 1
 non-regular sampling, thus no pooling was used
 
 batch size 64, RMSprop optimizer, constant learning rate of $1 \cdot 10{-3}$, MSE loss, order of 5 for all layers
+
+250 epochs with no augmentation
 \subsection*{Dense}
 
 \begin{dmath}
