@@ -294,12 +294,16 @@ and AR classes plus mean accuracy.}
         DS (non-weighted) & $80.86\pm 2.42$ & $97.45\pm 0.38$ & $89.16\pm 1.37$ & 30 ms & 13h \\ \hline
         % DS (non-weighted) & 83.66 & 97.57 & 90.62 & 30ms & 13h\\ \hline
         % 12'926'432
+        % non-weighted: accuracy (99.28, 33.60, 93.56, mean: 75.4819);AP (46.15, 93.87, mean: 70.01)
+        % weighted:        accuracy (96.52, 97.13, 97.59, mean: 97.08); AP (49.71, 89.23, mean: 69.47)
         DeepSphere (equi non-weighted) & 55.53 & 94.85 & 75.19 & 567 ms & 48h
     \end{tabular}
     \caption{Climate pattern segmentation average precision for positive classes and mean as wel, plus speed performance for inference (one training pass for one instance)  and training time.}
 \end{table}
 
-trade off between AP and accuracy in the case of TC class, it seems.
+* trade off between AP and accuracy in the case of TC class, it seems.\\
+* change base, influence\\
+* 
 
 % jiang like correct: 99.81631631, 13.18655162, 52.62412867, 55.20899887;  0.3990812 , 0.80056251, 0.59982186; 4 ms; 2h40
 % more feat: 99.67871329, 38.78607557, 66.37910064, 68.2812965: 0.99981102, 0.60714174, 0.83236147, 0.71975161; 12ms; 6h20
@@ -309,9 +313,20 @@ trade off between AP and accuracy in the case of TC class, it seems.
 * task is artificial, but it shows DeepSphere's flexibility\\
 * structure (looking around) help for prediction\\
 
-dense regression
+* non-regular sampling with different density over the globe (continent vs ocean)\\
+* resulting graph is not rotation equivariant\\
+* Two different tasks: a dense regression and a global regression\\
+
+\subsubsection*{dense regression - future temperature estimation}
+* Task is to find the temperature at day T, knowing the temperature of the 5 previous days.\\
+* Goal is to change the order of the chebyshev filter to find the influence of the structure.\\
+* order 0 is the same as time series, as the pixel have no information of its neighborhood.\\
+* increasing order is good until threshold.\\
+* The NN indeed predicts the correct temperature at day T, and not day T-1 (baseline) even though there is small difference.\\
+
 \begin{table}[!ht]
     \centering
+    \begin{minipage}{0.48\linewidth}
     \begin{tabular}{c|ccc}
         order & MSE & MAE & R2 \\ \hline 
         0 & 10.88 & 2.42 & 0.896\\
@@ -319,22 +334,31 @@ dense regression
         4 & 8.20 & 2.11 & 0.919\\
         9 & 8.38 & 2.12 & 0.915\\
     \end{tabular}
-    \caption{The task is to find the temperature for the day T, knowing the temperature of the 5 previous days. Evolution of performance in respect of the order of the filter}
+    \caption{Future temperature estimation task. Evolution of performance in respect of the order of the graph filter}
     \label{tab:future_results}
-    ~\\[1cm]
+    \end{minipage}
+    \hfill
+    %~\\[1cm]
+    \begin{minipage}{0.48\linewidth}
     \begin{tabular}{c|ccc}
         order & MSE & MAE & R2 \\ \hline 
         1 & 134.01 & 10.51 & -0.319\\
         4 & 129.48 & 10.31 & -0.274\\
         9 & 141.68 & 10.82 & -0.389\\
     \end{tabular}
-    \caption{Predicting the present day (T-1) instead of the future day T}
+    \caption{Baseline: testing with the present day (T-1) instead of the future day T}
     \label{tab:present_results}
+    \end{minipage}
 \end{table}
 
-global regression
+\subsubsection*{global regression - day in year estimation}
+* days represented by a sine to represent the periodic nature of the year.\\
+* task too easy, features already periodic\\
+* structure is still helping\\
+
 \begin{table}[!ht]
     \centering
+    \begin{minipage}{0.48\linewidth}
     \begin{tabular}{c|ccc}
         order & MSE & MAE & R2 \\ \hline 
         0 & 0.58 & 0.42 & -0.92\\
@@ -342,14 +366,18 @@ global regression
     \end{tabular}
     \caption{Find day in year using precipitation}
     \label{tab:glob_prec}
-    ~\\[1cm]
+    \end{minipage}
+    \hfill
+    %~\\[1cm]
+    \begin{minipage}{0.48\linewidth}
     \begin{tabular}{c|ccc}
         order & MSE & MAE & R2 \\ \hline 
         0 & 0.10 & 0.10 & 0.881\\
-        4 & - & - & -\\
+        4 & 0.05 & 0.05 & 0.969\\
     \end{tabular}
-    \caption{Using temperature feature that are already periodical}
+    \caption{Using temperature feature that is already periodical}
     \label{tab:glob_all}
+    \end{minipage}
 \end{table}
 
 
@@ -359,7 +387,7 @@ global regression
 * DeepSphere seems to be in the sweet spot of tradeoffs. Recall the desiderata.\\
   * respect geometry: No need for a very precise equivariance, i.e. a very good graph...\\
   * Not the most general (restricted to isotropic filters), but didn't hurt perf in any experiment\\
-  * scales linearly => cannot do better ($n^1.25$ for best HEALPix, linear for not optimal)\\
+  * scales linearly => cannot do better ($n^{1.25}$ for best HEALPix, linear for not optimal)\\
   * flexible => independent of the sampling\\
 
 future work:\\
@@ -578,12 +606,12 @@ decoder:\\
 \end{dmath}
 number of parameters: 2,2M
 
-concat the results of the corresponding encoder layer after the pooling. Not similar to Jiang and 4 times the feature maps.
+concat the results of the corresponding encoder layer before the graph convolution. Not similar to Jiang and 4 times the feature maps.
 
 batch size 64, adam optimizer, constant learning rate of $1 \cdot 10{-3}$, cross-entropy loss, both weighted and non weighted. Weight chosen with scikit-learn "compute\_class\_weight" on the training set
 
 30 epochs
-\subsubsection*{Correct Icosahedron}
+\subsubsection*{Jiang Icosahedron}
 encoder:\\
 \begin{dmath}
     [GC_{8}\, +\, BN\, +\, ReLU]_{L5}\,+\,\textrm{Pool}\,+\, [GC_{16}\, +\, BN\, +\, ReLU]_{L4}\, +\, \textrm{Pool}\, +\, [GC_{32}\, +\, BN\, +\, ReLU]_{L3}\, +\, \textrm{Pool}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{L2}\, +\,\textrm{Pool}\, +\, [GC_{128}\, +\, BN\, +\, ReLU]_{L1}\, +\, \textrm{Pool}\,  +\, [GC_{128}\, +\, BN\, +\, ReLU]_{L0}
