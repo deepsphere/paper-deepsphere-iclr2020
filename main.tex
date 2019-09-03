@@ -214,38 +214,35 @@ Show: \\
 * same perf as other spherical CNNs, but 40 times faster \\
 * compare the two samplings => not much difference \\
 
-\begin{table}[ht]
-    \centering
-    \begin{tabular}{l|c c r r}
-        \multicolumn{1}{l}{} & \multicolumn{2}{c}{performance} & \multicolumn{2}{c}{speed}\\
-        \cmidrule(lr){2-3} \cmidrule(lr){4-5}
-        \multicolumn{1}{l}{Method} & Accuracy & F1-score & inference & training \\ \hline
-        Cohen \emph{s2cnn} & - & - & 38ms & 50h\\
-        % Cohen \emph{s2cnn\_simple} & 78.59 & 78.85 & 400k & 12ms & 32h\\
-        Esteves \emph{sphericalcnn} & 79.18 & 79.36 & 9.8ms & 2h52\\ \hline
-        Deepsphere \emph{Equiangular} & 79.25 & 79.36 & 0.98ms & 2h33m \\
-        Deepsphere \emph{HEALPix} & 80.42 & 80.65 & 1.0ms & 48m
-    \end{tabular}
-    \caption{Performance of different models}
-    \label{tab:SHREC17_class}
-\end{table}
+\subsubsection*{SHREC17}
 
 \begin{table}[ht]
     \centering
-    \begin{tabular}{l|c c c c|c c c c}
-     & \multicolumn{4}{c|}{micro (label average)} & \multicolumn{4}{c}{macro (instance average)} \\
-    Method & P@N & R@N & F1@N & mAP & P@N & R@N & F1@N & mAP \\ \hline
-    Cohen \emph{s2cnn} & 0.701 & 0.711 & 0.699 & 0.676 & - & - & - & - \\
-    % Cohen \emph{s2cnn\_simple} & 0.704 & 0.701 & 0.696 & 0.665 & 0.430 & 0.480 & 0.429 & 0.385\\
-    Esteves \emph{sphericalcnn} & 0.717 & 0.737 & - & 0.685 & 0.450 & 0.550 & - & 0.444\\ \hline
-    Deepsphere \emph{Equiangular} & 0.709 & 0.700 & 0.698 & 0.665 & 0.439 & 0.489 & 0.439 & 0.403 \\
-    Deepsphere \emph{HEALPix} & 0.725 & 0.717 & 0.715 & 0.686 & 0.475 & 0.508 & 0.468 & 0.428
+    \begin{tabular}{l|c c c c c}
+        \multicolumn{1}{l}{} & \multicolumn{2}{c}{performance} & \multicolumn{1}{c}{size} & \multicolumn{2}{c}{speed}\\
+        \cmidrule(lr){2-3} \cmidrule(lr){4-4} \cmidrule(lr){5-6}
+        \multicolumn{1}{l}{Method} & F1-score & mAP & params & inference [ms] & training \\ \hline
+        \cite{cohen_spherical_2018} & 78.85 & 67.6 & 1.4M & 38 & 50h\\
+        % Cohen \emph{s2cnn\_simple} & 78.59 & 78.85 & 400k & 12ms & 32h\\
+        \cite{esteves_learning_2017} & 79.36 & 68.5 & 500k & 10 & 2h52\\ \hline
+        DeepSphere \emph{Equiangular} & 79.36 & 66.5 & 190k & 1 & 2h33m \\
+        DeepSphere \emph{HEALPix} & 80.65 & 68.6 & 190k & 1 & 48m\\
+        DeepSphere \emph{Improved HEALPix} & ? & ? & 190k & ? & ?
     \end{tabular}
-    \caption{Performance of different models over SHREC17 perturbed dataset as a retrieval task, using the official script of the competition.}
-    \label{tab:SHREC17_retriev}
+    \caption{Performance of different models for SHREC'17 task. F1-score computed with sklearn, mAP from the official script of the competition.}
+    \label{tab:SHREC17_class}
 \end{table}
-* add MN40 too? \\
-* add improved graph results too? \\
+
+* inference speed = time for a single instance to do a single training pass\\
+* training speed = time for the neural net to train to peak performance\\
+
+* add improved graph results too? ==> improved graph unnecessary (main information in low frequency) \\
+* diminish resolution ==> no change in result until nside=8, no change for high resolution => info in the low freq\\
+* same conclusion, anisotropy unnecessary cost to pay\\
+* Limited by representation of data?\\
+
+\subsubsection*{ModelNet 40}
+* in appendix now\\
 
 \subsection{cosmo}
 
@@ -260,50 +257,31 @@ Show: \\
 
 \begin{table}[!ht]
 \begin{tabular}{l|c c c c}
-        \multicolumn{1}{l}{} & \multicolumn{4}{c}{Accuracy}\\
-        \cmidrule(lr){2-5}
-        \multicolumn{1}{l}{Method} & BG & TC & AR & mean \\ \hline
+        \multicolumn{1}{l}{} & Accuracy & Average Precision & \multicolumn{2}{c}{Speed}\\
+        \cmidrule(lr){2-2} \cmidrule(lr){3-3} \cmidrule(lr){4-5} 
+        \multicolumn{1}{l}{Method} & mean & mean & inference [ms] & training \\ \hline
         %Mudigonda et al. & 97 & 74 & 65 & 78.67 & - & - & - \\
-        Jiang et al. & 97 & 94 & 93 & 94.67\\
-        Jiang (bsize 64) & 95.2 & 93.9 & 95.7 & 94.95\\
+        \cite{jiang_spherical_2019} & 94.67 & - & - & -\\
+        \cite{jiang_spherical_2019} \emph{rerun} & 94.95 & 38.41 & 10.2 & 10h14m\\
         % 328'339
-        Cohen et al. (S2R) & 97.3 & 97.8 & 97.3 & 97.5\\
-        Cohen et al. (R2R) & 97.4 & 97.9 & 97.8 & 97.7\\ \hline
-        DS (ico) & $98.2\pm 0.5$ & $97.4\pm 1.1$ & $97.7\pm 0.7$ & $97.8\pm 0.3$ \\
-        %DS (non-weighted) & 99.8 & 73.3 & 90.2 & 87.81 & 79.29 & 97.93 & 88.61 & 30ms & 3h50m\\
-        DS (non-weighted) & $99.7\pm 0.1$ & $69.2\pm 3.7$ & $94.5\pm 2.9$ & $87.8\pm 0.5$ \\ \hline
-        % DS (non-weighted) & 99.6 & 66.6 & 96.1 & 87.41\\ \hline
+        \cite{cohen_gauge_2019} (S2R) & 97.5 & 68.6 & - & -\\
+        \cite{cohen_gauge_2019} (R2R) & 97.7 & 75.9 & - & -\\ \hline
+        % unknown
+        DeepSphere (weighted) & $97.8\pm 0.3$ & $77.15\pm 1.94$ & 25 ms & 25h \\
+        DeepSphere (non-weighted) & $87.8\pm 0.5$ & $89.16\pm 1.37$ & 30 ms & 13h\\
         % 12'926'432
-        DeepSphere (equi non-weighted) & 99.9 & 31.3 & 75.2 & 68.80
     \end{tabular}
-    \caption{Climate pattern segmentation accuracy (\%) for BG, TC
-and AR classes plus mean accuracy.}
+    \caption{Climate pattern segmentation mean accuracy (\%), mean Average Precision (\%) and speed for different models run on the icosahedron dataset from \cite{jiang_spherical_2019}}
 \end{table}
 
-\begin{table}[!ht]
-\begin{tabular}{l|c c c c c}
-        \multicolumn{1}{l}{} & \multicolumn{3}{c}{Average Precision} & \multicolumn{2}{c}{Speed}\\
-        \cmidrule(lr){2-4}\cmidrule(lr){5-6}
-        \multicolumn{1}{l}{Method} & TC & AR & mean & inference & training \\ \hline
-        %Mudigonda et al. & 97 & 74 & 65 & 78.67 & - & - & - \\
-        Jiang (bsize 64) & 11.08 & 65.21 & 38.41 & 10.2 ms & 10h14m\\
-        % 328'339
-        Cohen et al. (S2R) & - & -& 68.6 & - & - \\
-        Cohen et al. (R2R) & - & -& 75.9 & - & -\\ \hline
-        DS (ico) & $58.88\pm 3.17$ & $95.41\pm 1.51$ & $77.15\pm 1.94$ & 25 ms & 25h \\
-        DS (non-weighted) & $80.86\pm 2.42$ & $97.45\pm 0.38$ & $89.16\pm 1.37$ & 30 ms & 13h \\ \hline
-        % DS (non-weighted) & 83.66 & 97.57 & 90.62 & 30ms & 13h\\ \hline
-        % 12'926'432
-        % non-weighted: accuracy (99.28, 33.60, 93.56, mean: 75.4819);AP (46.15, 93.87, mean: 70.01)
-        % weighted:        accuracy (96.52, 97.13, 97.59, mean: 97.08); AP (49.71, 89.23, mean: 69.47)
-        DeepSphere (equi non-weighted) & 55.53 & 94.85 & 75.19 & 567 ms & 48h
-    \end{tabular}
-    \caption{Climate pattern segmentation average precision for positive classes and mean as wel, plus speed performance for inference (one training pass for one instance)  and training time.}
-\end{table}
+* Jiang rerun with a batch size of 64 instead of 256 due to memory limit.\\
+* cross entropy loss between parenthesis\\
+* 5 runs for each loss to obtain mean and std\\
 
 * trade off between AP and accuracy in the case of TC class, it seems.\\
-* change base, influence\\
-* 
+* change base, influence?\\
+
+* full dataset not enough memory to run a correct model
 
 % jiang like correct: 99.81631631, 13.18655162, 52.62412867, 55.20899887;  0.3990812 , 0.80056251, 0.59982186; 4 ms; 2h40
 % more feat: 99.67871329, 38.78607557, 66.37910064, 68.2812965: 0.99981102, 0.60714174, 0.83236147, 0.71975161; 12ms; 6h20
@@ -317,67 +295,29 @@ and AR classes plus mean accuracy.}
 * resulting graph is not rotation equivariant\\
 * Two different tasks: a dense regression and a global regression\\
 
-\subsubsection*{dense regression - future temperature estimation}
+\paragraph*{dense regression - future temperature estimation}~\\
 * Task is to find the temperature at day T, knowing the temperature of the 5 previous days.\\
 * Goal is to change the order of the chebyshev filter to find the influence of the structure.\\
 * order 0 is the same as time series, as the pixel have no information of its neighborhood.\\
 * increasing order is good until threshold.\\
 * The NN indeed predicts the correct temperature at day T, and not day T-1 (baseline) even though there is small difference.\\
 
-\begin{table}[!ht]
-    \centering
-    \begin{minipage}{0.48\linewidth}
-    \begin{tabular}{c|ccc}
-        order & MSE & MAE & R2 \\ \hline 
-        0 & 10.88 & 2.42 & 0.896\\
-        1 & 8.91 & 2.20 & 0.906\\
-        4 & 8.20 & 2.11 & 0.919\\
-        9 & 8.38 & 2.12 & 0.915\\
-    \end{tabular}
-    \caption{Future temperature estimation task. Evolution of performance in respect of the order of the graph filter}
-    \label{tab:future_results}
-    \end{minipage}
-    \hfill
-    %~\\[1cm]
-    \begin{minipage}{0.48\linewidth}
-    \begin{tabular}{c|ccc}
-        order & MSE & MAE & R2 \\ \hline 
-        1 & 134.01 & 10.51 & -0.319\\
-        4 & 129.48 & 10.31 & -0.274\\
-        9 & 141.68 & 10.82 & -0.389\\
-    \end{tabular}
-    \caption{Baseline: testing with the present day (T-1) instead of the future day T}
-    \label{tab:present_results}
-    \end{minipage}
-\end{table}
 
-\subsubsection*{global regression - day in year estimation}
+
+\paragraph*{global regression - day in year estimation}~\\
 * days represented by a sine to represent the periodic nature of the year.\\
-* task too easy, features already periodic\\
+* task too easy, temperature feature already periodic ==> second experiment with only precipitation feature\\
 * structure is still helping\\
 
 \begin{table}[!ht]
     \centering
-    \begin{minipage}{0.48\linewidth}
     \begin{tabular}{c|ccc}
-        order & MSE & MAE & R2 \\ \hline 
-        0 & 0.58 & 0.42 & -0.92\\
-        4 & 0.50 & 0.18 & 0.597\\
+        order & future temp & day (temperature) & day (precipitations) \\ \hline 
+        0 & 0.896 & 0.881 & - 0.920\\
+        4 & 0.919 & 0.969 & 0.597\\
     \end{tabular}
-    \caption{Find day in year using precipitation}
-    \label{tab:glob_prec}
-    \end{minipage}
-    \hfill
-    %~\\[1cm]
-    \begin{minipage}{0.48\linewidth}
-    \begin{tabular}{c|ccc}
-        order & MSE & MAE & R2 \\ \hline 
-        0 & 0.10 & 0.10 & 0.881\\
-        4 & 0.05 & 0.05 & 0.969\\
-    \end{tabular}
-    \caption{Using temperature feature that is already periodical}
-    \label{tab:glob_all}
-    \end{minipage}
+    \caption{R2 coefficient for different tasks on the GHCN dataset}
+    \label{tab:GHCN_results}
 \end{table}
 
 
@@ -570,7 +510,57 @@ To conclude, we can see that the result obtained has the same form than the resu
 \section{Experiments details}
 * Network architecture and details
 \subsection{3D object Recognition}
+\subsubsection*{Detailed results}
+\paragraph*{SHREC17}
+\begin{table}[!ht]
+    \centering
+    \begin{tabular}{l|c c r r}
+        \multicolumn{1}{l}{} & \multicolumn{2}{c}{performance} & \multicolumn{2}{c}{speed}\\
+        \cmidrule(lr){2-3} \cmidrule(lr){4-5}
+        \multicolumn{1}{l}{Method} & Accuracy & F1-score & inference & training \\ \hline
+        Cohen \emph{s2cnn} & - & - & 38ms & 50h\\
+        % Cohen \emph{s2cnn\_simple} & 78.59 & 78.85 & 400k & 12ms & 32h\\
+        Esteves \emph{sphericalcnn} & 79.18 & 79.36 & 9.8ms & 2h52\\ \hline
+        DeepSphere \emph{Equiangular} & 79.25 & 79.36 & 0.98ms & 2h33m \\
+        DeepSphere \emph{HEALPix} & 80.42 & 80.65 & 1.0ms & 48m\\
+        DeepSphere \emph{Improved HEALPix} & 80.76 & & & 
+    \end{tabular}
+    \caption{Performance of different models}
+    \label{tab:SHREC17_class}
+\end{table}
+
+\begin{table}[!ht]
+    \centering
+    \begin{tabular}{l|c c c c|c c c c}
+     & \multicolumn{4}{c|}{micro (label average)} & \multicolumn{4}{c}{macro (instance average)} \\
+    Method & P@N & R@N & F1@N & mAP & P@N & R@N & F1@N & mAP \\ \hline
+    Cohen \emph{s2cnn} & 0.701 & 0.711 & 0.699 & 0.676 & - & - & - & - \\
+    % Cohen \emph{s2cnn\_simple} & 0.704 & 0.701 & 0.696 & 0.665 & 0.430 & 0.480 & 0.429 & 0.385\\
+    Esteves \emph{sphericalcnn} & 0.717 & 0.737 & - & 0.685 & 0.450 & 0.550 & - & 0.444\\ \hline
+    DeepSphere \emph{Equiangular} & 0.709 & 0.700 & 0.698 & 0.665 & 0.439 & 0.489 & 0.439 & 0.403 \\
+    DeepSphere \emph{HEALPix} & 0.725 & 0.717 & 0.715 & 0.686 & 0.475 & 0.508 & 0.468 & 0.428\\
+    DeepSphere \emph{Improved HEALPix} & & & & &
+    \end{tabular}
+    \caption{Performance of different models over SHREC17 perturbed dataset as a retrieval task, using the official script of the competition.}
+    \label{tab:SHREC17_retriev}
+\end{table}
+
+\paragraph*{ModelNet 40}
+\begin{table}[!ht]
+    \centering
+    \begin{tabular}{c|cccc}
+         &  x/x & z/z & SO3/SO3 & z/SO3 \\ \hline
+Cohen & 85.0 & - & - & - \\
+Jiang & 90.5 & - & - & - \\
+Esteves \emph{scnn} & - & 88.9 & 86.9 & 78.6 \\
+%Esteves \emph{MVCNN} & 94.69 & - & - & - \\
+DeepSphere & 87.8 & 86.8 & 86.7 & 76.9
+    \end{tabular}
+    \caption{Accuracy (in percent) on test set, for different models. The x dataset has no augmentation, the z dataset is augmented with rotation around Z-axis, and SO3 with ZYZ rotations.}
+    \label{tab:mn40_results}
+\end{table}
 \subsubsection*{HEALPix}
+
 HEALPix sampling, input signal at Nside = 32
 
 CNN having 5 convolutional layers, a global average pooling layer and a fully-connected layer at the end, such as this:
@@ -592,6 +582,52 @@ The architecture of the Neural Network is exactly the same, with a stride of [2,
 HEALPix sampling, Nside = 1024, with improved graph
 
 \subsection{climate event detection}
+\subsubsection*{Results}
+\begin{table}[!ht]
+\begin{tabular}{l|c c c c}
+        \multicolumn{1}{l}{} & \multicolumn{4}{c}{Accuracy}\\
+        \cmidrule(lr){2-5}
+        \multicolumn{1}{l}{Method} & TC & AR & BG & mean \\ \hline
+        %Mudigonda et al. & 97 & 74 & 65 & 78.67 & - & - & - \\
+        \cite{jiang_spherical_2019} & 94 & 93 & 97 & 94.67\\
+        \cite{jiang_spherical_2019} \emph{rerun} & 93.9 & 95.7 & 95.2 & 94.95\\
+        % 328'339
+        \cite{cohen_gauge_2019} (S2R) & 97.3 & 97.3 & 97.8 & 97.5\\
+        \cite{cohen_gauge_2019} (R2R) & 97.8 & 97.4 & 97.9 & 97.7\\ \hline
+        DS (weighted) & $97.4\pm 1.1$ & $97.7\pm 0.7$ & $98.2\pm 0.5$ & $97.8\pm 0.3$ \\
+        DS (non-weighted) & $69.2\pm 3.7$ & $94.5\pm 2.9$ & $99.7\pm 0.1$ & $87.8\pm 0.5$ \\ \hline
+        % 12'926'432
+        DS-Jiang (weighted) & 97.1 & 97.6 & 96.5 & 97.1\\
+        DS-Jiang (non-weighted) & 33.6 & 93.6 & 99.3 & 75.5
+        % 590k
+        % DeepSphere (equi non-weighted) & 99.9 & 31.3 & 75.2 & 68.80
+    \end{tabular}
+    \caption{Climate pattern segmentation accuracy (\%) for BG, TC
+and AR classes plus mean accuracy.}
+\end{table}
+
+* DS-jiang is the similar architecture as \cite{jiang_spherical_2019}.\\
+
+\begin{table}[!ht]
+\begin{tabular}{l|c c c c c}
+        \multicolumn{1}{l}{} & \multicolumn{3}{c}{Average Precision} & \multicolumn{2}{c}{Speed}\\
+        \cmidrule(lr){2-4}\cmidrule(lr){5-6}
+        \multicolumn{1}{l}{Method} & TC & AR & mean & inference [ms] & training \\ \hline
+        %Mudigonda et al. & 97 & 74 & 65 & 78.67 & - & - & - \\
+        \cite{jiang_spherical_2019} \emph{rerun} & 11.08 & 65.21 & 38.41 & 10.2 & 10h14m\\
+        % 328'339
+        \cite{cohen_gauge_2019} (S2R) & - & -& 68.6 & - & - \\
+        \cite{cohen_gauge_2019} (R2R) & - & -& 75.9 & - & -\\ \hline
+        DS (weighted) & $58.88\pm 3.17$ & $95.41\pm 1.51$ & $77.15\pm 1.94$ & 25 & 25h \\
+        DS (non-weighted) & $80.86\pm 2.42$ & $97.45\pm 0.38$ & $89.16\pm 1.37$ & 30 & 13h \\ \hline
+        % 12'926'432
+        DS-Jiang (weighted) & 49.7 & 89.2 & 69.5 & 5 & 3h06m\\
+        DS-Jiang (non-weighted) & 46.2 & 93.9 & 70.0 & 5 & 3h04m
+        % 590k
+        % DeepSphere (equi non-weighted) & 55.53 & 94.85 & 75.19 & 567 ms & 48h
+    \end{tabular}
+    \caption{Climate pattern segmentation average precision for positive classes and mean as well, plus speed performance for inference (one training pass for one instance)  and training time.}
+\end{table}
 \subsubsection*{Icosahedron}
 icosahedron sampling, level-5 resolution
 
@@ -611,7 +647,7 @@ concat the results of the corresponding encoder layer before the graph convoluti
 batch size 64, adam optimizer, constant learning rate of $1 \cdot 10{-3}$, cross-entropy loss, both weighted and non weighted. Weight chosen with scikit-learn "compute\_class\_weight" on the training set
 
 30 epochs
-\subsubsection*{Jiang Icosahedron}
+\subsubsection*{DS-jiang}
 encoder:\\
 \begin{dmath}
     [GC_{8}\, +\, BN\, +\, ReLU]_{L5}\,+\,\textrm{Pool}\,+\, [GC_{16}\, +\, BN\, +\, ReLU]_{L4}\, +\, \textrm{Pool}\, +\, [GC_{32}\, +\, BN\, +\, ReLU]_{L3}\, +\, \textrm{Pool}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{L2}\, +\,\textrm{Pool}\, +\, [GC_{128}\, +\, BN\, +\, ReLU]_{L1}\, +\, \textrm{Pool}\,  +\, [GC_{128}\, +\, BN\, +\, ReLU]_{L0}
@@ -646,7 +682,57 @@ non-regular sampling, thus no pooling was used
 batch size 64, RMSprop optimizer, constant learning rate of $1 \cdot 10{-3}$, MSE loss, order of 5 for all layers
 
 250 epochs with no augmentation
-\subsection*{Dense}
+\subsubsection*{Results}
+\begin{table}[!ht]
+    \centering
+    \begin{tabular}{c|ccc}
+        order & MSE & MAE & R2 \\ \hline 
+        0 & 10.88 & 2.42 & 0.896\\
+        1 & 8.91 & 2.20 & 0.906\\
+        4 & 8.20 & 2.11 & 0.919\\
+        9 & 8.38 & 2.12 & 0.915\\
+    \end{tabular}
+    \caption{Future temperature estimation task. Evolution of performance in respect of the order of the graph filter}
+    \label{tab:future_results}
+    \hfill
+    %~\\[1cm]
+    % \begin{minipage}{0.48\linewidth}
+    % \begin{tabular}{c|ccc}
+    %     order & MSE & MAE & R2 \\ \hline 
+    %     1 & 134.01 & 10.51 & -0.319\\
+    %     4 & 129.48 & 10.31 & -0.274\\
+    %     9 & 141.68 & 10.82 & -0.389\\
+    % \end{tabular}
+    % \caption{Baseline: testing with the present day (T-1) instead of the future day T}
+    % \label{tab:present_results}
+    % \end{minipage}
+\end{table}
+
+\begin{table}[!ht]
+    \centering
+    \begin{minipage}{0.48\linewidth}
+    \begin{tabular}{c|ccc}
+        order & MSE & MAE & R2 \\ \hline 
+        0 & 0.58 & 0.42 & -0.92\\
+        4 & 0.50 & 0.18 & 0.597\\
+    \end{tabular}
+    \caption{Find day in year using precipitation}
+    \label{tab:glob_prec}
+    \end{minipage}
+    \hfill
+    %~\\[1cm]
+    \begin{minipage}{0.48\linewidth}
+    \begin{tabular}{c|ccc}
+        order & MSE & MAE & R2 \\ \hline 
+        0 & 0.10 & 0.10 & 0.881\\
+        4 & 0.05 & 0.05 & 0.969\\
+    \end{tabular}
+    \caption{Using temperature feature that is already periodical}
+    \label{tab:glob_all}
+    \end{minipage}
+\end{table}
+
+\subsubsection*{Dense}
 
 \begin{dmath}
     [GC_{50}\, +\, BN\, +\, ReLU]\, +\, [GC_{100}\, +\, BN\, +\, ReLU]\, +\, [GC_{100}\, +\, BN\, +\, ReLU]\, +\, [GC_{1}\, +\, BN\, +\, ReLU]
