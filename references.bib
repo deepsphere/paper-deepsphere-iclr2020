@@ -8,15 +8,12 @@
   publisher={Elsevier}
 }
 
-
-@article{Frossard2017GraphBasedCO,
-  title={Graph-Based Classification of Omnidirectional Images},
-  author={Pascal Frossard and Renata Khasanova},
-  journal={2017 IEEE International Conference on Computer Vision Workshops (ICCVW)},
-  year={2017},
-  pages={860-869}
+@inproceedings{khasanova2017graphomni,
+  title={Graph-based classification of omnidirectional images},
+  author={Khasanova, Renata and Frossard, Pascal},
+  booktitle={Proceedings of the IEEE International Conference on Computer Vision},
+  year={2017}
 }
-
 
 @article{Driscoll:1994:CFT:184069.184073,
  author = {Driscoll, J. R. and Healy, D. M.},
@@ -36,7 +33,6 @@
  publisher = {Academic Press, Inc.},
  address = {Orlando, FL, USA},
 } 
-
 
 @inproceedings{Belkin:2005:TTF:2138147.2138189,
  author = {Belkin, Mikhail and Niyogi, Partha},
@@ -58,7 +54,6 @@
 @article{cohen_spherical_2018,
 	title = {Spherical {CNNs}},
 	url = {http://arxiv.org/abs/1801.10130},
-	abstract = {Convolutional Neural Networks ({CNNs}) have become the method of choice for learning problems involving 2D planar images. However, a number of problems of recent interest have created a demand for models that can analyze spherical images. Examples include omnidirectional vision for drones, robots, and autonomous cars, molecular regression problems, and global weather and climate modelling. A naive application of convolutional networks to a planar projection of the spherical signal is destined to fail, because the space-varying distortions introduced by such a projection will make translational weight sharing ineffective. In this paper we introduce the building blocks for constructing spherical {CNNs}. We propose a definition for the spherical cross-correlation that is both expressive and rotation-equivariant. The spherical correlation satisfies a generalized Fourier theorem, which allows us to compute it efficiently using a generalized (non-commutative) Fast Fourier Transform ({FFT}) algorithm. We demonstrate the computational efficiency, numerical accuracy, and effectiveness of spherical {CNNs} applied to 3D model recognition and atomization energy regression.},
 	journaltitle = {{arXiv}:1801.10130 [cs, stat]},
 	author = {Cohen, Taco S. and Geiger, Mario and Koehler, Jonas and Welling, Max},
 	urldate = {2019-02-13},
@@ -71,7 +66,6 @@
 @article{cohen_gauge_2019,
 	title = {Gauge Equivariant Convolutional Networks and the Icosahedral {CNN}},
 	url = {http://arxiv.org/abs/1902.04615},
-	abstract = {The idea of equivariance to symmetry transformations provides one of the first theoretically grounded principles for neural network architecture design. Equivariant networks have shown excellent performance and data efficiency on vision and medical imaging problems that exhibit symmetries. Here we show how this principle can be extended beyond global symmetries to local gauge transformations, thereby enabling the development of equivariant convolutional networks on general manifolds. We implement gauge equivariant {CNNs} for signals defined on the icosahedron, which provides a reasonable approximation of spherical signals. By choosing to work with this very regular manifold, we are able to implement the gauge equivariant convolution using a single conv2d call, making it a highly scalable and practical alternative to Spherical {CNNs}. We evaluate the Icosahedral {CNN} on omnidirectional image segmentation and climate pattern segmentation, and find that it outperforms previous methods.},
 	journaltitle = {{arXiv}:1902.04615 [cs, stat]},
 	author = {Cohen, Taco S. and Weiler, Maurice and Kicanaoglu, Berkay and Welling, Max},
 	urldate = {2019-04-03},
@@ -84,7 +78,6 @@
 @article{esteves_learning_2017,
 	title = {Learning {SO}(3) Equivariant Representations with Spherical {CNNs}},
 	url = {http://arxiv.org/abs/1711.06721},
-	abstract = {We address the problem of 3D rotation equivariance in convolutional neural networks. 3D rotations have been a challenging nuisance in 3D classification tasks requiring higher capacity and extended data augmentation in order to tackle it. We model 3D data with multi-valued spherical functions and we propose a novel spherical convolutional network that implements exact convolutions on the sphere by realizing them in the spherical harmonic domain. Resulting filters have local symmetry and are localized by enforcing smooth spectra. We apply a novel pooling on the spectral domain and our operations are independent of the underlying spherical resolution throughout the network. We show that networks with much lower capacity and without requiring data augmentation can exhibit performance comparable to the state of the art in standard retrieval and classification benchmarks.},
 	journaltitle = {{arXiv}:1711.06721 [cs]},
 	author = {Esteves, Carlos and Allen-Blanchette, Christine and Makadia, Ameesh and Daniilidis, Kostas},
 	urldate = {2019-02-19},
@@ -97,7 +90,6 @@
 @article{jiang_spherical_2019,
 	title = {Spherical {CNNs} on Unstructured Grids},
 	url = {http://arxiv.org/abs/1901.02039},
-	abstract = {We present an efficient convolution kernel for Convolutional Neural Networks ({CNNs}) on unstructured grids using parameterized differential operators while focusing on spherical signals such as panorama images or planetary signals. To this end, we replace conventional convolution kernels with linear combinations of differential operators that are weighted by learnable parameters. Differential operators can be efficiently estimated on unstructured grids using one-ring neighbors, and learnable parameters can be optimized through standard back-propagation. As a result, we obtain extremely efficient neural networks that match or outperform state-of-the-art network architectures in terms of performance but with a significantly lower number of network parameters. We evaluate our algorithm in an extensive series of experiments on a variety of computer vision and climate science tasks, including shape classification, climate pattern segmentation, and omnidirectional image semantic segmentation. Overall, we present (1) a novel {CNN} approach on unstructured grids using parameterized differential operators for spherical signals, and (2) we show that our unique kernel parameterization allows our model to achieve the same or higher accuracy with significantly fewer network parameters.},
 	journaltitle = {{arXiv}:1901.02039 [cs]},
 	author = {Jiang, Chiyu "Max" and Huang, Jingwei and Kashinath, Karthik and Prabhat and Marcus, Philip and Niessner, Matthias},
 	urldate = {2019-05-25},
@@ -109,9 +101,7 @@
 
 @article{mudigonda_segmenting_nodate,
 	title = {Segmenting and Tracking Extreme Climate Events using Neural Networks},
-	abstract = {Predicting extreme weather events in a warming world is one of the most pressing and challenging problems that humanity faces today. Deep learning and advances in the ﬁeld of computer vision provide a novel and powerful set of tools to tackle this demanding task. However, unlike images employed in computer vision, climate datasets present unique challenges. The channels (or physical variables) in a climate dataset are manifold, and unlike pixel information in computer vision data, these channels have physical properties. We present preliminary work using a convolutional neural network and a recurrent neural network for tracking cyclonic storms. We also show how state-of-the-art segmentation algorithms can be used to segment atmospheric rivers and tropical cyclones in global climate model simulations. We show how the latest advances in machine learning and computer vision can provide solutions to important problems in weather and climate sciences, and we highlight unique challenges and limitations.},
 	pages = {5},
 	author = {Mudigonda, Mayur and Kim, Sookyung and Mahesh, Ankur and Kahou, Samira and Kashinath, Karthik and Williams, Dean and Michalski, Vincent and O’Brien, Travis and Prabhat, Mr},
 	langid = {english}
 }
-
