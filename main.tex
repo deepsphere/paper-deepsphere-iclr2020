@@ -211,8 +211,8 @@ Show: \\
         \cite{cohen_spherical_2018} & 78.85 & 67.6 & 1.4M & 38 & 50h\\
         % Cohen \emph{s2cnn\_simple} & 78.59 & 78.85 & 400k & 12ms & 32h\\
         \cite{esteves_learning_2017} & 79.36 & 68.5 & 500k & 10 & 2h52\\ \hline
-        DeepSphere \emph{Equiangular} & 79.36 & 66.5 & 190k & 1 & 2h33m \\
-        DeepSphere \emph{HEALPix} & 80.65 & 68.6 & 190k & 1 & 48m\\
+        DeepSphere \emph{Equiangular} & 79.36 & 66.5 & 190k & 1 & 50m \\
+        DeepSphere \emph{HEALPix} & 80.65 & 68.6 & 190k & 1 & 50m\\
         DeepSphere \emph{Improved HEALPix} & ? & ? & 190k & ? & ?
     \end{tabular}
     \caption{Performance of different models for SHREC'17 task. F1-score computed with sklearn, mAP from the official script of the competition.}
@@ -252,7 +252,7 @@ Show: \\
 	\cite{cohen_gauge_2019} (R2R) & 97.7 & 75.9 & - & -\\ \hline
 	% unknown
 	DeepSphere (weighted) & $97.8\pm 0.3$ & $77.15\pm 1.94$ & 25 & 25h \\
-	DeepSphere (non-weighted) & $87.8\pm 0.5$ & $89.16\pm 1.37$ & 30 & 13h\\
+	DeepSphere (non-weighted) & $87.8\pm 0.5$ & $89.16\pm 1.37$ & 33 & 13h35\\
 	% 12'926'432
 	\end{tabular}
 	\caption{Climate pattern segmentation mean accuracy (\%), mean Average Precision (\%) and speed for different models run on the icosahedron dataset from \cite{jiang_spherical_2019}}
@@ -501,8 +501,8 @@ To conclude, we can see that the result obtained has the same form than the resu
         Cohen \emph{s2cnn} & - & - & 38ms & 50h\\
         % Cohen \emph{s2cnn\_simple} & 78.59 & 78.85 & 400k & 12ms & 32h\\
         Esteves \emph{sphericalcnn} & 79.18 & 79.36 & 9.8ms & 2h52\\ \hline
-        DeepSphere \emph{Equiangular} & 79.25 & 79.36 & 0.98ms & 2h33m \\
-        DeepSphere \emph{HEALPix} & 80.42 & 80.65 & 1.0ms & 48m\\
+        DeepSphere \emph{Equiangular} & 79.25 & 79.36 & 0.9ms & 47m \\
+        DeepSphere \emph{HEALPix} & 80.42 & 80.65 & 0.9ms & 46m\\
         DeepSphere \emph{Improved HEALPix} & 80.76 & & &
     \end{tabular}
     \caption{Performance of different models}
