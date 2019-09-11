@@ -8,9 +8,7 @@
 \usepackage{url}
 \usepackage{breqn}
 \usepackage{booktabs}
-
-% ------ Martino's usepackage ------
-\usepackage{graphicx}
+\usepackage{graphicx} \graphicspath{{figures/}}
 \usepackage{amsthm}
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -19,7 +17,6 @@
 \newtheorem{prop}{Proposition}
 \newtheorem*{remark}{Remark}
 \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
-% ----------------------------------
 
 %\title{Which spherical CNN should you use?\\ DeepSphere V2}
 \title{DeepSphere: a graph-based spherical CNN}
@@ -56,19 +53,53 @@ contributions:\\
 * experiments on relevant problems (not spherical MNIST) $\Rightarrow$ check the desiderata\\
   * surprising: anisotropy doesn't seem useful\\
 
+Experiments on xxx show
+Comparison with previous work on shape classification and climate event detection suggests that anisotropic filters are an unnecessary price to pay.
+% memory, computations, implementation complexity
+
 \end{abstract}
 
 \todo{
 	* adjacency matrix: $A$ instead of $W$? \\
+	* anonymize DeepSphere citation
 }
 
 \section{Introduction [2 pages]}
-Get inspiration from DeepSphere V1\\
 
-Why are spherical CNNs important? What are the application?\\
-See DeepSphere workshop paper\\
+Spherical data is common, and comes in two favors: (i) intrinsically spherical, and (ii) projection due to observation.
+% spherical data f: S^2 -> R, projection from R^3
+Examples of (i) are planetary data (such as temperature, wind, geological) and brain activity.
+An example of (ii) is cosmological observations.
 
-Desiderata:\\
+Learning is desirable for...
+Problems to be tackled by machine learning might be local or global regression or classification.
+
+\begin{figure}[h]
+	\includegraphics[height=0.25\linewidth]{example_cosmo_cmb}
+	\hfill
+	\includegraphics[height=0.25\linewidth]{example_brain_meg}
+	\hfill
+	\includegraphics[height=0.25\linewidth]{example_ghcn_daily_tmax}
+	\hfill
+	\includegraphics[height=0.25\linewidth]{example_ghcn_graph}
+	\caption{
+		Examples of intrinsically spherical data: (left) the cosmic microwave background (CMB) temperature from \citet{planck2015overview},
+		%with galactic plane masked
+		(middle) daily maximum temperature from the Global Historical Climatology Network (GHCN),\protect\footnotemark (right) brain activity recorded through magnetoencephalography (MEG).\protect\footnotemark
+		For those examples, a rigid full-sphere pixelization is not ideal: the Milky Way's galactic plane masks observations, brain activity is measured on the scalp only, and the position and density of weather stations is arbitrary and changes over time.
+		Graphs can faithfully and efficiently represent sampled spherical data by placing vertices where data has been measured.
+		%\todo{something from climate, weather?}
+		%\todo{compare ideal full-spheres (like SHREC-17 projection from Esteves, 360 from Coors) to real-world measurements?}
+		%\todo{horizontal colorbar for brain}
+	}
+	\label{fig:examples}
+\end{figure}
+\footnotetext[1]{\scriptsize\url{https://www.ncdc.noaa.gov/ghcn-daily-description}}
+\footnotetext[2]{\scriptsize\url{https://martinos.org/mne/stable/auto_tutorials/plot_visualize_evoked.html}}
+
+Exploit the geometrical properties of the domain, symmetries.
+
+We identify the following desiderata for spherical CNNs:\\
 * respect the domain\\
   * rotational equivariance\\
   * deformation (e.g., on the icosahedron for gauge)\\
@@ -76,10 +107,21 @@ Desiderata:\\
 * scale: computational cost \& memory usage (feature maps)\\
 * flexible (samplings, irregular), simplicity (implementation)\\
 
+Multiple methods have been developed to handle spherical data, each with their strengths and weaknesses.
+
+On the one side, we have Cohen which is computationally very expensive but perfectly equivariant most general, on the other we have cube sphere which computationl very good but not equivariant at all. Other methods are tradedoff between these two. What is a good tradeoff? We think that DeepSphere is
+
+Present the different spherical CNNs with pro and cons $\Rightarrow$ mostly scale vs generality\\
+* 2D CNN $\Rightarrow$ doesn't respect geometry and equivariance\\
+* Cohen spherical CNN $\Rightarrow$ most general, but doesn't scale\\
+* Cohen gauge $\Rightarrow$ fixes scale, at the price of deformation (sphere $\Rightarrow$ icosahedron)\\
+* Esteves $\Rightarrow$ ? \\
+* Jiang $\Rightarrow$ need a global coordinate system (ok for planets, not projections like cosmo)\\
+
 \begin{table}[b]
     \centering
     \begin{tabular}{l|c|c|c|c}
-         & Scale & Generality& equivariance & Flexibility \\
+         method & equivariance & generality & scalability & flexibility \\
          \hline
         Cohen & & & &  \\
          \hline
@@ -97,19 +139,25 @@ Desiderata:\\
     \label{tab:my_label}
 \end{table}
 
-On the one side, we have Cohen which is computationally very expensive but perfectly equivariant most general, on the other we have cube sphere which computationl very good but not equivariant at all. Other methods are tradedoff between these two. What is a good tradeoff? We think that DeepSphere is
-
-Present the different spherical CNNs with pro and cons $\Rightarrow$ mostly scale vs generality\\
-* 2D CNN $\Rightarrow$ doesn't respect geometry and equivariance\\
-* Cohen spherical CNN $\Rightarrow$ most general, but doesn't scale\\
-* Cohen gauge $\Rightarrow$ fixes scale, at the price of deformation (sphere $\Rightarrow$ icosahedron)\\
-* Esteves $\Rightarrow$ ? \\
-* Jiang $\Rightarrow$ need a global coordinate system (ok for planets, not projections like cosmo)\\
+This paper focuses on improving the equivariance of \cite{perraudin2019deepsphere}, a scalable graph-based method designed for cosmological applications.
+\todo{cite RLGM paper}
+Experiments on multiple problems of practical interest shows the competitiveness and flexibility of our method.
+Furthermore, those experiments show, contrarily to previously published results \cite{cohen_gauge_2019}, that anisotropic filters may be an unnecessary price to pay.
 
 \section{Method [1 pages]}
 
 * HEALPix: improvement from DeepSphere v1 \cite{perraudin2019deepsphere} \\
-* equiangular: Renata \& Pascal
+* equiangular: Renata \& Pascal \\
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{figure_architecture_v3}
+	\caption{Example architecture from \cite{perraudin2019deepsphere}.
+		Global tasks need a spatial summarization: the FCN variant is rotation invariant (and accepts inputs of varying sizes), while the CNN variant is not.
+		Dense tasks (when the output lives on the sphere, like segmentation) are rotation equivariant.
+	}
+	\label{fig:architecture}
+\end{figure}
 
 \section{Rotation equivariance [2.5 pages]}
 
@@ -139,7 +187,7 @@ This construction is interesting since it is adapted to the equiangular sampling
 
 \begin{figure}
 	\centering
-	\includegraphics[width=\textwidth]{figures/KhasanovaFrossardgraphonequiangularsampling.png}
+	\includegraphics[width=\textwidth]{KhasanovaFrossardgraphonequiangularsampling.png}
 	\caption{Equivariance error of the Khasanova-Frossard graph on the equiangular sampling with bandwidth $b=8$ by spherical harmonic degree $\ell$.}
 	\label{fig:Equivariance error of the Frossard-Khasanove graph}
 \end{figure}
@@ -179,8 +227,8 @@ In this way we framed the problem of constructing a rotation invariant graph wit
 
 \begin{figure}
 	\centering
-	\includegraphics[width=\textwidth]{figures/DeepSphereonHEALPix.png}
-	\includegraphics[width=\textwidth]{figures/OptimalHKGLonHEALPix.png}
+	\includegraphics[width=\textwidth]{DeepSphereonHEALPix.png}
+	\includegraphics[width=\textwidth]{OptimalHKGLonHEALPix.png}
 	\caption{\label{fig:DeepSphere equivariance error}Mean equivariance error of the diffusion filter $\exp(-\Lambda)$ for $G$, $G'$ and the full HKGL, by spherical harmonic degree. Notice the difference in the scale of the y axis for DeepSphere, that reaches errors up to 30\%.}
 \end{figure}
 
@@ -198,7 +246,7 @@ Show: \\
 \todo{
 * same perf as other spherical CNNs, but 40 times faster \\
 * compare samplings (equi, HEALPix) $\Rightarrow$ not much difference \\
-* compare with improved graph (Nside=32) $\Rightarrow$ no improvement if information in low frequencies, do an SHT \\
+* compare with improved graph (Nside=32) $\Rightarrow$ no improvement as information in the low frequencies (PSD, and works down to nside=8) \\
 * ModelNet 40: same conclusions $\Rightarrow$ appendix \\
 }
 
