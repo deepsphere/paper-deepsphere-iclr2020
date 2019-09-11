@@ -616,22 +616,24 @@ HEALPix sampling, Nside = 1024, with improved graph
 
 \begin{table}
 
-\begin{tabular}{l|c c c c}
-        \multicolumn{1}{l}{} & \multicolumn{4}{c}{Accuracy}\\
-        \cmidrule(lr){2-5}
-        \multicolumn{1}{l}{Method} & TC & AR & BG & mean \\ \hline
+\begin{tabular}{l|c c c c c}
+        \multicolumn{1}{l}{} & \multicolumn{4}{c}{Accuracy} & Size\\
+        \cmidrule(lr){2-5} \cmidrule(lr){6-6}
+        \multicolumn{1}{l}{Method} & TC & AR & BG & mean & params \\ \hline
         %Mudigonda et al. & 97 & 74 & 65 & 78.67 & - & - & - \\
-        \cite{jiang_spherical_2019} & 94 & 93 & 97 & 94.67\\
-        \cite{jiang_spherical_2019} \emph{rerun} & 93.9 & 95.7 & 95.2 & 94.95\\
+        \cite{jiang_spherical_2019} & 94 & 93 & 97 & 94.67 & 330k\\
+        \cite{jiang_spherical_2019} \emph{rerun} & 93.9 & 95.7 & 95.2 & 94.95 & 330k\\
         % 328'339
-        \cite{cohen_gauge_2019} (S2R) & 97.3 & 97.3 & 97.8 & 97.5\\
-        \cite{cohen_gauge_2019} (R2R) & 97.8 & 97.4 & 97.9 & 97.7\\ \hline
-        DS (weighted) & $97.4\pm 1.1$ & $97.7\pm 0.7$ & $98.2\pm 0.5$ & $97.8\pm 0.3$ \\
-        DS (non-weighted) & $69.2\pm 3.7$ & $94.5\pm 2.9$ & $99.7\pm 0.1$ & $87.8\pm 0.5$ \\ \hline
+        \cite{cohen_gauge_2019} (S2R) & 97.3 & 97.3 & 97.8 & 97.5 & -\\
+        \cite{cohen_gauge_2019} (R2R) & 97.8 & 97.4 & 97.9 & 97.7 & -\\ \hline
+        DS (weighted) & $97.4\pm 1.1$ & $97.7\pm 0.7$ & $98.2\pm 0.5$ & $97.8\pm 0.3$ & 13M\\
+        DS (non-weighted) & $69.2\pm 3.7$ & $94.5\pm 2.9$ & $99.7\pm 0.1$ & $87.8\pm 0.5$ & 13M\\ \hline
         % 12'926'432
-        DS-Jiang (weighted) & 97.1 & 97.6 & 96.5 & 97.1\\
-        DS-Jiang (non-weighted) & 33.6 & 93.6 & 99.3 & 75.5
+        DS-Jiang (weighted) & 97.1 & 97.6 & 96.5 & 97.1 & 590k\\
+        DS-Jiang (non-weighted) & 33.6 & 93.6 & 99.3 & 75.5 & 590k\\ \hline
         % 590k
+        DS-optimal (non-weighted) & 99.8 & 73.4 & 92.7 & 88.7 & \\ \hline
+        %DS-Cohen (weighted) &
         % DeepSphere (equi non-weighted) & 99.9 & 31.3 & 75.2 & 68.80
     \end{tabular}
     \caption{Climate pattern segmentation accuracy (\%) for BG, TC
@@ -639,6 +641,7 @@ and AR classes plus mean accuracy.}
 \end{table}
 
 * DS-jiang is the similar architecture as \cite{jiang_spherical_2019}.\\
+* DS-optimal has 2 times the number of feature maps of DS.\\
 
 \begin{table}
 \begin{tabular}{l|c c c c c}
@@ -654,8 +657,9 @@ and AR classes plus mean accuracy.}
         DS (non-weighted) & $80.86\pm 2.42$ & $97.45\pm 0.38$ & $89.16\pm 1.37$ & 33 & 13h \\ \hline
         % 12'926'432
         DS-Jiang (weighted) & 49.7 & 89.2 & 69.5 & 5 & 3h06m\\
-        DS-Jiang (non-weighted) & 46.2 & 93.9 & 70.0 & 5 & 3h04m
+        DS-Jiang (non-weighted) & 46.2 & 93.9 & 70.0 & 5 & 3h04m \\ \hline
         % 590k
+        DS-optimal (non-weighted) & 84.71 & 98.05 & 91.38 & 55 & 22h \\
         % DeepSphere (equi non-weighted) & 55.53 & 94.85 & 75.19 & 567 ms & 48h
     \end{tabular}
     \caption{Climate pattern segmentation average precision for positive classes and mean as well, plus speed performance for inference (one training pass for one instance)  and training time.}
