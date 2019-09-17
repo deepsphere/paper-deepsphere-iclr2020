@@ -8,6 +8,7 @@
 \usepackage{url}
 \usepackage{breqn}
 \usepackage{booktabs}
+\usepackage{bbm}        % for mathbbm
 \usepackage{graphicx} \graphicspath{{figures/}}
 \usepackage{amsthm}
 \usepackage{amsmath}
@@ -32,9 +33,12 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 \texttt{nathanael.perraudin@sdsc.ethz.ch}
 }
 
+\renewcommand{\b}[1]{{\bm{#1}}}   % bold symbol
+
 \newcommand{\fix}{\marginpar{FIX}}
 \newcommand{\new}{\marginpar{NEW}}
 \newcommand{\todo}[1]{{\color[rgb]{.6,.1,.6}{#1}}}
+\newcommand{\nati}[1]{{\color[rgb]{.3,.5,.9}{#1}}}
 
 %\iclrfinalcopy % Uncomment for camera-ready version, but NOT for submission.
 \begin{document}
@@ -159,21 +163,40 @@ Furthermore, those experiments show, contrarily to previously published results 
 	\label{fig:architecture}
 \end{figure}
 
-\section{Rotation equivariance [2.5 pages]}
+\section{Is graph convolution equivariant to rotation? [2 pages]}
 
-\subsection{Link with the Laplace-Beltrami Operator}
+% The plan for this section
+% 0) Explain why the Laplacian is so important...
+By definition, the graph convolution (on the sphere) is rotation equivariant to rotation, if and only if, it commutes with the rotation operator. 
+As, in the context of this work, graph convolution can be performed is performed by successive application of the graph Laplacian, i.e: $g(\b{L}) \b{f} = \left(\sum_{i=0}^K \alpha_i \b{L}^i\right) \b{f}$, if the graph Laplacian $\b{L}$ commutes with the rotation operator, then, by recursion, it will also commute with the convolution $g(\b{L})$.
+Hence to simplify our analysis, we concentrate on the graph Laplacian.
 
-\subsection{HEALPix: convergence theorem}
+% 0.5) Explain the sampling and metric
+We first need to deal with the sampling problem. The rotation operator $R_{b}$ \nati{define rotation} act on the continuous signal $R(b), b\in SO(3): R(b)f(\omega) = f(g^{-1}\omega)$
+graph laplacian on a discrete graph that is build from a sampling.
+So we need a sampling operator, ideally invertible. \nati{Define sampling}
+Eventually, we formulate the commute error of the graph Laplacian and the rotation operator as: 
+equ...
+Of course result will depend on the sampling and on the graph construction
 
-Given a sampling $x_0, \dots, x_{n-1}$ define $\sigma_i$ to be the patch of the surface of the sphere corresponding to the $i$-th point of the sampling, define $A_i$ to be its corresponding area and $d_i$ to be the radius of the smallest ball in $\mathbb R^3$ containing the $i$-th patch. Define $d^{(n)} := \max_{i=0, \dots, n}d_i$ and $A^{(n)}=\max_{i=0, \dots, n}A_i$.
+% !) summary the work of Khasanova
 
-\begin{theorem}
-	For a sampling $\mathcal P = \{x_i\in\mathbb S^2\}_{i=0}^{n-1}$ of the sphere that is equi area and such that $d^{(n)} \leq \frac{C}{\sqrt{n}}$, for all $f: \mathbb S^2 \rightarrow \mathbb R$ Lipschitz with respect to the euclidean distance in $\mathbb R^3$, for all $y\in\mathbb S^2$, there exists a sequence $t_n = n^\beta$ such that the rescaled Heat Kernel Graph Laplacian operator $\frac{|\mathbb S^2|}{4\pi t_n}L^t_n$ converges pointwise to the Laplace Beltrami operator on the sphere $\triangle_{\mathbb S^2}$  for $n\to\infty$:
-	$$ \lim_{n\to\infty}\frac{|\mathbb S^2|}{4\pi t_n} L_n^{t_n}f(y) =  \triangle_{\mathbb S^2}f(y).$$
-	\label{theo:pointwise convergence in the healpix case}
-\end{theorem}
+% 2) explain our approach
+Our approach is different as we do not miminize eq... Instead we inspire ourselves with Belkin, which says that for \emph{uniform sampling} the graph Laplacian converges toward the Laplace-Beltrami. b) The Laplace Beltrami commute with rotation.
+The following theorem extend the work of Belkin and Niogi to fixed sampling \nati{(Including Healpix or not?)}
+THEOREM HERE
+This is \emph{not} a proof of equivariance of the graph convolution for a specific sampling. We simply observe that the graph Laplacian converges pointwisely toward an operator that commutes with rotation. To have the desired equality in eq..., we would need to prove a stronger result, for example uniform convergence (in the space of the operators).
+\nati{Should we put this here?: }This does not hold in general \cite{belkin-spectral}. However, we believe that this is achievable for a bandlimited signals.
+More importantly, the proof of ... in Appendix ... inspires us in the construction of our graph Laplacian. a) use gaussian kernel b) we need to adjust t with respect of n such that ...
 
-\subsection{Equiangular}
+% 3) Show experimental results
+Define the error, show results and comments
+
+Explain the difference of errors... Uniform sampling is better
+
+\subsection{Theoretical evidence of equivariance}
+
+% \subsection{Equiangular}
 
 \cite{khasanova2017graphomni} designed a discrete Laplacian that is explicitly intended to work on the sphere with the equiangular sampling. They consider the set $\mathcal G$ of all the possible graphs where each node is connected only to four of its nearest neighbours (North, Sud, West, East) and propose a weighting scheme $w_{ij}$ that minimizes the difference in the response to the polynomial spectral filter $\mathcal F = \mathbf L$ evaluated on images of the same object seen at different latitudes. In other words, they solve the minimization problem
 \begin{equation} \label{eq:minimization frossard}
@@ -191,6 +214,18 @@ This construction is interesting since it is adapted to the equiangular sampling
 	\caption{Equivariance error of the Khasanova-Frossard graph on the equiangular sampling with bandwidth $b=8$ by spherical harmonic degree $\ell$.}
 	\label{fig:Equivariance error of the Frossard-Khasanove graph}
 \end{figure}
+
+\paragraph{Link with the Laplace-Beltrami Operator}
+
+Given a sampling $x_0, \dots, x_{n-1}$ define $\sigma_i$ to be the patch of the surface of the sphere corresponding to the $i$-th point of the sampling, define $A_i$ to be its corresponding area and $d_i$ to be the radius of the smallest ball in $\mathbb R^3$ containing the $i$-th patch. Define $d^{(n)} := \max_{i=0, \dots, n}d_i$ and $A^{(n)}=\max_{i=0, \dots, n}A_i$.
+
+\begin{theorem}
+	For a sampling $\mathcal P = \{x_i\in\mathbb S^2\}_{i=0}^{n-1}$ of the sphere that is equi area and such that $d^{(n)} \leq \frac{C}{\sqrt{n}}$, for all $f: \mathbb S^2 \rightarrow \mathbb R$ Lipschitz with respect to the euclidean distance in $\mathbb R^3$, for all $y\in\mathbb S^2$, there exists a sequence $t_n = n^\beta$ such that the rescaled Heat Kernel Graph Laplacian operator $\frac{|\mathbb S^2|}{4\pi t_n}L^t_n$ converges pointwise to the Laplace Beltrami operator on the sphere $\triangle_{\mathbb S^2}$  for $n\to\infty$:
+	$$ \lim_{n\to\infty}\frac{|\mathbb S^2|}{4\pi t_n} L_n^{t_n}f(y) =  \triangle_{\mathbb S^2}f(y).$$
+	\label{theo:pointwise convergence in the healpix case}
+\end{theorem}
+
+
 
 \subsection{Equivariance error}
 
@@ -632,9 +667,11 @@ HEALPix sampling, Nside = 1024, with improved graph
         DS-Jiang (weighted) & 97.1 & 97.6 & 96.5 & 97.1 & 590k\\
         DS-Jiang (non-weighted) & 33.6 & 93.6 & 99.3 & 75.5 & 590k\\ \hline
         % 590k
-        DS-optimal (non-weighted) & 99.8 & 73.4 & 92.7 & 88.7 & 52M\\ \hline
-        %DS-Cohen (weighted) &
-        % DeepSphere (equi non-weighted) & 99.9 & 31.3 & 75.2 & 68.80
+        DS-optimal (weighted) & 91.5 & 93.4 & 99.0 & 94.6 & 52M\\
+        DS-optimal (non-weighted) & 73.4 & 92.7 & 99.8 & 88.7 & 52M\\ \hline
+        %DS-Cohen (weighted) & 95.5 & 96.9 & 93.9 & 95.4 & 2M \\
+        %DS-Cohen (non-weighted) & 95.5 & 96.9 & 93.9 & 95.4 & 2M \\
+        % DeepSphere (equi non-weighted) & 31.3 & 75.2 & 99.9 & 68.80
     \end{tabular}
     \caption{Climate pattern segmentation accuracy (\%) for BG, TC
 and AR classes plus mean accuracy.}
@@ -659,7 +696,9 @@ and AR classes plus mean accuracy.}
         DS-Jiang (weighted) & 49.7 & 89.2 & 69.5 & 5 & 3h06m\\
         DS-Jiang (non-weighted) & 46.2 & 93.9 & 70.0 & 5 & 3h04m \\ \hline
         % 590k
-        DS-optimal (non-weighted) & 84.71 & 98.05 & 91.38 & 55 & 22h \\
+        DS-optimal (weighted) & 52.80 & 94.78 & 73.79 & 50 & 20h \\
+        DS-optimal (non-weighted) & 84.71 & 98.05 & 91.38 & 50 & 20h \\ \hline
+        %DS-Cohen (weighted) & 13.1 & 80.3 & 46.7 & 11 & 4h \\
         % DeepSphere (equi non-weighted) & 55.53 & 94.85 & 75.19 & 567 ms & 48h
     \end{tabular}
     \caption{Climate pattern segmentation average precision for positive classes and mean as well, plus speed performance for inference (one training pass for one instance)  and training time.}
