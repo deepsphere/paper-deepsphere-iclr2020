@@ -153,6 +153,15 @@ Furthermore, those experiments show, contrarily to previously published results 
 * HEALPix: improvement from DeepSphere v1 \cite{perraudin2019deepsphere} \\
 * equiangular: Renata \& Pascal \\
 
+\cite{khasanova2017graphomni} designed a discrete Laplacian that is explicitly intended to work on the sphere with the equiangular sampling. They consider the set $\mathcal G$ of all the possible graphs where each node is connected only to four of its nearest neighbours (North, Sud, West, East) and propose a weighting scheme $w_{ij}$ that minimizes the difference in the response to the polynomial spectral filter $\mathcal F = \mathbf L$ evaluated on images of the same object seen at different latitudes. In other words, they solve the minimization problem
+\begin{equation} \label{eq:minimization frossard}
+	\min_{W\in\mathcal G} \left|\mathcal{F}\left(\mathbf{y}\left(v_{ e}\right)\right)-\mathcal{F}\left(\mathbf{y}\left(v_{ i}\right)\right)\right|
+\end{equation}
+for the adjacency matrix $W$, where $\mathbf y(v_i)$ is the image of the object on the sphere centered on the vertex $v_i$, and $\mathcal F (\mathbf y(v_e))$ is the response of the filter at the vertex $v_e$ that lies at the same longitude of the vertex $v_i$ but on the equator. In their work they prove that the optimal weights solving the minimization problem (\ref{eq:minimization frossard}) are given by weights $w_{ij}$ inversely proportional to the Euclidean distance between vertices:
+\begin{equation} \label{eq:frossard weights}
+	w_{ij} = \frac{1}{\norm{x_i-x_j}}
+\end{equation}
+
 \begin{figure}
 	\centering
 	\includegraphics[width=0.9\linewidth]{figure_architecture_v3}
@@ -193,18 +202,10 @@ A measure of how equivariant a graph is with respect to rotations will then be g
 In practice the expected value is obtained by averaging over a finite number of random functions and random rotations. The mean equivariance error $\overline E_G$ gives us an indication of how close the graph $G$ is from being equivariant to rotations. 
 Of course result will depend on the sampling and on the graph construction.
 
-% !) summary the work of Khasanova
-\cite{khasanova2017graphomni} designed a discrete Laplacian that is explicitly intended to work on the sphere with the equiangular sampling. They consider the set $\mathcal G$ of all the possible graphs where each node is connected only to four of its nearest neighbours (North, Sud, West, East) and propose a weighting scheme $w_{ij}$ that minimizes the difference in the response to the polynomial spectral filter $\mathcal F = \mathbf L$ evaluated on images of the same object seen at different latitudes. In other words, they solve the minimization problem
-\begin{equation} \label{eq:minimization frossard}
-	\min_{W\in\mathcal G} \left|\mathcal{F}\left(\mathbf{y}\left(v_{ e}\right)\right)-\mathcal{F}\left(\mathbf{y}\left(v_{ i}\right)\right)\right|
-\end{equation}
-for the adjacency matrix $W$, where $\mathbf y(v_i)$ is the image of the object on the sphere centered on the vertex $v_i$, and $\mathcal F (\mathbf y(v_e))$ is the response of the filter at the vertex $v_e$ that lies at the same longitude of the vertex $v_i$ but on the equator. In their work they prove that the optimal weights solving the minimization problem (\ref{eq:minimization frossard}) are given by weights $w_{ij}$ inversely proportional to the Euclidean distance between vertices:
-\begin{equation} \label{eq:frossard weights}
-	w_{ij} = \frac{1}{\norm{x_i-x_j}}
-\end{equation}
+% !) summary the work of Khasanova -> No! to be put in section 2) Method
 
 % 2) explain our approach
-Our approach is different as we do not miminize eq \ref{eq:minimization frossard}. Instead we inspire ourselves with Belkin, which says that for \emph{uniform sampling} the graph Laplacian converges toward the Laplace-Beltrami. b) The Laplace Beltrami commute with rotation. The following theorem extend the work of Belkin and Nyiogi to fixed sampling \nati{(Including Healpix or not?)}. 
+We inspire ourselves with Belkin, which says that for \emph{uniform sampling} the graph Laplacian converges toward the Laplace-Beltrami. b) The Laplace Beltrami commute with rotation. The following theorem extend the work of Belkin and Nyiogi to fixed sampling \nati{(Including Healpix or not?)}. 
 Given a sampling $V = \{x_0, \dots, x_{n-1}\}$ define $\sigma_i$ to be the patch of the surface of the sphere corresponding to $x_i$, define $A_i$ to be its corresponding area and $d_i$ to be the radius of the smallest ball in $\mathbb R^3$ containing $\sigma_i$. Define $d^{(n)} := \max_{i=0, \dots, n}d_i$ and $A^{(n)}=\max_{i=0, \dots, n}A_i$.
 
 \begin{theorem}
@@ -219,6 +220,16 @@ More importantly, the proof of theorem \ref{theo:pointwise convergence for a reg
 
 % 3) Show experimental results
 Define the error, show results and comments
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{figure_architecture_v3}
+	\caption{Example architecture from \cite{perraudin2019deepsphere}.
+		Global tasks need a spatial summarization: the FCN variant is rotation invariant (and accepts inputs of varying sizes), while the CNN variant is not.
+		Dense tasks (when the output lives on the sphere, like segmentation) are rotation equivariant.
+	}
+	\label{fig:architecture}
+\end{figure}
+
 
 Explain the difference of errors... Uniform sampling is better
 
