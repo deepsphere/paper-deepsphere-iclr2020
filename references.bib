@@ -1,42 +1,101 @@
 %% Spherical CNNs
 
 
-@article{perraudin2019deepsphere,
-  title={DeepSphere: Efficient spherical convolutional neural network with HEALPix sampling for cosmological applications},
-  author={Perraudin, Nathana{\"e}l and Defferrard, Micha{\"e}l and Kacprzak, Tomasz and Sgier, Raphael},
-  journal={Astronomy and Computing},
-  volume={27},
-  pages={130--146},
-  year={2019},
-  publisher={Elsevier}
+@article{perraudin2019deepsphereequiv,
+  title = {DeepSphere: towards an equivariant graph-based spherical CNN},
+  author = {Defferrard, Micha\"el and Perraudin, Nathana\"el and Kacprzak, Tomasz and Sgier, Raphael},
+  booktitle = {ICLR Workshop on Representation Learning on Graphs and Manifolds},
+  year = {2019},
+  url = {https://arxiv.org/abs/1904.05146},
 }
 
-@inproceedings{khasanova2017graphomni,
-  title={Graph-based classification of omnidirectional images},
-  author={Khasanova, Renata and Frossard, Pascal},
-  booktitle={Proceedings of the IEEE International Conference on Computer Vision},
-  year={2017}
+@article{perraudin2019deepspherecosmo,
+  title = {DeepSphere: Efficient spherical Convolutional Neural Network with HEALPix sampling for cosmological applications},
+  author = {Perraudin, Nathana\"el and Defferrard, Micha\"el and Kacprzak, Tomasz and Sgier, Raphael},
+  journal = {Astronomy and Computing},
+  year = {2019},
+  url = {https://arxiv.org/abs/1810.12186},
+}
+
+@inproceedings{khasanova2017sphericalcnn,
+  title = {Graph-based classification of omnidirectional images},
+  author = {Khasanova, Renata and Frossard, Pascal},
+  booktitle = {Proceedings of the IEEE International Conference on Computer Vision},
+  year = {2017},
+  url = {https://arxiv.org/abs/1707.08301},
+}
+
+@inproceedings{cohen2018sphericalcnn,
+  title = {Spherical CNNs},
+  author = {Cohen, Taco S and Geiger, Mario and Koehler, Jonas and Welling, Max},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year = {2018},
+  url = {https://arxiv.org/abs/1801.10130},
+}
+
+@inproceedings{esteves2018sphericalcnn,
+  title = {Learning SO(3) Equivariant Representations with Spherical CNNs},
+  author = {Esteves, Carlos and Allen-Blanchette, Christine and Makadia, Ameesh and Daniilidis, Kostas},
+  booktitle = {Proceedings of the European Conference on Computer Vision (ECCV)},
+  year = {2018},
+  url = {https://arxiv.org/abs/1711.06721}
+}
+
+@inproceedings{boomsma2017sphericalcnn,
+  title = {Spherical convolutions and their application in molecular modelling},
+  author = {Boomsma, Wouter and Frellsen, Jes},
+  booktitle = {Advances in Neural Information Processing Systems},
+  year = {2017},
+}
+
+@inproceedings{su2017sphericalcnn,
+  title = {Learning spherical convolution for fast features from 360 imagery},
+  author = {Su, Yu-Chuan and Grauman, Kristen},
+  booktitle = {Advances in Neural Information Processing Systems},
+  year = {2017}
+}
+
+@inproceedings{coors2018sphericalcnn,
+  author = {Benjamin Coors and Alexandru Paul Condurache and Andreas Geiger},
+  title = {SphereNet: Learning Spherical Representations for Detection and Classification in Omnidirectional Images},
+  booktitle = {European Conference on Computer Vision},
+  year = {2018}
+}
+
+@article{krachmalnicoff2019sphericalcnn,
+  title = {Convolutional Neural Networks on the HEALPix sphere: a pixel-based algorithm and its application to CMB data analysis},
+  author = {Krachmalnicoff, Nicoletta and Tomasi, Maurizio},
+  journal = {arXiv:1902.04083},
+  year = {2019},
+}
+
+@inproceedings{jiang2019sphericalcnn,
+  title = {Spherical CNNs on Unstructured Grids},
+  author = {Jiang, Chiyu "Max" and Huang, Jingwei and Kashinath, Karthik and Prabhat and Marcus, Philip and Niessner, Matthias},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year = {2019},
+  url = {https://arxiv.org/abs/1901.02039},
+}
+
+@inproceedings{cohen2019gauge,
+  title = {Gauge Equivariant Convolutional Networks and the Icosahedral CNN},
+  author = {Cohen, Taco S. and Weiler, Maurice and Kicanaoglu, Berkay and Welling, Max},
+  booktitle = {International Conference on Machine Learning (ICML)},
+  year = {2019},
+  url = {http://arxiv.org/abs/1902.04615},
 }
 
 
-@article{Driscoll:1994:CFT:184069.184073,
- author = {Driscoll, J. R. and Healy, D. M.},
+%% Convergence and equivariance
+
+
+@article{driscoll1994fouriersphere,
  title = {Computing Fourier Transforms and Convolutions on the 2-Sphere},
+ author = {Driscoll, J. R. and Healy, D. M.},
  journal = {Adv. Appl. Math.},
- issue_date = {June 1994},
- volume = {15},
- number = {2},
- month = jun,
  year = {1994},
- issn = {0196-8858},
- pages = {202--250},
- numpages = {49},
  url = {http://dx.doi.org/10.1006/aama.1994.1008},
- doi = {10.1006/aama.1994.1008},
- acmid = {184073},
- publisher = {Academic Press, Inc.},
- address = {Orlando, FL, USA},
-} 
+}
 
 @inproceedings{belkin2007convergence,
   title={Convergence of Laplacian eigenmaps},
@@ -50,6 +109,7 @@
  author = {Belkin, Mikhail and Niyogi, Partha},
  title = {Towards a Theoretical Foundation for Laplacian-based Manifold Methods},
  booktitle = {Proceedings of the 18th Annual Conference on Learning Theory},
+<<<<<<< HEAD
  series = {COLT'05},
  year = {2005},
  isbn = {3-540-26556-2, 978-3-540-26556-6},
@@ -116,27 +176,20 @@
 %% Convergence and equivariance
 
 
+
 %% Data
 
 
 @inproceedings{mudigonda2017climateevents,
-  title={Segmenting and tracking extreme climate events using neural networks},
-  author={Mudigonda, Mayur and Kim, Sookyung and Mahesh, Ankur and Kahou, Samira and Kashinath, Karthik and Williams, Dean and Michalski, Vincen and O’Brien, Travis and Prabhat, Mr},
-  booktitle={Deep Learning for Physical Sciences (DLPS) Workshop, held with NIPS Conference},
-  year={2017}
+  title = {Segmenting and tracking extreme climate events using neural networks},
+  author = {Mudigonda, Mayur and Kim, Sookyung and Mahesh, Ankur and Kahou, Samira and Kashinath, Karthik and Williams, Dean and Michalski, Vincen and O’Brien, Travis and Prabhat, Mr},
+  booktitle = {Deep Learning for Physical Sciences (DLPS) Workshop, held with NIPS Conference},
+  year = {2017},
 }
 
 @article{planck2015overview,
-   author = {{Planck Collaboration}},
-    title = "{Planck 2015 results. I. Overview of products and scientific results}",
+  title = {Planck 2015 results. I. Overview of products and scientific results},
+  author = {Planck Collaboration},
   journal = {Astronomy \& Astrophysics},
-archivePrefix = "arxiv",
- keywords = {cosmology: observations, cosmic background radiation, surveys, space vehicles: instruments, instrumentation: detectors},
-     year = 2016,
-    month = sep,
-   volume = 594,
-      eid = {A1},
-    pages = {A1},
-   adsurl = {http://adsabs.harvard.edu/abs/2016A%26A...594A...1P},
-  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+  year = {2016},
 }

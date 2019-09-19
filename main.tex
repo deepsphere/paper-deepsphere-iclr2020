@@ -88,7 +88,7 @@ Examples of (i) are planetary data (such as meteorological or geological measure
 Examples of (ii) is the observation of the universe, LIDAR scans, and the digitalization of 3D objects. % through which apparatus?
 See \figref{examples}.
 In many applications, labels or variables are to be inferred from spherical data.
-Examples are the inference of cosmological parameters from the distribution of mass in the universe \citep{perraudin2019deepsphere}, and the segmentation of cyclones from Earth observation \citep{mudigonda2017climateevents}.
+Examples are the inference of cosmological parameters from the distribution of mass in the universe \citep{perraudin2019deepspherecosmo}, and the segmentation of cyclones from Earth observation \citep{mudigonda2017climateevents}.
 
 \begin{figure}[h]
 	\includegraphics[height=0.25\linewidth]{example_cosmo_cmb}
@@ -160,17 +160,17 @@ Present the different spherical CNNs with pro and cons $\Rightarrow$ mostly scal
     \label{tab:my_label}
 \end{table}
 
-This paper focuses on improving the equivariance of \cite{perraudin2019deepsphere}, a scalable graph-based method designed for cosmological applications.
+This paper focuses on improving the equivariance of \cite{perraudin2019deepspherecosmo}, a scalable graph-based method designed for cosmological applications.
 \todo{cite RLGM paper}
 Experiments on multiple problems of practical interest shows the competitiveness and flexibility of our method.
-Furthermore, those experiments show, contrarily to previously published results \cite{cohen_gauge_2019}, that anisotropic filters may be an unnecessary price to pay.
+Furthermore, those experiments show, contrarily to previously published results \cite{cohen2019gauge}, that anisotropic filters may be an unnecessary price to pay.
 
 \section{Method [1 pages]}
 
-* HEALPix: improvement from DeepSphere v1 \cite{perraudin2019deepsphere} \\
+* HEALPix: improvement from DeepSphere v1 \cite{perraudin2019deepspherecosmo} \\
 * equiangular: Renata \& Pascal \\
 
-% \cite{khasanova2017graphomni} designed a discrete Laplacian that is explicitly intended to work on the sphere with the equiangular sampling. They consider the set $\mathcal G$ of all the possible graphs where each node is connected only to four of its nearest neighbours (North, Sud, West, East) and propose a weighting scheme $w_{ij}$ that minimizes the difference in the response to the polynomial spectral filter $\mathcal F = \mathbf L$ evaluated on images of the same object seen at different latitudes. In other words, they solve the minimization problem
+% \cite{khasanova2017sphericalcnn} designed a discrete Laplacian that is explicitly intended to work on the sphere with the equiangular sampling. They consider the set $\mathcal G$ of all the possible graphs where each node is connected only to four of its nearest neighbours (North, Sud, West, East) and propose a weighting scheme $w_{ij}$ that minimizes the difference in the response to the polynomial spectral filter $\mathcal F = \mathbf L$ evaluated on images of the same object seen at different latitudes. In other words, they solve the minimization problem
 % \begin{equation} \label{eq:minimization frossard}
 % 	\min_{W\in\mathcal G} \left|\mathcal{F}\left(\mathbf{y}\left(v_{ e}\right)\right)-\mathcal{F}\left(\mathbf{y}\left(v_{ i}\right)\right)\right|
 % \end{equation}
@@ -182,7 +182,7 @@ Furthermore, those experiments show, contrarily to previously published results 
 \begin{figure}
 	\centering
 	\includegraphics[width=0.9\linewidth]{figure_architecture_v3}
-	\caption{Example architecture from \cite{perraudin2019deepsphere}.
+	\caption{Example architecture from \cite{perraudin2019deepspherecosmo}.
 		Global tasks need a spatial summarization: the FCN variant is rotation invariant (and accepts inputs of varying sizes), while the CNN variant is not.
 		Dense tasks (when the output lives on the sphere, like segmentation) are rotation equivariant.
 	}
@@ -202,18 +202,18 @@ Furthermore, those experiments show, contrarily to previously published results 
 % 0.1 Explain the sampling problem
 As the graph convolution acts on a sampled version of the signal $\b{f}$ and the rotation on its continuous counterpart $f$, we first need to define a sampling operator.
 Given a sampling scheme $V=\{v_i\in\mathbb S^2, i=0, \dots, n\}$ of the sphere and a function $f : \mathbb S^2 \supset F_V \to \mathbb R$, the sampling operator $T_V: L^2(\mathbb S^2) \supset F\to \mathbb R^n,\  T_V(f) = \b{f}$ is defined as $\b{f}:\ f_i=f(v_i)$, where $F_V$ suitable subspace of $L^2(\mathbb S^2)$ such that $T_V$ is invertible, i.e., we can unambiguously reconstruct the function $f\in F_V$ from its sampled values $\b{f}$.
-The existence of such subspace depends on the sampling scheme $V$, and its characterization is a common problem in signal processing \cite{Driscoll:1994:CFT:184069.184073}. 
-For most samplings, it is not known if $F_V$ exist and hence if $T_V$ is invertible. A special case is the \textit{equiangular sampling} scheme where a sampling theorem holds, and thus we have a closed form of $T_V^{-1}$ is known. % \cite{Driscoll:1994:CFT:184069.184073}
-For sampling schemes where no such sampling formula is available, we leverage the discrete SHT to reconstruct $f$ from $\bf{f}$, thus approximating $T_V^{-1}$. 
+The existence of such subspace depends on the sampling scheme $V$, and its characterization is a common problem in signal processing \cite{driscoll1994Fouriersphere}.
+For most samplings, it is not known if $F_V$ exist and hence if $T_V$ is invertible. A special case is the \textit{equiangular sampling} scheme where a sampling theorem holds, and thus we have a closed form of $T_V^{-1}$ is known. % \cite{driscoll1994Fouriersphere}
+For sampling schemes where no such sampling formula is available, we leverage the discrete SHT to reconstruct $f$ from $\bf{f}$, thus approximating $T_V^{-1}$.
 For all theoretical consideration, we assume that $F_V$ exists and $f \in F_V$.
 
 % 0.2 Explain why the Laplacian is so important...
 By definition, our (spherical) graph convolution is rotation equivariant, if and only if, it commutes with the rotation operator defined as $R(g), g\in SO(3)$: $R(g) f(x) = f\left(g^{-1} x \right)$. 
 In the context of this work, graph convolution is performed by recursive applications of the graph Laplacian, i.e: $h(\b{L}) \b{f} = \left(\sum_{i=0}^K \alpha_i \b{L}^i\right) \b{f}$\nati{Put this equation somewhere else?}.  Hence, if $\b{L}$ commutes with the rotation operator, then, by recursion, it will also commute with the convolution $h(\b{L})$.
-As a result, to simplify our analysis, we concentrate on the graph Laplacian and $h(\b{L})$ is rotational invariant if and only if 
+As a result, to simplify our analysis, we concentrate on the graph Laplacian and $h(\b{L})$ is rotational invariant if and only if
 % 0.3 Formulate the problem
 \begin{equation} \label{eq:equivariance}
-	\b{R}_V(g) \b{L} \b{f} = \b{L} \b{R}_V(g) \b{f} \hspace{1cm} \forall f\in F_V \text{ and } \forall g\in SO(3), 
+	\b{R}_V(g) \b{L} \b{f} = \b{L} \b{R}_V(g) \b{f} \hspace{1cm} \forall f\in F_V \text{ and } \forall g\in SO(3),
 \end{equation}
 where $\b{R}_V(g) = T_V R(g) T_V^{-1}$. For practical application, we define the \textit{normalized equivariance error} for a signal $\b{f}$, and a  rotation $g$ as:
 \begin{equation} \label{eq:equivariance error}
@@ -224,11 +224,11 @@ More generally for a class of signal $f \in C \subset F_V$, the \textit{mean equ
 	\overline E_{\b{L}, C} = \mathbb E_{\b{f}\in C, g\in SO(3)} \ E_{\b{L}}(\b{f}, g).
 \end{equation}
 In practice, to anlyse the equivariance error frequency,  the set $C$ we used is composed of functions $f$ with made of spherical harmonic of a single degree $\ell$.
-The expected value is obtained by averaging over a finite number of random functions and random rotations. 
+The expected value is obtained by averaging over a finite number of random functions and random rotations.
 
 \subsection{Finding a the optimal set of weights}
 % !) summary the work of Khasanova -> No! to be put in section 2) Method
-\cite{khasanova2017graphomni} designed a Laplacian $\b{L}$ explicitly intended to work with the equiangular sampling. 
+\cite{khasanova2017sphericalcnn} designed a Laplacian $\b{L}$ explicitly intended to work with the equiangular sampling.
 They consider the set $\mathcal{G}$ of all the possible graphs where each node is connected only to four of its nearest neighbours (North, Sud, West, East) and propose a weighting scheme $w_{ij}$ that minimizes \eqref{eq:equivariance error} for specific rotations on the longitude latitude axis.
 Their approach leads to weights $w_{ij}$ inversely proportional to the Euclidean distance between vertices:
 \begin{equation} \label{eq:frossard weights}
@@ -247,7 +247,7 @@ In practice most of the weights are very close to $0$ and hence, to optimize for
 
 
 \subsection{Analysis of the proposed weighting scheme}
-We analyse our proposed weighting scheme both theoretically and empirically
+We analyse our proposed weighting scheme both theoretically and empirically.
 
 \paragraph{Theoretical convergence.}
 We extend the work Belkin and Nyiogi to a fixed sampling. 
@@ -268,7 +268,6 @@ More importantly, the proof of theorem \ref{theo:pointwise convergence for a reg
 \paragraph{Empirical convergence.}
 \nati{@martino, please put some stuff here...}
 Explain the difference of errors... Uniform sampling is better
-
 
 
 \section{Experiments [2 pages]}
@@ -295,9 +294,9 @@ Show: \\
         \multicolumn{1}{l}{} & \multicolumn{2}{c}{performance} & \multicolumn{1}{c}{size} & \multicolumn{2}{c}{speed}\\
         \cmidrule(lr){2-3} \cmidrule(lr){4-4} \cmidrule(lr){5-6}
         \multicolumn{1}{l}{Method} & F1 & mAP & params & inference [ms] & training \\ \hline
-        \cite{cohen_spherical_2018} & 78.85 & 67.6 & 1.4M & 38 & 50h\\
+        \cite{cohen2018sphericalcnn} & 78.85 & 67.6 & 1.4M & 38 & 50h\\
         % Cohen \emph{s2cnn\_simple} & 78.59 & 78.85 & 400k & 12ms & 32h\\
-        \cite{esteves_learning_2017} & 79.36 & 68.5 & 500k & 10 & 2h52\\ \hline
+        \cite{esteves2018sphericalcnn} & 79.36 & 68.5 & 500k & 10 & 2h52\\ \hline
         DeepSphere \emph{Equiangular} & 79.36 & 66.5 & 190k & 1 & 50m \\
         DeepSphere \emph{HEALPix} & 80.65 & 68.6 & 190k & 1 & 50m\\
         DeepSphere \emph{Improved HEALPix} & ? & ? & 190k & ? & ?
@@ -324,7 +323,7 @@ Show: \\
 %     \centering
 %     \begin{tabular}{c|c}
 %          &  \\
-%          & 
+%          &
 %     \end{tabular}
 %     \caption{Caption}
 %     \label{tab:cosmo_newgraph}
@@ -342,17 +341,17 @@ Show: \\
 	\cmidrule(lr){2-2} \cmidrule(lr){3-3} \cmidrule(lr){4-5}
 	\multicolumn{1}{l}{Method} & mean & mean & inference [ms] & training \\ \hline
 	%Mudigonda et al. & 97 & 74 & 65 & 78.67 & - & - & - \\
-	\cite{jiang_spherical_2019} & 94.67 & - & - & -\\
-	\cite{jiang_spherical_2019} \emph{rerun} & 94.95 & 38.41 & 10 & 10h\\
+	\cite{jiang2019sphericalcnn} & 94.67 & - & - & -\\
+	\cite{jiang2019sphericalcnn} \emph{rerun} & 94.95 & 38.41 & 10 & 10h\\
 	% 328'339
-	\cite{cohen_gauge_2019} (S2R) & 97.5 & 68.6 & - & -\\
-	\cite{cohen_gauge_2019} (R2R) & 97.7 & 75.9 & - & -\\ \hline
+	\cite{cohen2019gauge} (S2R) & 97.5 & 68.6 & - & -\\
+	\cite{cohen2019gauge} (R2R) & 97.7 & 75.9 & - & -\\ \hline
 	% unknown
 	DeepSphere (weighted) & $97.8\pm 0.3$ & $77.15\pm 1.94$ & 33 & 13h \\
 	DeepSphere (non-weighted) & $87.8\pm 0.5$ & $89.16\pm 1.37$ & 33 & 13h\\
 	% 12'926'432
 	\end{tabular}
-	\caption{Climate pattern segmentation mean accuracy (\%), mean Average Precision (\%) and speed for different models run on the icosahedron dataset from \cite{jiang_spherical_2019}}
+	\caption{Climate pattern segmentation mean accuracy (\%), mean Average Precision (\%) and speed for different models run on the icosahedron dataset from \cite{jiang2019sphericalcnn}}
 \end{table}
 
 * Jiang rerun with a batch size of 64 instead of 256 due to memory limit.\\
@@ -677,11 +676,11 @@ HEALPix sampling, Nside = 1024, with improved graph
         \cmidrule(lr){2-5} \cmidrule(lr){6-6}
         \multicolumn{1}{l}{Method} & TC & AR & BG & mean & params \\ \hline
         %Mudigonda et al. & 97 & 74 & 65 & 78.67 & - & - & - \\
-        \cite{jiang_spherical_2019} & 94 & 93 & 97 & 94.67 & 330k\\
-        \cite{jiang_spherical_2019} \emph{rerun} & 93.9 & 95.7 & 95.2 & 94.95 & 330k\\
+        \cite{jiang2019sphericalcnn} & 94 & 93 & 97 & 94.67 & 330k\\
+        \cite{jiang2019sphericalcnn} \emph{rerun} & 93.9 & 95.7 & 95.2 & 94.95 & 330k\\
         % 328'339
-        \cite{cohen_gauge_2019} (S2R) & 97.3 & 97.3 & 97.8 & 97.5 & -\\
-        \cite{cohen_gauge_2019} (R2R) & 97.8 & 97.4 & 97.9 & 97.7 & -\\ \hline
+        \cite{cohen2019gauge} (S2R) & 97.3 & 97.3 & 97.8 & 97.5 & -\\
+        \cite{cohen2019gauge} (R2R) & 97.8 & 97.4 & 97.9 & 97.7 & -\\ \hline
         DS (weighted) & $97.4\pm 1.1$ & $97.7\pm 0.7$ & $98.2\pm 0.5$ & $97.8\pm 0.3$ & 13M\\
         DS (non-weighted) & $69.2\pm 3.7$ & $94.5\pm 2.9$ & $99.7\pm 0.1$ & $87.8\pm 0.5$ & 13M\\ \hline
         % 12'926'432
@@ -698,7 +697,7 @@ HEALPix sampling, Nside = 1024, with improved graph
 and AR classes plus mean accuracy.}
 \end{table}
 
-* DS-jiang is the similar architecture as \cite{jiang_spherical_2019}.\\
+* DS-jiang is the similar architecture as \cite{jiang2019sphericalcnn}.\\
 * DS-optimal has 2 times the number of feature maps of DS.\\
 
 \begin{table}
@@ -707,10 +706,10 @@ and AR classes plus mean accuracy.}
         \cmidrule(lr){2-4}\cmidrule(lr){5-6}
         \multicolumn{1}{l}{Method} & TC & AR & mean & inference [ms] & training \\ \hline
         %Mudigonda et al. & 97 & 74 & 65 & 78.67 & - & - & - \\
-        \cite{jiang_spherical_2019} \emph{rerun} & 11.08 & 65.21 & 38.41 & 10.2 & 10h14m\\
+        \cite{jiang2019sphericalcnn} \emph{rerun} & 11.08 & 65.21 & 38.41 & 10.2 & 10h14m\\
         % 328'339
-        \cite{cohen_gauge_2019} (S2R) & - & -& 68.6 & - & - \\
-        \cite{cohen_gauge_2019} (R2R) & - & -& 75.9 & - & -\\ \hline
+        \cite{cohen2019gauge} (S2R) & - & -& 68.6 & - & - \\
+        \cite{cohen2019gauge} (R2R) & - & -& 75.9 & - & -\\ \hline
         DS (weighted) & $58.88\pm 3.17$ & $95.41\pm 1.51$ & $77.15\pm 1.94$ & 33 & 13h \\
         DS (non-weighted) & $80.86\pm 2.42$ & $97.45\pm 0.38$ & $89.16\pm 1.37$ & 33 & 13h \\ \hline
         % 12'926'432
@@ -848,7 +847,7 @@ batch size 64, RMSprop optimizer, constant learning rate of $1 \cdot 10{-3}$, MS
 
 % \subsection{Equiangular}
 
-\cite{khasanova2017graphomni} designed a discrete Laplacian that is explicitly intended to work on the sphere with the equiangular sampling. They consider the set $\mathcal G$ of all the possible graphs where each node is connected only to four of its nearest neighbours (North, Sud, West, East) and propose a weighting scheme $w_{ij}$ that minimizes the difference in the response to the polynomial spectral filter $\mathcal F = \mathbf L$ evaluated on images of the same object seen at different latitudes. In other words, they solve the minimization problem
+\cite{khasanova2017sphericalcnn} designed a discrete Laplacian that is explicitly intended to work on the sphere with the equiangular sampling. They consider the set $\mathcal G$ of all the possible graphs where each node is connected only to four of its nearest neighbours (North, Sud, West, East) and propose a weighting scheme $w_{ij}$ that minimizes the difference in the response to the polynomial spectral filter $\mathcal F = \mathbf L$ evaluated on images of the same object seen at different latitudes. In other words, they solve the minimization problem
 \begin{equation} \label{eq:minimization frossard}
 	\min_{W\in\mathcal G} \left|\mathcal{F}\left(\mathbf{y}\left(v_{ e}\right)\right)-\mathcal{F}\left(\mathbf{y}\left(v_{ i}\right)\right)\right|
 \end{equation}
@@ -886,7 +885,7 @@ Given a sampling $x_0, \dots, x_{n-1}$ define $\sigma_i$ to be the patch of the 
 * no difference in practice (see experiment xx) $\Rightarrow$ NNs are resilient to equiv error \\
 }
 
-Take a sampling scheme $V=\{v_i\in\mathbb S^2, i=0, \dots, n\}$ of the sphere, a weighted undirected graph $G(V, E, \mathbf W)$, a signal $f: \mathbb S^2\to\mathbb R$ and its sampled representation $\mathbf f:\ f_i=f(v_i)$. Suppose that there exists a sampling operator $T_V: L^2(\mathbb S^2) \supset F\to \mathbb R^n,\  T_V(f) = \mathbf f$ defined on a suitable subspace $F$ of $L^2(\mathbb S^2)$ such that it is invertible, i.e., we can unambiguously reconstruct the function $f\in F$ from its sampled values $\mathbf f$. The existence of such subspace depends on the sampling scheme $V$, and its characterization is a common problem in signal processing \cite{Driscoll:1994:CFT:184069.184073}. Define the rotation operator $\Lambda(g), g\in SO(3)$: $\Lambda(g) f(\omega) = f\left(g^{-1} \omega\right)$.
+Take a sampling scheme $V=\{v_i\in\mathbb S^2, i=0, \dots, n\}$ of the sphere, a weighted undirected graph $G(V, E, \mathbf W)$, a signal $f: \mathbb S^2\to\mathbb R$ and its sampled representation $\mathbf f:\ f_i=f(v_i)$. Suppose that there exists a sampling operator $T_V: L^2(\mathbb S^2) \supset F\to \mathbb R^n,\  T_V(f) = \mathbf f$ defined on a suitable subspace $F$ of $L^2(\mathbb S^2)$ such that it is invertible, i.e., we can unambiguously reconstruct the function $f\in F$ from its sampled values $\mathbf f$. The existence of such subspace depends on the sampling scheme $V$, and its characterization is a common problem in signal processing \cite{driscoll1994Fouriersphere}. Define the rotation operator $\Lambda(g), g\in SO(3)$: $\Lambda(g) f(\omega) = f\left(g^{-1} \omega\right)$.
 
 We now want to understand how to set the edges and the weights of $G$ such that
 \begin{equation} \label{eq:equivariance}
@@ -894,7 +893,7 @@ We now want to understand how to set the edges and the weights of $G$ such that
 \end{equation}
 i.e., the graph convolution $\Omega_k$ and any rotation $\Lambda(g)$ commute.
 
-Verifying equation (\ref{eq:equivariance}) is really hard in practice, due to the fact that for almost all sampling schemes $V$ it is not known if there exists a space $F$ in which $T$ is invertible. A special case is the \textit{equiangular sampling} scheme where a sampling theorem holds \cite{Driscoll:1994:CFT:184069.184073}, and thus we have a closed form of $T^{-1}$. For sampling schemes where no such sampling theorem is available, there are implementations of discrete SHT to reconstruct a sampled signal $\mathbf f$, thus providing a way to approximate $T^{-1}$. Thanks to this we are able, for a given sampling, a given function $f$, a given rotation $g$, and a given kernel $k$, to compute the \textit{normalized equivariance error}
+Verifying equation (\ref{eq:equivariance}) is really hard in practice, due to the fact that for almost all sampling schemes $V$ it is not known if there exists a space $F$ in which $T$ is invertible. A special case is the \textit{equiangular sampling} scheme where a sampling theorem holds \cite{driscoll1994Fouriersphere}, and thus we have a closed form of $T^{-1}$. For sampling schemes where no such sampling theorem is available, there are implementations of discrete SHT to reconstruct a sampled signal $\mathbf f$, thus providing a way to approximate $T^{-1}$. Thanks to this we are able, for a given sampling, a given function $f$, a given rotation $g$, and a given kernel $k$, to compute the \textit{normalized equivariance error}
 \begin{equation} \label{eq:equivariance error}
 	E_{G}(f, g) = \left(\frac{ \norm {T \Lambda(g) T^{-1} \Omega_k Tf - \Omega_k T \Lambda(g) f}_{L^2(\mathbb R^2)}}{\norm {Tf}_{L^2(\mathbb R^2)}}\right)^2,
 \end{equation}
