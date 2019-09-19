@@ -53,11 +53,26 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 %\iclrfinalcopy % Uncomment for camera-ready version, but NOT for submission.
 \begin{document}
 
+\todo{
+\begin{itemize}
+	\item shall we really name it? Or simply reference the general idea of a graph-based spherical CNN.
+	\item adjacency matrix: $A$ instead of $W$?
+	\item anonymize DeepSphere citation
+	\item climate spherical figure: inputs with TC and AR labels superimposed [Frédérick]
+	\item citet for inline, citep for parenthesis
+	\item More details on related work? Not sure we have the space. If yes, detailed comparison with related work after method.
+	\item PSD of climate data: how does it compare to cosmo and 3D objects?
+	\item align the spheres in figure 1
+\end{itemize}
+}
+\newpage
+
 \maketitle
 
 \begin{abstract}
 
-story: there are tradeoffs when designing a spherical CNN
+story: there are tradeoffs when designing a spherical CNN -> DS strikes a controllable balance between efficiency / cost and exactitude / equivariance
+% DSv2 has a clear tradeoff between equivariance and computational cost
 
 * method development: tool that solve a need (balance btw the desiderata: equiv vs cost)\\
 * research question: anisotropy (highlight from the start or leave it as a dangling question in the end)\\
@@ -73,22 +88,15 @@ Comparison with previous work on shape classification and climate event detectio
 
 \end{abstract}
 
-\todo{
-	* adjacency matrix: $A$ instead of $W$? \\
-	* anonymize DeepSphere citation \\
-	* climate spherical figure: inputs with TC and AR labels superimposed \\
-	* citet for inline, citep for parenthesis \\
-}
-
 \section{Introduction [2 pages]}
 
-Spherical data is common, and comes in two favors: (i) intrinsically spherical, and (ii) projection due to observation.
+Spherical data is found in many applications.
 % spherical data f: S^2 -> R, projection from R^3
-Examples of (i) are planetary data (such as meteorological or geological measurements) and brain activity.
-Examples of (ii) is the observation of the universe, LIDAR scans, and the digitalization of 3D objects. % through which apparatus?
+Planetary data (such as meteorological or geological measurements) and brain activity are example of intrinsically spherical data.
+The observation of the universe, LIDAR scans, and the digitalization of 3D objects are examples of projections due to observation.
 See \figref{examples}.
 In many applications, labels or variables are to be inferred from spherical data.
-Examples are the inference of cosmological parameters from the distribution of mass in the universe \citep{perraudin2019deepspherecosmo}, and the segmentation of cyclones from Earth observation \citep{mudigonda2017climateevents}.
+Examples are the inference of cosmological parameters from the distribution of mass in the universe \citep{perraudin2019deepspherecosmo}, the segmentation of omnidirectional images \citep{khasanova2017sphericalcnn}, and the segmentation of cyclones from Earth observation \citep{mudigonda2017climateevents}.
 
 \begin{figure}[h]
 	\includegraphics[height=0.25\linewidth]{example_cosmo_cmb}
@@ -99,10 +107,11 @@ Examples are the inference of cosmological parameters from the distribution of m
 	\hfill
 	\includegraphics[height=0.25\linewidth]{example_ghcn_graph}
 	\caption{
-		Examples of intrinsically spherical data: (left) the cosmic microwave background (CMB) temperature from \citet{planck2015overview},
-		%with galactic plane masked
-		(middle) daily maximum temperature from the Global Historical Climatology Network (GHCN),\protect\footnotemark (right) brain activity recorded through magnetoencephalography (MEG).\protect\footnotemark
-		For those examples, a rigid full-sphere pixelization is not ideal: the Milky Way's galactic plane masks observations, brain activity is measured on the scalp only, and the position and density of weather stations is arbitrary and changes over time.
+		Examples of intrinsically spherical data:
+		(left) the cosmic microwave background (CMB) temperature from \citet{planck2015overview},
+		(middle) brain activity recorded through magnetoencephalography (MEG),\protect\footnotemark
+		(right) daily maximum temperature from the Global Historical Climatology Network (GHCN).\protect\footnotemark
+		A rigid full-sphere pixelization is not ideal: the Milky Way's galactic plane masks observations, brain activity is only measured on the scalp, and the position of weather stations is arbitrary and changes over time.
 		Graphs can faithfully and efficiently represent sampled spherical data by placing vertices where data has been measured.
 		%\todo{something from climate, weather?}
 		%\todo{compare ideal full-spheres (like SHREC-17 projection from Esteves, 360 from Coors) to real-world measurements?}
@@ -113,59 +122,55 @@ Examples are the inference of cosmological parameters from the distribution of m
 \footnotetext[1]{\scriptsize\url{https://www.ncdc.noaa.gov/ghcn-daily-description}}
 \footnotetext[2]{\scriptsize\url{https://martinos.org/mne/stable/auto_tutorials/plot_visualize_evoked.html}}
 
-Neural networks (NNs) have proved to be great tools to solve inference problems. % when a huge amount of data is available.
-As such, multiple kinds of NNs have been developed to handle spherical data, each with their strengths and weaknesses.
 % balance of ??
 % Exploit the geometrical properties of the domain, symmetries.
 % desiderata or tradeoff
-We identified the following desiderata for a spherical NN.
-\begin{enumerate}
-	\item \textbf{Respect the domain.}
-		By respecting the domain, a spherical NN should respect the symmetries of the sphere, i.e., be equivariant to rotation, and not deform the sphere, e.g., by a projection on the icosahedron.
-	\item \textbf{Be powerful.}
-	\item \textbf{Scale.}
-	\item \textbf{Be flexible.}
-\end{enumerate}
-* powerful / generality $\Rightarrow$ isotropic vs anisotropic\\
-* scale: computational cost \& memory usage (feature maps)\\
-* flexible (samplings, irregular), simplicity (implementation)\\
+% We identified the following desiderata for a spherical NN.
+%Those take different tradeoffs among the following desiderata.
+%\begin{enumerate}
+%	\item \textbf{Respect the geometry.}  % geometry, domain
+%		By respecting the domain, a spherical NN should respect the symmetries of the sphere, i.e., be equivariant to rotation, and not deform the sphere, e.g., by a projection on the icosahedron.
+%	\item \textbf{Generality.} % powerful
+%		How general the NN is as a function approximator.
+%		For example, isotropic filters are less general than anisotropic filters.
+%	\item \textbf{Scalability.}
+%		How a spherical CNN scales w.r.t.\ the number of pixels in terms of computational cost and memory usage.
+%		% memory: feature maps and parameters
+%	\item \textbf{Flexibility.}
+%		Whether the NN is constrained to work on specific samplings, part of the sphere (useful when data is masked), and irregular samplings.
+%	\item \textbf{Simplicity.}
+%		Simplicity of its derivation and implementation.
+%\end{enumerate}
 
-On the one side, we have Cohen which is computationally very expensive but perfectly equivariant most general, on the other we have cube sphere which computationl very good but not equivariant at all. Other methods are tradedoff between these two. What is a good tradeoff? We think that DeepSphere is
+% keep the story simple and focus on the tradeoff between cost (time / computational and storage / memory) and exactitude
+As neural networks (NNs) have proved to be great tools for inference, variants have been developed to handle spherical data.
+Exploiting the locally Euclidean property of the sphere, early attempts used standard 2D convolutions on a grid discretization of the sphere \citep{boomsma2017sphericalcnn, su2017sphericalcnn, coors2018sphericalcnn}.
+While simple and efficient, those convolutions are not equivariant to rotations.
+On the other side of this tradeoff, \citet{cohen2018sphericalcnn} and \citet{esteves2018sphericalcnn} proposed to perform proper spherical convolutions through the spherical harmonic transform.
+While equivariant to rotations, those convolutions are expensive.
 
-Present the different spherical CNNs with pro and cons $\Rightarrow$ mostly scale vs generality\\
-* 2D CNN $\Rightarrow$ doesn't respect geometry and equivariance\\
-* Cohen spherical CNN $\Rightarrow$ most general, but doesn't scale\\
-* Cohen gauge $\Rightarrow$ fixes scale, at the price of deformation (sphere $\Rightarrow$ icosahedron)\\
-* Esteves $\Rightarrow$ ? \\
-* Jiang $\Rightarrow$ need a global coordinate system (ok for planets, not projections like cosmo)\\
+% On the one side, we have Cohen which is computationally very expensive but perfectly equivariant most general, on the other we have cube sphere which computationl very good but not equivariant at all. Other methods are tradedoff between these two. What is a good tradeoff? We think that DeepSphere is.
 
-\begin{table}[b]
-    \centering
-    \begin{tabular}{l|c|c|c|c}
-         method & equivariance & generality & scalability & flexibility \\
-         \hline
-        Cohen & & & &  \\
-         \hline
-        Gauge & & & &  \\
-         \hline
-        Esteves & & & &  \\
-         \hline
-        Jiang & & & &  \\
-         \hline
-        2D CNN (cubed sphere) & & & &  \\
-         \hline
-        Ours & & & &  \\
-    \end{tabular}
-    \caption{Caption}
-    \label{tab:my_label}
-\end{table}
+As the lack of equivariance penalizes performance (\secref{exp:cosmo}) and expensive convolutions prohibit their application to some real-world problems, methods standing between those two extremes are desired.
+\citet{cohen2019gauge} proposed to reduce costs by limiting the size of the representation of the symmetry group.
+% (from the continuous rotation group SO(3) to a discrete rotation group)
+% the dimensionality of feature maps is equal to the size of the irreducible representation of the symmetry group
+%As a platonic solid, it \todo{exhibits discrete rotations}.
+% the representation of its symmetry group is much smaller than SO(3)
+\todo{not all rotations, subset of SO(3)?}
+The projection of the data from the sphere to the icosahedron however introduces distortions that might hinder performance (see the experiments in \secref{exp:climate}).
+\todo{Where does Jiang fit? Need a global coordinate system (ok for planets, not projections like cosmo)}
 
-This paper focuses on improving the equivariance of \cite{perraudin2019deepspherecosmo}, a scalable graph-based method designed for cosmological applications.
-\todo{cite RLGM paper}
-Experiments on multiple problems of practical interest shows the competitiveness and flexibility of our method.
-Furthermore, those experiments show, contrarily to previously published results \cite{cohen2019gauge}, that anisotropic filters may be an unnecessary price to pay.
+Another approach represents the discretized sphere as a graph connecting pixels according to the distance between them \citep{khasanova2017sphericalcnn, perraudin2019deepspherecosmo}.
+While Laplacian-based graph convolutions are more efficient than spherical convolutions, they are not exactly equivariant \citep{defferrard2019deepsphereequiv}.
+In this work, we argue that graph-based spherical CNNs strike an interesting balance, with a controllable tradeoff between cost and equivariance.
+Experiments on multiple problems of practical interest show the competitiveness and flexibility of this approach.
+% Furthermore, experiments show that, perhaps surprisingly and contrarily to previously published results \citep{cohen2019gauge} \todo{[Bronstein?]}, anisotropic filters might be an unnecessary price to pay.
+% This paper focuses on improving the rotation equivariance of \citet{perraudin2019deepspherecosmo}, a scalable graph-based method designed for cosmological applications.
 
 \section{Method [1 pages]}
+
+The gist of the method is to define the spherical convolution using a graph, and the down-sampling operation using a hierarchical pixelisation of the sphere.
 
 * HEALPix: improvement from DeepSphere v1 \cite{perraudin2019deepspherecosmo} \\
 * equiangular: Renata \& Pascal \\
@@ -195,7 +200,7 @@ Furthermore, those experiments show, contrarily to previously published results 
 % % , a weighted undirected graph $G(V, E, \mathbf W)$,
 % \nati{I do not think we should have a notation section, but should somehow write this somewhere...}
 
-\section{Is graph convolution equivariant to rotation? [2 pages]}
+\section{Is graph convolution equivariant to rotation? [2 pages]} \label{sec:equivariance}
 
 \subsection{Problem formulation} 
 % The plan for this section
@@ -301,7 +306,7 @@ Show: \\
 * anisotropy doesn't help \\
 }
 
-\subsection{3D objects recognition}
+\subsection{3D objects recognition} \label{sec:exp:objects}
 
 \todo{
 * same perf as other spherical CNNs, but 40 times faster \\
@@ -334,11 +339,14 @@ Show: \\
 * same conclusion, anisotropy unnecessary cost to pay\\
 * Limited by representation of data? yep, treat them as point clouds \\
 
-\subsection{Cosmological model discrimination}
+\subsection{Cosmological model discrimination} \label{sec:exp:cosmo}
 
 \todo{
 * other sphercial CNNs cannot scale to 10M pixels (tested on 10k at most) \\
 * redo the experiment with the optimal graph \\
+* DSv2 better than v1 -> equivariance has practical implications \\
+* clear cost-accuracy tradeoff with n_neighbors \\
+* show the baselines? (at least the 2D CNN?) \\
 }
 
 % \begin{table}[]
@@ -351,7 +359,7 @@ Show: \\
 %     \label{tab:cosmo_newgraph}
 % \end{table}
 
-\subsection{Climate event detection}
+\subsection{Climate event detection} \label{sec:exp:climate}
 
 * small: better perf than gauge and Jiang. due to icosahedron distortion? to be confirmed\\
 * cannot compare with Mudigonda (16 vs 1 input channel)\\
@@ -393,10 +401,11 @@ Show: \\
 % jiang like correct: 99.81631631, 13.18655162, 52.62412867, 55.20899887;  0.3990812 , 0.80056251, 0.59982186; 4 ms; 2h40
 % more feat: 99.67871329, 38.78607557, 66.37910064, 68.2812965: 0.99981102, 0.60714174, 0.83236147, 0.71975161; 12ms; 6h20
 
-\subsection{GHCN}
+\subsection{GHCN} \label{sec:exp:ghcn}
 
 * task is artificial, but it shows DeepSphere's flexibility\\
 * structure (looking around) help for prediction\\
+* equivariance to be verified in this case (next paper)\\
 
 * non-regular sampling with different density over the globe (continent vs ocean)\\
 * resulting graph is not rotation equivariant\\
@@ -427,21 +436,45 @@ Show: \\
     \label{tab:GHCN_results}
 \end{table}
 
-
-
 \section{Conclusion [0.5 pages]}
 
-* DeepSphere seems to be in the sweet spot of tradeoffs. Recall the desiderata.\\
-  * respect geometry: No need for a very precise equivariance, i.e., a very good graph...\\
-  * Not the most general (restricted to isotropic filters), but didn't hurt perf in any experiment\\
-  * Similar as in GNN: most general might not be the best [Andreas paper?] \\
-  * scales linearly $\Rightarrow$ cannot do better ($n^{1.25}$ for best HEALPix, linear for not optimal)\\
-  * flexible $\Rightarrow$ independent of the sampling\\
+This work showed that DeepSphere strikes an interesting balance between desiderata for a spherical CNN.
+A single parameter, the number of neighbors a pixel is connected to in the graph, controls the tradeoff between \todo{performance and efficiency}.
+% vague words
+As computational cost and memory consumption scales linearly with the number of pixels, DeepSphere easily deals with spherical maps made of millions of pixels.
+Such high resolutions are not necessary to represent thethe  depth maps of 3D objects, but are required to faithfully represent cosmological and climate data.
+% That has to do with the frequency content of the signals (see fig xx)
+% cannot do better
+Also relevant in scientific applications is the flexibility offered by a graph representation to deal with partial coverage and non-uniform samplings.
+% partial coverage / missing data
+Finally, the implementation of Laplacian-based graph convolutions is straightforward.
+The ubiquity of graph neural networks, pushing for a first-class support in Deep Learning frameworks, will make implementations even easier and more efficient.
 
-future work:\\
-* when anisotropy useful? (research question)\\
-* irregular sampling while respecting the geometry\\
-* beyond the sphere, any manifold\\
+A potential drawback of graph Laplacian-based approaches is that graph filters are isotropic, reducing the expressive power of the NN.
+% in principle -> may in fact not
+% Our experiments showed that DeepSphere nonetheless achieved state-of-the-art performance, on par with methods featuring anisotropic filters.
+% didn't hurt perf in any experiment
+% expressive power / generality / powerful / function approximator
+%Why anisotropic filters?
+Experiments from \citet{cohen2019gauge} suggest that more general convolutions achieve better performance.
+Our climate experiments (\secref{exp:climate}) however show that DeepSphere achieves similar performance than their most general convolution.
+Works on shape alignment indicates that anisotropic filters achieve better performance \todo{[Bronstein]}.
+Possible explanations for this discrepancy are that NNs somehow compensate for the lack of anisotropic filters, or that some tasks can be solved with isotropic filters.
+The distortions induced by the icosahedral projection in \citep{cohen2019gauge} or the leakage of curvature information in \todo{[Bronstein]} might also be explanations.
+Further research is needed to determine if anisotropic filters are an unnecessary price to pay or if they are needed for some applications.
+% As was recently shown for graph NNs used for graph classification, most general might not be the best, when the ultimate goal is generalization [Andreas paper? + previous by xx]
+
+Developing graph convolutions on irregular samplings that still respect the geometry of the sphere is another research direction of importance.
+% known underlying manifold
+Practitioners currently interpolate their measurements (coming from arbitrarily positioned weather stations, satellites or telescopes) to regular samplings.
+This practice either results in a waste of precision or computational and storage resources.
+Our ultimate goal is for practitioners to be able to work directly on their measurement, however distributed.
+
+% beyond the sphere => any manifold
+% what are other manifolds of interest?
+% done by monet & co on shapes
+
+% beyond scalar fields => simplicial complexes
 
 \newpage
 \subsubsection*{Author Contributions}
