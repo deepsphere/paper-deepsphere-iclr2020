@@ -153,14 +153,14 @@ Furthermore, those experiments show, contrarily to previously published results 
 * HEALPix: improvement from DeepSphere v1 \cite{perraudin2019deepsphere} \\
 * equiangular: Renata \& Pascal \\
 
-\cite{khasanova2017graphomni} designed a discrete Laplacian that is explicitly intended to work on the sphere with the equiangular sampling. They consider the set $\mathcal G$ of all the possible graphs where each node is connected only to four of its nearest neighbours (North, Sud, West, East) and propose a weighting scheme $w_{ij}$ that minimizes the difference in the response to the polynomial spectral filter $\mathcal F = \mathbf L$ evaluated on images of the same object seen at different latitudes. In other words, they solve the minimization problem
-\begin{equation} \label{eq:minimization frossard}
-	\min_{W\in\mathcal G} \left|\mathcal{F}\left(\mathbf{y}\left(v_{ e}\right)\right)-\mathcal{F}\left(\mathbf{y}\left(v_{ i}\right)\right)\right|
-\end{equation}
-for the adjacency matrix $W$, where $\mathbf y(v_i)$ is the image of the object on the sphere centered on the vertex $v_i$, and $\mathcal F (\mathbf y(v_e))$ is the response of the filter at the vertex $v_e$ that lies at the same longitude of the vertex $v_i$ but on the equator. In their work they prove that the optimal weights solving the minimization problem (\ref{eq:minimization frossard}) are given by weights $w_{ij}$ inversely proportional to the Euclidean distance between vertices:
-\begin{equation} \label{eq:frossard weights}
-	w_{ij} = \frac{1}{\norm{x_i-x_j}}
-\end{equation}
+% \cite{khasanova2017graphomni} designed a discrete Laplacian that is explicitly intended to work on the sphere with the equiangular sampling. They consider the set $\mathcal G$ of all the possible graphs where each node is connected only to four of its nearest neighbours (North, Sud, West, East) and propose a weighting scheme $w_{ij}$ that minimizes the difference in the response to the polynomial spectral filter $\mathcal F = \mathbf L$ evaluated on images of the same object seen at different latitudes. In other words, they solve the minimization problem
+% \begin{equation} \label{eq:minimization frossard}
+% 	\min_{W\in\mathcal G} \left|\mathcal{F}\left(\mathbf{y}\left(v_{ e}\right)\right)-\mathcal{F}\left(\mathbf{y}\left(v_{ i}\right)\right)\right|
+% \end{equation}
+% for the adjacency matrix $W$, where $\mathbf y(v_i)$ is the image of the object on the sphere centered on the vertex $v_i$, and $\mathcal F (\mathbf y(v_e))$ is the response of the filter at the vertex $v_e$ that lies at the same longitude of the vertex $v_i$ but on the equator. In their work they prove that the optimal weights solving the minimization problem (\ref{eq:minimization frossard}) are given by weights $w_{ij}$ inversely proportional to the Euclidean distance between vertices:
+% \begin{equation} \label{eq:frossard weights}
+% 	w_{ij} = \frac{1}{\norm{x_i-x_j}}
+% \end{equation}
 
 \begin{figure}
 	\centering
@@ -172,40 +172,63 @@ for the adjacency matrix $W$, where $\mathbf y(v_i)$ is the image of the object 
 	\label{fig:architecture}
 \end{figure}
 
+% \section{Notation}
+% Throughout this contribution, we denote with bold font all vectors and matrices such as $\b{L}$ the graph Laplacian and $\b{f}$ the vector of the sampled function $f$.
+% \nati{Right now, it is not True}
+% % , a weighted undirected graph $G(V, E, \mathbf W)$,
+% \nati{I do not think we should have a notation section, but should somehow write this somewhere...}
+
 \section{Is graph convolution equivariant to rotation? [2 pages]}
 
 % The plan for this section
-% 0) Explain why the Laplacian is so important...
-By definition, the graph convolution (on the sphere) is rotation equivariant to rotation, if and only if, it commutes with the rotation operator. 
-As, in the context of this work, graph convolution can be performed by successive application of the graph Laplacian, i.e: $g(\b{L}) \b{f} = \left(\sum_{i=0}^K \alpha_i \b{L}^i\right) \b{f}$, if the graph Laplacian $\b{L}$ commutes with the rotation operator, then, by recursion, it will also commute with the convolution $g(\b{L})$.
-Hence to simplify our analysis, we concentrate on the graph Laplacian.
+% 0.1 Explain the sampling problem
+\paragraph{Sampling} 
+As the graph convolution act on a sampled version of the signal $\b{f}$ and the rotation on its continuous counterpart $f$, we first need to define a sampling operator.
+Given a sampling scheme $V=\{v_i\in\mathbb S^2, i=0, \dots, n\}$ of the sphere and a function $f : \mathbb S^2 \supset F_V \to \mathbb R$, the sampling operator $T_V: L^2(\mathbb S^2) \supset F\to \mathbb R^n,\  T_V(f) = \b{f}$ is defined as $\b{f}:\ f_i=f(v_i)$, where $F_V$ suitable subspace of $L^2(\mathbb S^2)$ such that $T_V$ is invertible, i.e., we can unambiguously reconstruct the function $f\in F_V$ from its sampled values $\b{f}$.
+The existence of such subspace depends on the sampling scheme $V$, and its characterization is a common problem in signal processing \cite{Driscoll:1994:CFT:184069.184073}. 
+For most samplings, it is not known if $F_V$ exist and hence if $T_V$ is invertible. A special case is the \textit{equiangular sampling} scheme where a sampling theorem holds, and thus we have a closed form of $T_V^{-1}$ is known. % \cite{Driscoll:1994:CFT:184069.184073}
+For sampling schemes where no such sampling formula is available, we leverage the discrete SHT to reconstruct $f$ from $\bf{f}$, thus approximating $T_V^{-1}$. 
+For all theoretical consideration, we assume that $F_V$ exists and $f \in F_V$.
 
-% 0.5) Explain the sampling and metric
-We first need to deal with the sampling problem. 
-Take a sampling scheme $V=\{v_i\in\mathbb S^2, i=0, \dots, n\}$ of the sphere, a weighted undirected graph $G(V, E, \mathbf W)$, a signal $f: \mathbb S^2\to\mathbb R$ and its sampled representation $\mathbf f:\ f_i=f(v_i)$. Suppose that there exists a sampling operator $T_V: L^2(\mathbb S^2) \supset F\to \mathbb R^n,\  T_V(f) = \mathbf f$ defined on a suitable subspace $F$ of $L^2(\mathbb S^2)$ such that it is invertible, i.e., we can unambiguously reconstruct the function $f\in F$ from its sampled values $\mathbf f$. The existence of such subspace depends on the sampling scheme $V$, and its characterization is a common problem in signal processing \cite{Driscoll:1994:CFT:184069.184073}. Define the rotation operator $R(g), g\in SO(3)$: $R(g) f(\omega) = f\left(g^{-1} \omega\right)$. 
-
-We now want to understand how to set the edges and the weights of $G$ such that
+% 0.2 Explain why the Laplacian is so important...
+\paragraph{Problem formulation} 
+By definition, our (spherical) graph convolution is rotation equivariant, if and only if, it commutes with the rotation operator defined as $R(g), g\in SO(3)$: $R(g) f(x) = f\left(g^{-1} x \right)$. 
+In the context of this work, graph convolution is performed by recursive applications of the graph Laplacian, i.e: $h(\b{L}) \b{f} = \left(\sum_{i=0}^K \alpha_i \b{L}^i\right) \b{f}$\nati{Put this equation somewhere else?}.  Hence, if $\b{L}$ commutes with the rotation operator, then, by recursion, it will also commute with the convolution $h(\b{L})$.
+As a result, to simplify our analysis, we concentrate on the graph Laplacian and $h(\b{L})$ is rotational invariant if and only if 
+% 0.3 Formulate the problem
 \begin{equation} \label{eq:equivariance}
-	T \R(g) T^{-1} \Omega_k T f = \Omega_k T R(g) f,
+	\b{R}_V(g) \b{L} \b{f} = \b{L} \b{R}_V(g) \b{f} \hspace{1cm} \forall f\in F_V \text{ and } \forall g\in SO(3), 
 \end{equation}
-i.e., the graph convolution $\Omega_k$ and any rotation $R(g)$ commute.
-
-Verifying equation (\ref{eq:equivariance}) is really hard in practice, due to the fact that for almost all sampling schemes $V$ it is not known if there exists a space $F$ in which $T$ is invertible. A special case is the \textit{equiangular sampling} scheme where a sampling theorem holds \cite{Driscoll:1994:CFT:184069.184073}, and thus we have a closed form of $T^{-1}$. For sampling schemes where no such sampling theorem is available, there are implementations of discrete SHT to reconstruct a sampled signal $\mathbf f$, thus providing a way to approximate $T^{-1}$. Thanks to this we are able, for a given sampling, a given function $f$, a given rotation $g$, and a given kernel $k$, to compute the \textit{normalized equivariance error}
+where $\b{R}_V(g) = T_V R(g) T_V^{-1}$. For practical application, we define the \textit{normalized equivariance error} for a signal $\b{f}$, and a  rotation $g$ as:
 \begin{equation} \label{eq:equivariance error}
-	E_{G}(f, g) = \left(\frac{ \norm {T R(g) T^{-1} \Omega_k Tf - \Omega_k T R(g) f}_{L^2(\mathbb R^2)}}{\norm {Tf}_{L^2(\mathbb R^2)}}\right)^2,
+	E_{\b{L}}(\b{f}, g) = \left(\frac{ \norm {\b{R}_V(g) \b{L} \b{f} - \b{L} \b{R}_V(g) \b{f}} }{\norm {\b{f}}}\right)^2,
 \end{equation}
-where $T^{-1}$ is substituted with a discrete SHT in case $T$ is not invertible.
-A measure of how equivariant a graph is with respect to rotations will then be given by the \textit{mean equivariance error}
+More generally for a class of signal $f \in C \subset F_V$, the \textit{mean equivariance error}
 \begin{equation} \label{eq:mean equivariance error}
-	\overline E_G = \mathbb E_{f, g} \ E_G(f, g).
+	\overline E_{\b{L}, C} = \mathbb E_{\b{f}\in C, g\in SO(3)} \ E_{\b{L}}(\b{f}, g).
 \end{equation}
-In practice the expected value is obtained by averaging over a finite number of random functions and random rotations. The mean equivariance error $\overline E_G$ gives us an indication of how close the graph $G$ is from being equivariant to rotations. 
-Of course result will depend on the sampling and on the graph construction.
+In practice, to anlyse the equivariance error frequency,  the set $C$ we used is composed of functions $f$ with made of spherical harmonic of a single degree $\ell$.
+The expected value is obtained by averaging over a finite number of random functions and random rotations. 
 
+\subsection{Finding a the optimal set of weights}
 % !) summary the work of Khasanova -> No! to be put in section 2) Method
+\cite{khasanova2017graphomni} designed a Laplacian $\b{L}$ explicitly intended to work with the equiangular sampling. 
+They consider the set $\mathcal{G}$ of all the possible graphs where each node is connected only to four of its nearest neighbours (North, Sud, West, East) and propose a weighting scheme $w_{ij}$ that minimizes \eqref{eq:equivariance error} for specific rotations on the longitude latitude axis.
+Their approach leads to weights $w_{ij}$ inversely proportional to the Euclidean distance between vertices:
+\begin{equation} \label{eq:frossard weights}
+	w_{ij} = \frac{1}{\norm{x_i-x_j}}
+\end{equation}
 
 % 2) explain our approach
-We inspire ourselves with Belkin, which says that for \emph{uniform sampling} the graph Laplacian converges toward the Laplace-Beltrami. b) The Laplace Beltrami commute with rotation. The following theorem extend the work of Belkin and Nyiogi to fixed sampling \nati{(Including Healpix or not?)}. 
+We chose a different approach and take inspiration from \cite{belkin2005towards}, which proves that for a random \emph{uniform sampling} scheme the graph Laplacian converges toward the Laplace-Beltrami operator $\Delta$ as the number of sampling point goes to infinity.
+This convergence result is important as a) $\Delta$ commutes with rotation and b) is diagonalized by the spherical harmonics. 
+In this case the weighting scheme is full (every node is connected to every node) and is based the exponential kernel: 
+\nati{@martino, please check this equation... Do you use 4t?}
+\begin{equation} \label{eq:belkin_weights}
+w_{ij} = e^{-\frac{1}{t} \norm{x_i-x_j}^2}
+\end{equation}
+In practice
+The following theorem extend the work of Belkin and Nyiogi to fixed sampling \nati{(Including Healpix or not?)}. 
 Given a sampling $V = \{x_0, \dots, x_{n-1}\}$ define $\sigma_i$ to be the patch of the surface of the sphere corresponding to $x_i$, define $A_i$ to be its corresponding area and $d_i$ to be the radius of the smallest ball in $\mathbb R^3$ containing $\sigma_i$. Define $d^{(n)} := \max_{i=0, \dots, n}d_i$ and $A^{(n)}=\max_{i=0, \dots, n}A_i$.
 
 \begin{theorem}
@@ -215,20 +238,14 @@ Given a sampling $V = \{x_0, \dots, x_{n-1}\}$ define $\sigma_i$ to be the patch
 \end{theorem}
 
 This is \emph{not} a proof of equivariance of the graph convolution for a specific sampling. We simply observe that the graph Laplacian converges pointwisely toward an operator that commutes with rotation. To have the desired equality in eq..., we would need to prove a stronger result, for example uniform convergence (in the space of the operators).
-\nati{Should we put this here?: }This does not hold in general \cite{belkin-spectral}. However, we believe that this is achievable for a bandlimited signals.
+\nati{Should we put this here?: }
+This does not hold in general \cite{belkin2007convergence}. However, we believe that this is achievable for a bandlimited signals.
 More importantly, the proof of theorem \ref{theo:pointwise convergence for a regular sampling} in Appendix ... inspires us in the construction of our graph Laplacian. a) use gaussian kernel b) we need to adjust t with respect of n such that ...
 
 % 3) Show experimental results
 Define the error, show results and comments
-\begin{figure}
-	\centering
-	\includegraphics[width=0.9\linewidth]{figure_architecture_v3}
-	\caption{Example architecture from \cite{perraudin2019deepsphere}.
-		Global tasks need a spatial summarization: the FCN variant is rotation invariant (and accepts inputs of varying sizes), while the CNN variant is not.
-		Dense tasks (when the output lives on the sphere, like segmentation) are rotation equivariant.
-	}
-	\label{fig:architecture}
-\end{figure}
+
+
 
 
 Explain the difference of errors... Uniform sampling is better
@@ -281,6 +298,16 @@ Show: \\
 * other sphercial CNNs cannot scale to 10M pixels (tested on 10k at most) \\
 * redo the experiment with the optimal graph \\
 }
+
+% \begin{table}[]
+%     \centering
+%     \begin{tabular}{c|c}
+%          &  \\
+%          & 
+%     \end{tabular}
+%     \caption{Caption}
+%     \label{tab:cosmo_newgraph}
+% \end{table}
 
 \subsection{Climate event detection}
 
