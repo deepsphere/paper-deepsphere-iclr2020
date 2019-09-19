@@ -40,6 +40,16 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 \newcommand{\todo}[1]{{\color[rgb]{.6,.1,.6}{#1}}}
 \newcommand{\nati}[1]{{\color[rgb]{.3,.5,.9}{#1}}}
 
+\renewcommand{\figref}[1]{figure~\ref{fig:#1}}
+\renewcommand{\Figref}[1]{Figure~\ref{fig:#1}}
+\newcommand{\tabref}[1]{table~\ref{tab:#1}}
+\newcommand{\Tabref}[1]{Table~\ref{tab:#1}}
+\renewcommand{\secref}[1]{section~\ref{sec:#1}}
+\renewcommand{\Secref}[1]{Section~\ref{sec:#1}}
+%\newcommand{\secref}[1]{\S\ref{sec:#1}}
+\newcommand{\eqnref}[1]{equation~(\ref{eqn:#1})}
+\newcommand{\Eqnref}[1]{Equation~(\ref{eqn:#1})}
+
 %\iclrfinalcopy % Uncomment for camera-ready version, but NOT for submission.
 \begin{document}
 
@@ -65,18 +75,20 @@ Comparison with previous work on shape classification and climate event detectio
 
 \todo{
 	* adjacency matrix: $A$ instead of $W$? \\
-	* anonymize DeepSphere citation
+	* anonymize DeepSphere citation \\
+	* climate spherical figure: inputs with TC and AR labels superimposed \\
+	* citet for inline, citep for parenthesis \\
 }
 
 \section{Introduction [2 pages]}
 
 Spherical data is common, and comes in two favors: (i) intrinsically spherical, and (ii) projection due to observation.
 % spherical data f: S^2 -> R, projection from R^3
-Examples of (i) are planetary data (such as temperature, wind, geological) and brain activity.
-An example of (ii) is cosmological observations.
-
-Learning is desirable for...
-Problems to be tackled by machine learning might be local or global regression or classification.
+Examples of (i) are planetary data (such as meteorological or geological measurements) and brain activity.
+Examples of (ii) is the observation of the universe, LIDAR scans, and the digitalization of 3D objects. % through which apparatus?
+See \figref{examples}.
+In many applications, labels or variables are to be inferred from spherical data.
+Examples are the inference of cosmological parameters from the distribution of mass in the universe \citep{perraudin2019deepsphere}, and the segmentation of cyclones from Earth observation \citep{mudigonda2017climateevents}.
 
 \begin{figure}[h]
 	\includegraphics[height=0.25\linewidth]{example_cosmo_cmb}
@@ -101,17 +113,22 @@ Problems to be tackled by machine learning might be local or global regression o
 \footnotetext[1]{\scriptsize\url{https://www.ncdc.noaa.gov/ghcn-daily-description}}
 \footnotetext[2]{\scriptsize\url{https://martinos.org/mne/stable/auto_tutorials/plot_visualize_evoked.html}}
 
-Exploit the geometrical properties of the domain, symmetries.
-
-We identify the following desiderata for spherical CNNs:\\
-* respect the domain\\
-  * rotational equivariance\\
-  * deformation (e.g., on the icosahedron for gauge)\\
+Neural networks (NNs) have proved to be great tools to solve inference problems. % when a huge amount of data is available.
+As such, multiple kinds of NNs have been developed to handle spherical data, each with their strengths and weaknesses.
+% balance of ??
+% Exploit the geometrical properties of the domain, symmetries.
+% desiderata or tradeoff
+We identified the following desiderata for a spherical NN.
+\begin{enumerate}
+	\item \textbf{Respect the domain.}
+		By respecting the domain, a spherical NN should respect the symmetries of the sphere, i.e., be equivariant to rotation, and not deform the sphere, e.g., by a projection on the icosahedron.
+	\item \textbf{Be powerful.}
+	\item \textbf{Scale.}
+	\item \textbf{Be flexible.}
+\begin{enumerate}
 * powerful / generality $\Rightarrow$ isotropic vs anisotropic\\
 * scale: computational cost \& memory usage (feature maps)\\
 * flexible (samplings, irregular), simplicity (implementation)\\
-
-Multiple methods have been developed to handle spherical data, each with their strengths and weaknesses.
 
 On the one side, we have Cohen which is computationally very expensive but perfectly equivariant most general, on the other we have cube sphere which computationl very good but not equivariant at all. Other methods are tradedoff between these two. What is a good tradeoff? We think that DeepSphere is
 
@@ -337,6 +354,11 @@ Show: \\
 * Jiang rerun with a batch size of 64 instead of 256 due to memory limit.\\
 * cross entropy loss between parenthesis\\
 * 5 runs for each loss to obtain mean and std\\
+* same architecture as gauge, more feature maps than Jiang\\
+* perf with same arch as Jiang in appendix => not enough channels!\\
+* even more feature maps give us one more point in perf\\
+* cannot compare with Mudigonda: not the same input data\\
+* why: icosahedron, can do anisotropy with isotropy + non-linearity + pooling
 
 * trade off between AP and accuracy in the case of TC class, it seems.\\
 * change base, influence?\\
@@ -387,6 +409,7 @@ Show: \\
 * DeepSphere seems to be in the sweet spot of tradeoffs. Recall the desiderata.\\
   * respect geometry: No need for a very precise equivariance, i.e., a very good graph...\\
   * Not the most general (restricted to isotropic filters), but didn't hurt perf in any experiment\\
+  * Similar as in GNN: most general might not be the best [Andreas paper?] \\
   * scales linearly $\Rightarrow$ cannot do better ($n^{1.25}$ for best HEALPix, linear for not optimal)\\
   * flexible $\Rightarrow$ independent of the sampling\\
 
@@ -403,8 +426,8 @@ Left blank for anonymity reason
 
 \subsubsection*{Acknowledgments}
 Left blank for anonymity reason
-% Use unnumbered third level headings for the acknowledgments. All
-% acknowledgments, including those to funding agencies, go at the end of the paper.
+
+%We thank Taco Cohen for his inputs on the intriguing results of our comparisons with their gauge CNN \citep{}.
 
 \bibliography{references}
 \bibliographystyle{iclr2020_conference}
