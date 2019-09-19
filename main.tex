@@ -200,7 +200,7 @@ Furthermore, those experiments show, contrarily to previously published results 
 % The plan for this section
 % 0.1 Explain the sampling problem
 \paragraph{Sampling} 
-As the graph convolution act on a sampled version of the signal $\b{f}$ and the rotation on its continuous counterpart $f$, we first need to define a sampling operator.
+As the graph convolution acts on a sampled version of the signal $\b{f}$ and the rotation on its continuous counterpart $f$, we first need to define a sampling operator.
 Given a sampling scheme $V=\{v_i\in\mathbb S^2, i=0, \dots, n\}$ of the sphere and a function $f : \mathbb S^2 \supset F_V \to \mathbb R$, the sampling operator $T_V: L^2(\mathbb S^2) \supset F\to \mathbb R^n,\  T_V(f) = \b{f}$ is defined as $\b{f}:\ f_i=f(v_i)$, where $F_V$ suitable subspace of $L^2(\mathbb S^2)$ such that $T_V$ is invertible, i.e., we can unambiguously reconstruct the function $f\in F_V$ from its sampled values $\b{f}$.
 The existence of such subspace depends on the sampling scheme $V$, and its characterization is a common problem in signal processing \cite{Driscoll:1994:CFT:184069.184073}. 
 For most samplings, it is not known if $F_V$ exist and hence if $T_V$ is invertible. A special case is the \textit{equiangular sampling} scheme where a sampling theorem holds, and thus we have a closed form of $T_V^{-1}$ is known. % \cite{Driscoll:1994:CFT:184069.184073}
