@@ -257,16 +257,38 @@ Given a sampling $V = \{x_0, \dots, x_{n-1}\}$ define $\sigma_i$ to be the patch
 	$$ \lim_{n\to\infty} \frac{|\mathbb{S}^2|}{4\pi t_n} \b{L}_n^{t_n} T_{V_n} f(y) =  \Delta_{\mathbb{S}^2}f(y).$$
 	\label{theo:pointwise convergence for a regular sampling}
 \end{theorem}
-While this is \emph{not} a proof of equivariance of the graph convolution for a specific sampling, we observe that the $\b{L}$ converges pointwisely toward an operator ($\Delta_{\mathbb S^2}$) commuting with rotation. 
-To have the desired equality in eq..., we would need to prove a stronger result, for example uniform convergence (in the space of the operators).
-\nati{Should we put this here?: }
-This does not hold in general \cite{belkin2007convergence}. However, we believe that this is achievable for a bandlimited signals.
-More importantly, the proof of theorem \ref{theo:pointwise convergence for a regular sampling} in Appendix ... inspires us in the construction of our graph Laplacian. a) use gaussian kernel b) we need to adjust t with respect of n such that ...
-\nati{While do not have a proof for it, we srongly believe that the HEALpix sampling do satisfy the hypothesis $d^{(n)}\leq \frac{C}{\sqrt{n}}$ of Theorem \ref{theo:pointwise convergence for a regular sampling}. This is discussed in Appendix~\ref{...}}
+This theorem show that the $\b{L}$ converges pointwisely toward an operator ($\Delta_{\mathbb S^2}$) commuting with rotation and hence is a strong hints for equivariance.
+Importantly, the proof of Theorem \ref{theo:pointwise convergence for a regular sampling} in Appendix \ref{...} inspires us in the construction of our graph Laplacian. It gives us a strong hint how the parameter $t$ needs to adjusted with respect of the number of point $n$.
+
+It is important to keep in mind the limits of Theorem \ref{theo:pointwise convergence for a regular sampling}.
+First, it is \emph{not} a proof of equivariance of the graph convolution for a specific sampling. To construct such a proof, a stronger convergence result is needed, for example uniform convergence (instead of pointwise).
+Unfortunately, the graph laplacian does \emph{not} converges uniformly in general \cite{belkin2007convergence}. This can probably be overcomed by considering a specific class of functions, such as bandlimited function.
+Second, while do not have a proof for it, we strongly believe that the HEALpix sampling do satisfy the hypothesis $d^{(n)}\leq \frac{C}{\sqrt{n}}$ of Theorem \ref{theo:pointwise convergence for a regular sampling}. This is discussed in Appendix~\ref{...}
+
 
 % 3) Show experimental results
 \paragraph{Empirical convergence.}
-\nati{@martino, please put some stuff here...}
+From 20\% error on V1, we got to less than 2\% error on v2. More neighbors, more precision, plus a better kernel width obtained "minimizing" the equivariance error. How to explain how we found the kernel width? Because minimizing the kernel width would lead to a completely disconnected graph. What we did was finding a heuristic law (fix neighbors, set the kernel width by imposing the minimum weight to be equal to $0.1$) and then optimizing
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{DeepSphereV1}
+	\caption{Shall we put it here or in Appendix?
+	}
+	\label{fig:deepsphereV1}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{DeepSphereV2_50neighbors.pdf}
+	\caption{}
+	\label{fig:deepsphereV2}
+\end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{khasanova_frossard.pdf}
+	\caption{}
+	\label{fig:khasanova_frossard}
+\end{figure}
 Explain the difference of errors... Uniform sampling is better
 
 
