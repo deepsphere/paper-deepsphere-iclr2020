@@ -39,6 +39,8 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 \newcommand{\new}{\marginpar{NEW}}
 \newcommand{\todo}[1]{{\color[rgb]{.6,.1,.6}{#1}}}
 \newcommand{\nati}[1]{{\color[rgb]{.3,.5,.9}{#1}}}
+\newcommand{\mart}[1]{{\color[rgb]{.9,.5,.3}{#1}}}
+
 
 \renewcommand{\figref}[1]{figure~\ref{fig:#1}}
 \renewcommand{\Figref}[1]{Figure~\ref{fig:#1}}
@@ -250,25 +252,31 @@ In practice most of the weights are very close to $0$ and hence, to optimize for
 We analyse our proposed weighting scheme both theoretically and empirically.
 
 \paragraph{Theoretical convergence.}
-We extend the work Belkin and Nyiogi to a fixed sampling. 
+We extend the work of Belkin and Nyiogi to a fixed sampling. 
 Given a sampling $V = \{x_0, \dots, x_{n-1}\}$ define $\sigma_i$ to be the patch of the surface of the sphere corresponding to $x_i$, define $A_i$ to be its corresponding area and $d_i$ to be the radius of the smallest ball in $\mathbb R^3$ containing $\sigma_i$. Define $d^{(n)} := \max_{i=0, \dots, n}d_i$ and $A^{(n)}=\max_{i=0, \dots, n}A_i$.
+
 \begin{theorem}
-	For a sampling $\mathcal P = \{x_i\in\mathbb S^2\}_{i=0}^{n-1}$ of the sphere that is equi area and such that $d^{(n)} \leq \frac{C}{\sqrt{n}}$, for all $f: \mathbb S^2 \rightarrow \mathbb R$ Lipschitz with respect to the euclidean distance in $\mathbb R^3$, for all $y\in\mathbb S^2$, there exists a sequence $t_n = n^\beta$ such that the rescaled Heat Kernel Graph Laplacian operator $\frac{|\mathbb S^2|}{4\pi t_n}L^t_n$ converges pointwise to the Laplace Beltrami operator on the sphere $\triangle_{\mathbb S^2}$  for $n\to\infty$:
-	$$ \lim_{n\to\infty} \frac{|\mathbb{S}^2|}{4\pi t_n} \b{L}_n^{t_n} T_{V_n} f(y) =  \Delta_{\mathbb{S}^2}f(y).$$
+	For a sampling $V = \{x_i\in\mathbb S^2\}_{i=0}^{n-1}$ of the sphere that is equi area and such that $d^{(n)} \leq \frac{C}{\sqrt{n}}$, for all $f: \mathbb S^2 \rightarrow \mathbb R$ Lipschitz with respect to the euclidean distance in $\mathbb R^3$, for all $y\in\mathbb S^2$, there exists a sequence $t_n = n^\beta$ such that the rescaled Heat Kernel Graph Laplacian $\frac{|\mathbb S^2|}{4\pi t_n}\b {L}^t_n$ converges pointwise to the Laplace Beltrami operator on the sphere $\Delta{\mathbb S^2}$  for $n\to\infty$:
+	$$ \lim_{n\to\infty} \frac{|\mathbb{S}^2|}{4\pi t_n} \b{L}_n^{t_n} T_V f(x_i) =  \Delta_{\mathbb{S}^2}f(x_i)\quad \forall i=0, ..., n-1.$$
 	\label{theo:pointwise convergence for a regular sampling}
 \end{theorem}
-This theorem show that the $\b{L}$ converges pointwisely toward an operator ($\Delta_{\mathbb S^2}$) commuting with rotation and hence is a strong hints for equivariance.
+This theorem implies immediately that $\b{L}$ converges pointwisely toward an operator ($\Delta_{\mathbb S^2}$) commuting with rotation and hence is a strong hints for equivariance.
 Importantly, the proof of Theorem \ref{theo:pointwise convergence for a regular sampling} in Appendix \ref{...} inspires us in the construction of our graph Laplacian. It gives us a strong hint how the parameter $t$ needs to adjusted with respect of the number of point $n$.
 
 It is important to keep in mind the limits of Theorem \ref{theo:pointwise convergence for a regular sampling}.
 First, it is \emph{not} a proof of equivariance of the graph convolution for a specific sampling. To construct such a proof, a stronger convergence result is needed, for example uniform convergence (instead of pointwise).
-Unfortunately, the graph laplacian does \emph{not} converges uniformly in general \cite{belkin2007convergence}. This can probably be overcomed by considering a specific class of functions, such as bandlimited function.
+Unfortunately, the graph laplacian does \emph{not} converges uniformly in general \cite{belkin2007convergence}. This can probably be overcome by considering a specific class of functions, such as bandlimited function.
 Second, while do not have a proof for it, we strongly believe that the HEALpix sampling do satisfy the hypothesis $d^{(n)}\leq \frac{C}{\sqrt{n}}$ of Theorem \ref{theo:pointwise convergence for a regular sampling}. This is discussed in Appendix~\ref{...}
 
 
 % 3) Show experimental results
 \paragraph{Empirical convergence.}
-From 20\% error on V1, we got to less than 2\% error on v2. More neighbors, more precision, plus a better kernel width obtained "minimizing" the equivariance error. How to explain how we found the kernel width? Because minimizing the kernel width would lead to a completely disconnected graph. What we did was finding a heuristic law (fix neighbors, set the kernel width by imposing the minimum weight to be equal to $0.1$) and then optimizing
+
+% 3.0) explain how we obtained the figures
+We calculated numerically the equivariance error (\ref{eq:mean equivariance error}) by generating $N$ monochromatic signals and $M$ random rotations for each signal. The colors that were used were chosen in the range $(0,\  3N_{side}-1)$ to allow for an almost perfect synthesis of the rotated signals, and thus an almost perfect implementation (up to numerical errors) of the operator $\b{R}_V$ (\cite{healpix_primer})
+
+% 3.1) explain what the figures tell us
+From 20\% error on V1, we got to less than 2\% error on V2. The number of neighbors used for V2 is $50$. More neighbors implies naturally more precision, plus a better kernel width obtained by "minimizing" the equivariance error. \mart{How to explain how we found the kernel width? Micha\"el I need your help here!!} Literally, minimizing the kernel width would lead to a completely disconnected graph. What we did was finding a heuristic law (fix neighbors, set the kernel width $\hat t$ by imposing the minimum weight to be equal to $0.1$) and then minimizing the equivariance error in the range $(\hat t / 10, \hat t\cdot 10) $. We got better that Khasanova-Frossard \mart{(check the code)} that however uses only 4 neighbors. However, it is built to explicitely minimize the equivariance error, so we expect it to be a good benchmark against which to test our construction. 
 \begin{figure}
 	\centering
 	\includegraphics[width=0.9\linewidth]{DeepSphereV1}
@@ -289,7 +297,6 @@ From 20\% error on V1, we got to less than 2\% error on v2. More neighbors, more
 	\caption{}
 	\label{fig:khasanova_frossard}
 \end{figure}
-Explain the difference of errors... Uniform sampling is better
 
 
 \section{Experiments [2 pages]}
@@ -462,18 +469,21 @@ Left blank for anonymity reason
 \appendix
 
 \section{Proof of theorem}
-
+Since it is known that to prove the pointwise convergence of $\b{L}_n^t$ it is sufficient to prove the convergence of its continuous counterpart $L_n^t$ to $\Delta_{\mathbb S^2}$ (\cite{belkin2005towards}), we will prove here that 
+\begin{equation}\label{eq:continuous convergence}
+ \lim_{n\to\infty} \frac{|\mathbb{S}^2|}{4\pi t_n} {L}_n^{t_n} f(y) =  \Delta_{\mathbb{S}^2}f(y)
+\end{equation}
+where $L_n^t$ is defined as follows:
 \begin{definition}{}(Heat Kernel Graph Laplacian operator)\\
 	\label{def:Heat Kernel Graph Laplacian operator}
 	\text{Given a sampling $\{x_i\in\mathcal M\}_{i=0}^{n-1}$ of the manifold we define the \textbf{operator} }$L_n^t$ such that
 	$$L_n^tf(y) := \frac{1}{n}\left[ \sum_{i=0}^{n-1} \exp{-\frac{||x_i-y||^2}{4t}}\left(f(y)-f(x_i)\right)\right]$$
 \end{definition}
+For the sake of the proof we will need also the following facts:
 \begin{definition}{} \cite{belkin2005towards}\\ \label{eq: my L^t} Let $\mu$ be the uniform probability measure on the manifold $\mathcal M$, and let $\text{vol}(\mathcal M)$ be the volume of $\mathcal M$. We define the functional approximation to the Laplace-Beltrami operator to be the operator $L^t: L^{2}(\mathcal{M}) \rightarrow L^{2}(\mathcal{M})$ such that
 	\label{def:Functional approximation to the Laplace-Beltrami operator}
 	$$ L^tf(y) = \int_{\mathcal M}e^{-\frac{||y-x||^2}{4t}}\left(f(y)-f(x)\right)d\mu(x)$$
 \end{definition}
-
-The core of the work of Belkin et al. is the proof, that we will not discuss, of the following proposition.
 
 \begin{prop} \cite{belkin2005towards} \\
 Let $\mathcal M$ be a $k$-dimensional compact smooth manifold embedded in some euclidean space $\mathbb R^N$, and fix $p\in\mathcal M$. Let the data points $x_1, \dots, x_n$ be sampled form a uniform distribution on the manifold $\mathcal M$. Set $t_n=n^{-\frac{1}{k+2+\alpha}}$, for any $\alpha>0$ and let $f\in\mathcal C_\infty(\mathcal M)$. Then
@@ -481,7 +491,10 @@ Let $\mathcal M$ be a $k$-dimensional compact smooth manifold embedded in some e
 	\label{prop:3}
 \end{prop}
 
-Our first goal is to prove the following Proposition:
+% brief introduction:
+This proof consists in two steps: first, we prove that $\b L_n^t \rightarrow L^t$, and second we use proposition \ref{prop:3} from Belkin et al. to prove equation \ref{eq:continuous convergence}. This equation, as already explained in \cite{belkin2007convergence}, directly implies theorem \ref{theo:pointwise convergence for a regular sampling}.
+
+Our first goal is thus to prove the following Proposition:
 \vspace{0.5cm}
 \begin{prop}\label{prop:1}
 	For an equal area sampling $\{x_i\in\mathbb S^2\}_{i=0}^{n-1}: A_i=A_j \forall i,j$ of the sphere it is true that for all $f: \mathbb S^2 \rightarrow \mathbb R$ Lipschitz with respect to the euclidean distance $||\cdot||$ with Lipschitz constant $\mathcal L_f$
@@ -520,8 +533,6 @@ $$
 $$
 \end{prop}
 \vspace{0.5cm}
-
-The main result of this section, theorem  \ref{theo:pointwise convergence in the healpix case}, is then an immediate consequence of Proposition \ref{prop:2} and Proposition \ref{prop:3}.
 
 \begin{proof}[Proof of Proposition \ref{prop:2}]
 
@@ -595,8 +606,9 @@ $$\begin{cases}
 
 \end{proof}
 
-The proof of theorem \ref{theo:pointwise convergence in the healpix case} is now trivial:
-\begin{proof}[Proof of Theorem \ref{theo:pointwise convergence in the healpix case}]
+
+Theorem  \ref{theo:pointwise convergence for a regular sampling}, is then an immediate consequence of Proposition \ref{prop:2} and Proposition \ref{prop:3}.
+\begin{proof}[Proof of Theorem \ref{theo:pointwise convergence for a regular sampling}]
 	Thanks to Proposition \ref{prop:2} and Proposition \ref{prop:3}	we conclude that $\forall y\in\mathbb S^2 $
 	$$\lim_{n\to\infty}\frac{1}{4\pi t_n^2} L_n^{t_n}f(y) =  \lim_{n\to\infty}\frac{1}{4\pi t_n^2} L^{t_n}f(y) = \frac{1}{|\mathbb S^2|}\triangle_{\mathbb S^2}f(y) $$
 \end{proof}
@@ -865,77 +877,6 @@ batch size 64, RMSprop optimizer, constant learning rate of $1 \cdot 10{-3}$, MS
     [GC_{50}\, +\, BN\, +\, ReLU]\, +\, [GC_{100}\, +\, BN\, +\, ReLU]\, +\, [GC_{100}\, +\, BN\, +\, ReLU]\, +\, GAP\, +\, FCN
 \end{dmath}
 
-\subsection{MATERIAL FROM MARTINO'S MASTER PROJECT}
 
-% \subsection{Equiangular}
-
-\cite{khasanova2017sphericalcnn} designed a discrete Laplacian that is explicitly intended to work on the sphere with the equiangular sampling. They consider the set $\mathcal G$ of all the possible graphs where each node is connected only to four of its nearest neighbours (North, Sud, West, East) and propose a weighting scheme $w_{ij}$ that minimizes the difference in the response to the polynomial spectral filter $\mathcal F = \mathbf L$ evaluated on images of the same object seen at different latitudes. In other words, they solve the minimization problem
-\begin{equation} \label{eq:minimization frossard}
-	\min_{W\in\mathcal G} \left|\mathcal{F}\left(\mathbf{y}\left(v_{ e}\right)\right)-\mathcal{F}\left(\mathbf{y}\left(v_{ i}\right)\right)\right|
-\end{equation}
-for the adjacency matrix $W$, where $\mathbf y(v_i)$ is the image of the object on the sphere centered on the vertex $v_i$, and $\mathcal F (\mathbf y(v_e))$ is the response of the filter at the vertex $v_e$ that lies at the same longitude of the vertex $v_i$ but on the equator. In their work they prove that the optimal weights solving the minimization problem (\ref{eq:minimization frossard}) are given by weights $w_{ij}$ inversely proportional to the Euclidean distance between vertices:
-\begin{equation} \label{eq:frossard weights}
-	w_{ij} = \frac{1}{\norm{x_i-x_j}}
-\end{equation}
-This construction is interesting since it is adapted to the equiangular sampling, and leads to a very sparse graph with only 4 neighbors per vertex. Furthermore, to obtain the weights (\ref{eq:frossard weights}) every calculation was done in the \textit{spatial domain}, without any consideration about the spectral interpretation of the filter. In order to compare it to the HKGL we show the equivariance error by spherical harmonic degree in figure \ref{fig:Equivariance error of the Frossard-Khasanove graph}. It can be appreciated how this construction performs a little worse that the full HKGL for low bandwidth samplings, but converges faster than the \textit{full} HKGL, and its spectrum looks much more similar to the one of $\Delta_{\mathbb S^2}$.
-
-\begin{figure}
-	\centering
-	\includegraphics[width=\textwidth]{KhasanovaFrossardgraphonequiangularsampling.png}
-	\caption{Equivariance error of the Khasanova-Frossard graph on the equiangular sampling with bandwidth $b=8$ by spherical harmonic degree $\ell$.}
-	\label{fig:Equivariance error of the Frossard-Khasanove graph}
-\end{figure}
-
-\paragraph{Link with the Laplace-Beltrami Operator}
-
-Given a sampling $x_0, \dots, x_{n-1}$ define $\sigma_i$ to be the patch of the surface of the sphere corresponding to the $i$th point of the sampling, define $A_i$ to be its corresponding area and $d_i$ to be the radius of the smallest ball in $\mathbb R^3$ containing the $i$-th patch. Define $d^{(n)} := \max_{i=0, \dots, n}d_i$ and $A^{(n)}=\max_{i=0, \dots, n}A_i$.
-
-\begin{theorem}
-	For a sampling $\mathcal P = \{x_i\in\mathbb S^2\}_{i=0}^{n-1}$ of the sphere that is equi area and such that $d^{(n)} \leq \frac{C}{\sqrt{n}}$, for all $f: \mathbb S^2 \rightarrow \mathbb R$ Lipschitz with respect to the euclidean distance in $\mathbb R^3$, for all $y\in\mathbb S^2$, there exists a sequence $t_n = n^\beta$ such that the rescaled Heat Kernel Graph Laplacian operator $\frac{|\mathbb S^2|}{4\pi t_n}L^t_n$ converges pointwise to the Laplace Beltrami operator on the sphere $\triangle_{\mathbb S^2}$  for $n\to\infty$:
-	$$ \lim_{n\to\infty}\frac{|\mathbb S^2|}{4\pi t_n} L_n^{t_n}f(y) =  \triangle_{\mathbb S^2}f(y).$$
-	\label{theo:pointwise convergence in the healpix case}
-\end{theorem}
-
-
-
-\subsection{MATERIAL FROM MARTINO'S MASTER PROJECT}
-
-\todo{
-* define a measure of equiv error \\
-* show convergence empirically (for Nside up to 1024) \\
-* improved upon V1 \\
-* no difference in practice (see experiment xx) $\Rightarrow$ NNs are resilient to equiv error \\
-}
-
-Take a sampling scheme $V=\{v_i\in\mathbb S^2, i=0, \dots, n\}$ of the sphere, a weighted undirected graph $G(V, E, \mathbf W)$, a signal $f: \mathbb S^2\to\mathbb R$ and its sampled representation $\mathbf f:\ f_i=f(v_i)$. Suppose that there exists a sampling operator $T_V: L^2(\mathbb S^2) \supset F\to \mathbb R^n,\  T_V(f) = \mathbf f$ defined on a suitable subspace $F$ of $L^2(\mathbb S^2)$ such that it is invertible, i.e., we can unambiguously reconstruct the function $f\in F$ from its sampled values $\mathbf f$. The existence of such subspace depends on the sampling scheme $V$, and its characterization is a common problem in signal processing \cite{driscoll1994Fouriersphere}. Define the rotation operator $\Lambda(g), g\in SO(3)$: $\Lambda(g) f(\omega) = f\left(g^{-1} \omega\right)$.
-
-We now want to understand how to set the edges and the weights of $G$ such that
-\begin{equation} \label{eq:equivariance}
-	T \Lambda(g) T^{-1} \Omega_k T f = \Omega_k T \Lambda(g) f,
-\end{equation}
-i.e., the graph convolution $\Omega_k$ and any rotation $\Lambda(g)$ commute.
-
-Verifying equation (\ref{eq:equivariance}) is really hard in practice, due to the fact that for almost all sampling schemes $V$ it is not known if there exists a space $F$ in which $T$ is invertible. A special case is the \textit{equiangular sampling} scheme where a sampling theorem holds \cite{driscoll1994Fouriersphere}, and thus we have a closed form of $T^{-1}$. For sampling schemes where no such sampling theorem is available, there are implementations of discrete SHT to reconstruct a sampled signal $\mathbf f$, thus providing a way to approximate $T^{-1}$. Thanks to this we are able, for a given sampling, a given function $f$, a given rotation $g$, and a given kernel $k$, to compute the \textit{normalized equivariance error}
-\begin{equation} \label{eq:equivariance error}
-	E_{G}(f, g) = \left(\frac{ \norm {T \Lambda(g) T^{-1} \Omega_k Tf - \Omega_k T \Lambda(g) f}_{L^2(\mathbb R^2)}}{\norm {Tf}_{L^2(\mathbb R^2)}}\right)^2,
-\end{equation}
-where $T^{-1}$ is substituted with a discrete SHT in case $T$ is not invertible.
-A measure of how equivariant a graph is with respect to rotations will then be given by the \textit{mean equivariance error}
-\begin{equation} \label{eq:mean equivariance error}
-	\overline E_G = \mathbb E_{f, g} \ E_G(f, g).
-\end{equation}
-In practice the expected value is obtained by averaging over a finite number of random functions and random rotations. The mean equivariance error $\overline E_G$ gives us an indication of how close the graph $G$ is from being equivariant to rotations. Now we state an intuitive concept that explains how to construct rotation invariant graphs, i.e., graphs such that $\overline{E_G}$ is small.
-The mean equivariance error $\overline{E_G}$ will be small if the scalar product $\mathbf f^T \mathbf v_{i(\ell, m)}$ well approximates $\hat {f}(\ell,m)$, i.e., the $L^2$ scalar product of the continuous signal $\hat {f}(\ell,m)= \int_{\eta \in \mathbb S^2}f(\eta)Y_\ell^m(\eta)d\mu(\eta)$.
-
-\textit{If $V$ is an equal area sampling scheme}, i.e., the area around each pixel $v_i$ is the same, $\overline{E_G}$ will be small if the graph Laplacian $\mathbf L$ is such that its eigenvectors $\mathbf v_i$ well approximate the eigenfunctions of the Laplace-Beltrami operator $\Delta_{\mathbb S^2}$ evaluated in the points of the sampling scheme, i.e., $\mathbf v_{i(\ell, m)} \approx Y_\ell^m(x_i)$.
-
-In this way we framed the problem of constructing a rotation invariant graph with the more general problem of coming up with a matrix $\mathbf L$ with some specific spectral properties.
-
-\begin{figure}
-	\centering
-	\includegraphics[width=\textwidth]{DeepSphereonHEALPix.png}
-	\includegraphics[width=\textwidth]{OptimalHKGLonHEALPix.png}
-	\caption{\label{fig:DeepSphere equivariance error}Mean equivariance error of the diffusion filter $\exp(-\Lambda)$ for $G$, $G'$ and the full HKGL, by spherical harmonic degree. Notice the difference in the scale of the y axis for DeepSphere, that reaches errors up to 30\%.}
-\end{figure}
 
 \end{document}
