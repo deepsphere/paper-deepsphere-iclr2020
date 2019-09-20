@@ -207,7 +207,7 @@ The gist of the method is to define the spherical convolution using a graph, and
 \subsection{Problem formulation} 
 % The plan for this section
 % 0.1 Explain the sampling problem
-As the graph convolution acts on a sampled version of the signal $\b{f}$ and the rotation on its continuous counterpart $f$, we first need to define a sampling operator.
+As the graph convolution acts on a sampled version of the function $\b{f}$ and the rotation on its continuous counterpart $f$, a sampling operator is needed.
 Given a sampling scheme $V=\{v_i\in\mathbb S^2, i=0, \dots, n\}$ of the sphere and a function $f : \mathbb S^2 \supset F_V \to \mathbb R$, the sampling operator $T_V: L^2(\mathbb S^2) \supset F\to \mathbb R^n,\  T_V(f) = \b{f}$ is defined as $\b{f}:\ f_i=f(v_i)$, where $F_V$ suitable subspace of $L^2(\mathbb S^2)$ such that $T_V$ is invertible, i.e., we can unambiguously reconstruct the function $f\in F_V$ from its sampled values $\b{f}$.
 The existence of such subspace depends on the sampling scheme $V$, and its characterization is a common problem in signal processing \cite{driscoll1994Fouriersphere}.
 For most samplings, it is not known if $F_V$ exist and hence if $T_V$ is invertible. A special case is the \textit{equiangular sampling} scheme where a sampling theorem holds, and thus we have a closed form of $T_V^{-1}$ is known. % \cite{driscoll1994Fouriersphere}
@@ -222,7 +222,7 @@ As a result, to simplify our analysis, we concentrate on the graph Laplacian and
 \begin{equation} \label{eq:equivariance}
 	\b{R}_V(g) \b{L} \b{f} = \b{L} \b{R}_V(g) \b{f} \hspace{1cm} \forall f\in F_V \text{ and } \forall g\in SO(3),
 \end{equation}
-where $\b{R}_V(g) = T_V R(g) T_V^{-1}$. For practical application, we define the \textit{normalized equivariance error} for a signal $\b{f}$, and a  rotation $g$ as:
+where $\b{R}_V(g) = T_V R(g) T_V^{-1}$. For practical a evaluation of the equivariance, we define the \textit{normalized equivariance error} for a signal $\b{f}$, and a  rotation $g$ as:
 \begin{equation} \label{eq:equivariance error}
 	E_{\b{L}}(\b{f}, g) = \left(\frac{ \norm {\b{R}_V(g) \b{L} \b{f} - \b{L} \b{R}_V(g) \b{f}} }{\norm {\b{f}}}\right)^2,
 \end{equation}
@@ -230,10 +230,10 @@ More generally for a class of signal $f \in C \subset F_V$, the \textit{mean equ
 \begin{equation} \label{eq:mean equivariance error}
 	\overline E_{\b{L}, C} = \mathbb E_{\b{f}\in C, g\in SO(3)} \ E_{\b{L}}(\b{f}, g).
 \end{equation}
-In practice, to anlyse the equivariance error frequency,  the set $C$ we used is composed of functions $f$ with made of spherical harmonic of a single degree $\ell$.
+In practice, to analyze the equivariance error frequency,  the set $C$ we used is composed of functions $f$ made of spherical harmonic of a single degree $\ell$.
 The expected value is obtained by averaging over a finite number of random functions and random rotations.
 
-\subsection{Finding a the optimal set of weights}
+\subsection{Finding the optimal set of weights}
 % !) summary the work of Khasanova -> No! to be put in section 2) Method
 \cite{khasanova2017sphericalcnn} designed a Laplacian $\b{L}$ explicitly intended to work with the equiangular sampling.
 They consider the set $\mathcal{G}$ of all the possible graphs where each node is connected only to four of its nearest neighbours (North, Sud, West, East) and propose a weighting scheme $w_{ij}$ that minimizes \eqref{eq:equivariance error} for specific rotations on the longitude latitude axis.
@@ -243,9 +243,9 @@ Their approach leads to weights $w_{ij}$ inversely proportional to the Euclidean
 \end{equation}
 
 % 2) explain our approach
-We chose a different approach and take inspiration from \cite{belkin2005towards}, which proves that for a random \emph{uniform sampling} scheme the graph Laplacian converges toward the Laplace-Beltrami operator $\Delta_{\mathbb{S}^2}$ as the number of sampling point goes to infinity.
+We chose a different approach and take inspiration from \cite{belkin2005towards}, which proves that for a random \emph{uniform sampling} scheme the graph Laplacian converges toward the Laplace-Beltrami operator $\Delta_{\mathbb{S}^2}$ as the number of sampling points goes to infinity.
 This convergence result is important as a) $\Delta_{\mathbb{S}^2}$ commutes with rotation ($\Delta_{\mathbb{S}^2}R(g) = R(g)\Delta_{\mathbb{S}^2}$) and b) is diagonalized by the spherical harmonics. 
-In this case the weighting scheme is full (every node is connected to every node) and is based the exponential kernel: 
+In this case the weighting scheme is full (every node is connected to every node) and is based on the exponential kernel: 
 \nati{@martino, please check this equation... Do you use 4t?}
 \begin{equation} \label{eq:belkin_weights}
 w_{ij} = e^{-\frac{1}{t} \norm{x_i-x_j}^2}
@@ -258,20 +258,20 @@ We analyse our proposed weighting scheme both theoretically and empirically.
 
 \paragraph{Theoretical convergence.}
 We extend the work of Belkin and Nyiogi to a fixed sampling. 
-Given a sampling $V = \{x_0, \dots, x_{n-1}\}$ define $\sigma_i$ to be the patch of the surface of the sphere corresponding to $x_i$, define $A_i$ to be its corresponding area and $d_i$ to be the radius of the smallest ball in $\mathbb R^3$ containing $\sigma_i$. Define $d^{(n)} := \max_{i=0, \dots, n}d_i$ and $A^{(n)}=\max_{i=0, \dots, n}A_i$.
+Given a sampling $V = \{x_0, \dots, x_{n-1}\}$, define $\sigma_i$ to be the patch of the surface of the sphere corresponding to $x_i$, define $A_i$ to be its corresponding area and $d_i$ to be the radius of the smallest ball in $\mathbb R^3$ containing $\sigma_i$. Define $d^{(n)} := \max_{i=0, \dots, n}d_i$ and $A^{(n)}=\max_{i=0, \dots, n}A_i$.
 
 \begin{theorem}
-	For a sampling $V = \{x_i\in\mathbb S^2\}_{i=0}^{n-1}$ of the sphere that is equi area and such that $d^{(n)} \leq \frac{C}{\sqrt{n}}$, for all $f: \mathbb S^2 \rightarrow \mathbb R$ Lipschitz with respect to the euclidean distance in $\mathbb R^3$, for all $y\in\mathbb S^2$, there exists a sequence $t_n = n^\beta$ such that the rescaled Heat Kernel Graph Laplacian $\frac{|\mathbb S^2|}{4\pi t_n}\b {L}^t_n$ converges pointwise to the Laplace Beltrami operator on the sphere $\Delta{\mathbb S^2}$  for $n\to\infty$:
+	For a sampling $V = \{x_i\in\mathbb S^2\}_{i=0}^{n-1}$ of the sphere that is equi-area and such that $d^{(n)} \leq \frac{C}{\sqrt{n}}$, for all $f: \mathbb S^2 \rightarrow \mathbb R$ Lipschitz with respect to the Euclidean distance in $\mathbb R^3$, for all $y\in\mathbb S^2$, there exists a sequence $t_n = n^\beta$ such that the rescaled Heat Kernel Graph Laplacian $\frac{|\mathbb S^2|}{4\pi t_n}\b {L}^t_n$ converges pointwise to the Laplace Beltrami operator on the sphere $\Delta{\mathbb S^2}$  for $n\to\infty$:
 	$$ \lim_{n\to\infty} \frac{|\mathbb{S}^2|}{4\pi t_n} \b{L}_n^{t_n} T_V f(x_i) =  \Delta_{\mathbb{S}^2}f(x_i)\quad \forall i=0, ..., n-1.$$
 	\label{theo:pointwise convergence for a regular sampling}
 \end{theorem}
-This theorem implies immediately that $\b{L}$ converges pointwisely toward an operator ($\Delta_{\mathbb S^2}$) commuting with rotation and hence is a strong hints for equivariance.
-Importantly, the proof of Theorem \ref{theo:pointwise convergence for a regular sampling} in Appendix \ref{...} inspires us in the construction of our graph Laplacian. It gives us a strong hint how the parameter $t$ needs to adjusted with respect of the number of point $n$.
+This theorem implies immediately that $\b{L}$ converges pointwisely toward an operator ($\Delta_{\mathbb S^2}$) commuting with rotation and hence is a strong hint for equivariance.
+Importantly, the proof of Theorem \ref{theo:pointwise convergence for a regular sampling} in Appendix \ref{...} inspires us in the construction of our graph Laplacian. It gives us a strong hint how the parameter $t$ needs to be adjusted with respect to the number of points $n$.
 
 It is important to keep in mind the limits of Theorem \ref{theo:pointwise convergence for a regular sampling}.
 First, it is \emph{not} a proof of equivariance of the graph convolution for a specific sampling. To construct such a proof, a stronger convergence result is needed, for example uniform convergence (instead of pointwise).
 Unfortunately, the graph laplacian does \emph{not} converges uniformly in general \cite{belkin2007convergence}. This can probably be overcome by considering a specific class of functions, such as bandlimited function.
-Second, while do not have a proof for it, we strongly believe that the HEALpix sampling do satisfy the hypothesis $d^{(n)}\leq \frac{C}{\sqrt{n}}$ of Theorem \ref{theo:pointwise convergence for a regular sampling}. This is discussed in Appendix~\ref{...}
+Second, while do not have a proof for it, we strongly believe that the HEALpix sampling does satisfy the hypothesis $d^{(n)}\leq \frac{C}{\sqrt{n}}$ of Theorem \ref{theo:pointwise convergence for a regular sampling}. This is discussed in Appendix~\ref{...}
 
 
 % 3) Show experimental results
@@ -519,7 +519,7 @@ For the sake of the proof we will need also the following facts:
 \end{definition}
 
 \begin{prop} \cite{belkin2005towards} \\
-Let $\mathcal M$ be a $k$-dimensional compact smooth manifold embedded in some euclidean space $\mathbb R^N$, and fix $p\in\mathcal M$. Let the data points $x_1, \dots, x_n$ be sampled form a uniform distribution on the manifold $\mathcal M$. Set $t_n=n^{-\frac{1}{k+2+\alpha}}$, for any $\alpha>0$ and let $f\in\mathcal C_\infty(\mathcal M)$. Then
+Let $\mathcal M$ be a $k$-dimensional compact smooth manifold embedded in some Euclidean space $\mathbb R^N$, and fix $p\in\mathcal M$. Let the data points $x_1, \dots, x_n$ be sampled form a uniform distribution on the manifold $\mathcal M$. Set $t_n=n^{-\frac{1}{k+2+\alpha}}$, for any $\alpha>0$ and let $f\in\mathcal C_\infty(\mathcal M)$. Then
 	$$\frac{1}{t}\frac{1}{(4\pi t)^{k/2}} L^tf(p) \xrightarrow{t\to 0 } \frac{1}{\text{vol}(\mathcal M)}\triangle_{\mathcal M}f(p).$$
 	\label{prop:3}
 \end{prop}
@@ -530,7 +530,7 @@ This proof consists in two steps: first, we prove that $\b L_n^t \rightarrow L^t
 Our first goal is thus to prove the following Proposition:
 \vspace{0.5cm}
 \begin{prop}\label{prop:1}
-	For an equal area sampling $\{x_i\in\mathbb S^2\}_{i=0}^{n-1}: A_i=A_j \forall i,j$ of the sphere it is true that for all $f: \mathbb S^2 \rightarrow \mathbb R$ Lipschitz with respect to the euclidean distance $||\cdot||$ with Lipschitz constant $\mathcal L_f$
+	For an equal area sampling $\{x_i\in\mathbb S^2\}_{i=0}^{n-1}: A_i=A_j \forall i,j$ of the sphere it is true that for all $f: \mathbb S^2 \rightarrow \mathbb R$ Lipschitz with respect to the Euclidean distance $||\cdot||$ with Lipschitz constant $\mathcal L_f$
 	$$
 	\left| \int_{\mathbb S^2}f({ x})\text{d}{\mu(x)} - \frac{1}{n}\sum_i f( x_i)\right|\leq \mathcal L_fd^{(n)}.
 	$$
