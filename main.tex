@@ -39,15 +39,42 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 \newcommand{\new}{\marginpar{NEW}}
 \newcommand{\todo}[1]{{\color[rgb]{.6,.1,.6}{#1}}}
 \newcommand{\nati}[1]{{\color[rgb]{.3,.5,.9}{#1}}}
+\newcommand{\mart}[1]{{\color[rgb]{.9,.5,.3}{#1}}}
+
+
+\renewcommand{\figref}[1]{figure~\ref{fig:#1}}
+\renewcommand{\Figref}[1]{Figure~\ref{fig:#1}}
+\newcommand{\tabref}[1]{table~\ref{tab:#1}}
+\newcommand{\Tabref}[1]{Table~\ref{tab:#1}}
+\renewcommand{\secref}[1]{section~\ref{sec:#1}}
+\renewcommand{\Secref}[1]{Section~\ref{sec:#1}}
+%\newcommand{\secref}[1]{\S\ref{sec:#1}}
+\newcommand{\eqnref}[1]{equation~(\ref{eqn:#1})}
+\newcommand{\Eqnref}[1]{Equation~(\ref{eqn:#1})}
 
 %\iclrfinalcopy % Uncomment for camera-ready version, but NOT for submission.
 \begin{document}
+
+\todo{
+\begin{itemize}
+	\item shall we really name it? Or simply reference the general idea of a graph-based spherical CNN.
+	\item adjacency matrix: $A$ instead of $W$?
+	\item anonymize DeepSphere citation
+	\item climate spherical figure: inputs with TC and AR labels superimposed [Frédérick]
+	\item citet for inline, citep for parenthesis
+	\item More details on related work? Not sure we have the space. If yes, detailed comparison with related work after method.
+	\item PSD of climate data: how does it compare to cosmo and 3D objects?
+	\item align the spheres in figure 1
+\end{itemize}
+}
+\newpage
 
 \maketitle
 
 \begin{abstract}
 
-story: there are tradeoffs when designing a spherical CNN
+story: there are tradeoffs when designing a spherical CNN -> DS strikes a controllable balance between efficiency / cost and exactitude / equivariance
+% DSv2 has a clear tradeoff between equivariance and computational cost
 
 * method development: tool that solve a need (balance btw the desiderata: equiv vs cost)\\
 * research question: anisotropy (highlight from the start or leave it as a dangling question in the end)\\
@@ -63,20 +90,15 @@ Comparison with previous work on shape classification and climate event detectio
 
 \end{abstract}
 
-\todo{
-	* adjacency matrix: $A$ instead of $W$? \\
-	* anonymize DeepSphere citation
-}
-
 \section{Introduction [2 pages]}
 
-Spherical data is common, and comes in two favors: (i) intrinsically spherical, and (ii) projection due to observation.
+Spherical data is found in many applications.
 % spherical data f: S^2 -> R, projection from R^3
-Examples of (i) are planetary data (such as temperature, wind, geological) and brain activity.
-An example of (ii) is cosmological observations.
-
-Learning is desirable for...
-Problems to be tackled by machine learning might be local or global regression or classification.
+Planetary data (such as meteorological or geological measurements) and brain activity are example of intrinsically spherical data.
+The observation of the universe, LIDAR scans, and the digitalization of 3D objects are examples of projections due to observation.
+See \figref{examples}.
+In many applications, labels or variables are to be inferred from spherical data.
+Examples are the inference of cosmological parameters from the distribution of mass in the universe \citep{perraudin2019deepspherecosmo}, the segmentation of omnidirectional images \citep{khasanova2017sphericalcnn}, and the segmentation of cyclones from Earth observation \citep{mudigonda2017climateevents}.
 
 \begin{figure}[h]
 	\includegraphics[height=0.25\linewidth]{example_cosmo_cmb}
@@ -87,10 +109,11 @@ Problems to be tackled by machine learning might be local or global regression o
 	\hfill
 	\includegraphics[height=0.25\linewidth]{example_ghcn_graph}
 	\caption{
-		Examples of intrinsically spherical data: (left) the cosmic microwave background (CMB) temperature from \citet{planck2015overview},
-		%with galactic plane masked
-		(middle) daily maximum temperature from the Global Historical Climatology Network (GHCN),\protect\footnotemark (right) brain activity recorded through magnetoencephalography (MEG).\protect\footnotemark
-		For those examples, a rigid full-sphere pixelization is not ideal: the Milky Way's galactic plane masks observations, brain activity is measured on the scalp only, and the position and density of weather stations is arbitrary and changes over time.
+		Examples of intrinsically spherical data:
+		(left) the cosmic microwave background (CMB) temperature from \citet{planck2015overview},
+		(middle) brain activity recorded through magnetoencephalography (MEG),\protect\footnotemark
+		(right) daily maximum temperature from the Global Historical Climatology Network (GHCN).\protect\footnotemark
+		A rigid full-sphere pixelization is not ideal: the Milky Way's galactic plane masks observations, brain activity is only measured on the scalp, and the position of weather stations is arbitrary and changes over time.
 		Graphs can faithfully and efficiently represent sampled spherical data by placing vertices where data has been measured.
 		%\todo{something from climate, weather?}
 		%\todo{compare ideal full-spheres (like SHREC-17 projection from Esteves, 360 from Coors) to real-world measurements?}
@@ -101,171 +124,185 @@ Problems to be tackled by machine learning might be local or global regression o
 \footnotetext[1]{\scriptsize\url{https://www.ncdc.noaa.gov/ghcn-daily-description}}
 \footnotetext[2]{\scriptsize\url{https://martinos.org/mne/stable/auto_tutorials/plot_visualize_evoked.html}}
 
-Exploit the geometrical properties of the domain, symmetries.
+% balance of ??
+% Exploit the geometrical properties of the domain, symmetries.
+% desiderata or tradeoff
+% We identified the following desiderata for a spherical NN.
+%Those take different tradeoffs among the following desiderata.
+%\begin{enumerate}
+%	\item \textbf{Respect the geometry.}  % geometry, domain
+%		By respecting the domain, a spherical NN should respect the symmetries of the sphere, i.e., be equivariant to rotation, and not deform the sphere, e.g., by a projection on the icosahedron.
+%	\item \textbf{Generality.} % powerful
+%		How general the NN is as a function approximator.
+%		For example, isotropic filters are less general than anisotropic filters.
+%	\item \textbf{Scalability.}
+%		How a spherical CNN scales w.r.t.\ the number of pixels in terms of computational cost and memory usage.
+%		% memory: feature maps and parameters
+%	\item \textbf{Flexibility.}
+%		Whether the NN is constrained to work on specific samplings, part of the sphere (useful when data is masked), and irregular samplings.
+%	\item \textbf{Simplicity.}
+%		Simplicity of its derivation and implementation.
+%\end{enumerate}
 
-We identify the following desiderata for spherical CNNs:\\
-* respect the domain\\
-  * rotational equivariance\\
-  * deformation (e.g., on the icosahedron for gauge)\\
-* powerful / generality $\Rightarrow$ isotropic vs anisotropic\\
-* scale: computational cost \& memory usage (feature maps)\\
-* flexible (samplings, irregular), simplicity (implementation)\\
+% keep the story simple and focus on the tradeoff between cost (time / computational and storage / memory) and exactitude
+As neural networks (NNs) have proved to be great tools for inference, variants have been developed to handle spherical data.
+Exploiting the locally Euclidean property of the sphere, early attempts used standard 2D convolutions on a grid discretization of the sphere \citep{boomsma2017sphericalcnn, su2017sphericalcnn, coors2018sphericalcnn}.
+While simple and efficient, those convolutions are not equivariant to rotations.
+On the other side of this tradeoff, \citet{cohen2018sphericalcnn} and \citet{esteves2018sphericalcnn} proposed to perform proper spherical convolutions through the spherical harmonic transform.
+While equivariant to rotations, those convolutions are expensive.
 
-Multiple methods have been developed to handle spherical data, each with their strengths and weaknesses.
+% On the one side, we have Cohen which is computationally very expensive but perfectly equivariant most general, on the other we have cube sphere which computationl very good but not equivariant at all. Other methods are tradedoff between these two. What is a good tradeoff? We think that DeepSphere is.
 
-On the one side, we have Cohen which is computationally very expensive but perfectly equivariant most general, on the other we have cube sphere which computationl very good but not equivariant at all. Other methods are tradedoff between these two. What is a good tradeoff? We think that DeepSphere is
+As the lack of equivariance penalizes performance (\secref{exp:cosmo}) and expensive convolutions prohibit their application to some real-world problems, methods standing between those two extremes are desired.
+\citet{cohen2019gauge} proposed to reduce costs by limiting the size of the representation of the symmetry group.
+% (from the continuous rotation group SO(3) to a discrete rotation group)
+% the dimensionality of feature maps is equal to the size of the irreducible representation of the symmetry group
+%As a platonic solid, it \todo{exhibits discrete rotations}.
+% the representation of its symmetry group is much smaller than SO(3)
+\todo{not all rotations, subset of SO(3)?}
+The projection of the data from the sphere to the icosahedron however introduces distortions that might hinder performance (see the experiments in \secref{exp:climate}).
+\todo{Where does Jiang fit? Need a global coordinate system (ok for planets, not projections like cosmo)}
 
-Present the different spherical CNNs with pro and cons $\Rightarrow$ mostly scale vs generality\\
-* 2D CNN $\Rightarrow$ doesn't respect geometry and equivariance\\
-* Cohen spherical CNN $\Rightarrow$ most general, but doesn't scale\\
-* Cohen gauge $\Rightarrow$ fixes scale, at the price of deformation (sphere $\Rightarrow$ icosahedron)\\
-* Esteves $\Rightarrow$ ? \\
-* Jiang $\Rightarrow$ need a global coordinate system (ok for planets, not projections like cosmo)\\
-
-\begin{table}[b]
-    \centering
-    \begin{tabular}{l|c|c|c|c}
-         method & equivariance & generality & scalability & flexibility \\
-         \hline
-        Cohen & & & &  \\
-         \hline
-        Gauge & & & &  \\
-         \hline
-        Esteves & & & &  \\
-         \hline
-        Jiang & & & &  \\
-         \hline
-        2D CNN (cubed sphere) & & & &  \\
-         \hline
-        Ours & & & &  \\
-    \end{tabular}
-    \caption{Caption}
-    \label{tab:my_label}
-\end{table}
-
-This paper focuses on improving the equivariance of \cite{perraudin2019deepsphere}, a scalable graph-based method designed for cosmological applications.
-\todo{cite RLGM paper}
-Experiments on multiple problems of practical interest shows the competitiveness and flexibility of our method.
-Furthermore, those experiments show, contrarily to previously published results \cite{cohen_gauge_2019}, that anisotropic filters may be an unnecessary price to pay.
+Another approach represents the discretized sphere as a graph connecting pixels according to the distance between them \citep{khasanova2017sphericalcnn, perraudin2019deepspherecosmo}.
+While Laplacian-based graph convolutions are more efficient than spherical convolutions, they are not exactly equivariant \citep{defferrard2019deepsphereequiv}.
+In this work, we argue that graph-based spherical CNNs strike an interesting balance, with a controllable tradeoff between cost and equivariance.
+Experiments on multiple problems of practical interest show the competitiveness and flexibility of this approach.
+% Furthermore, experiments show that, perhaps surprisingly and contrarily to previously published results \citep{cohen2019gauge} \todo{[Bronstein?]}, anisotropic filters might be an unnecessary price to pay.
+% This paper focuses on improving the rotation equivariance of \citet{perraudin2019deepspherecosmo}, a scalable graph-based method designed for cosmological applications.
 
 \section{Method [1 pages]}
 
-* HEALPix: improvement from DeepSphere v1 \cite{perraudin2019deepsphere} \\
+The gist of the method is to define the spherical convolution using a graph, and the down-sampling operation using a hierarchical pixelisation of the sphere.
+
+* HEALPix: improvement from DeepSphere v1 \cite{perraudin2019deepspherecosmo} \\
 * equiangular: Renata \& Pascal \\
+
+% \cite{khasanova2017sphericalcnn} designed a discrete Laplacian that is explicitly intended to work on the sphere with the equiangular sampling. They consider the set $\mathcal G$ of all the possible graphs where each node is connected only to four of its nearest neighbours (North, Sud, West, East) and propose a weighting scheme $w_{ij}$ that minimizes the difference in the response to the polynomial spectral filter $\mathcal F = \mathbf L$ evaluated on images of the same object seen at different latitudes. In other words, they solve the minimization problem
+% \begin{equation} \label{eq:minimization frossard}
+% 	\min_{W\in\mathcal G} \left|\mathcal{F}\left(\mathbf{y}\left(v_{ e}\right)\right)-\mathcal{F}\left(\mathbf{y}\left(v_{ i}\right)\right)\right|
+% \end{equation}
+% for the adjacency matrix $W$, where $\mathbf y(v_i)$ is the image of the object on the sphere centered on the vertex $v_i$, and $\mathcal F (\mathbf y(v_e))$ is the response of the filter at the vertex $v_e$ that lies at the same longitude of the vertex $v_i$ but on the equator. In their work they prove that the optimal weights solving the minimization problem (\ref{eq:minimization frossard}) are given by weights $w_{ij}$ inversely proportional to the Euclidean distance between vertices:
+% \begin{equation} \label{eq:frossard weights}
+% 	w_{ij} = \frac{1}{\norm{x_i-x_j}}
+% \end{equation}
 
 \begin{figure}
 	\centering
 	\includegraphics[width=0.9\linewidth]{figure_architecture_v3}
-	\caption{Example architecture from \cite{perraudin2019deepsphere}.
+	\caption{Example architecture from \cite{perraudin2019deepspherecosmo}.
 		Global tasks need a spatial summarization: the FCN variant is rotation invariant (and accepts inputs of varying sizes), while the CNN variant is not.
 		Dense tasks (when the output lives on the sphere, like segmentation) are rotation equivariant.
 	}
 	\label{fig:architecture}
 \end{figure}
 
-\section{Is graph convolution equivariant to rotation? [2 pages]}
+% \section{Notation}
+% Throughout this contribution, we denote with bold font all vectors and matrices such as $\b{L}$ the graph Laplacian and $\b{f}$ the vector of the sampled function $f$.
+% \nati{Right now, it is not True}
+% % , a weighted undirected graph $G(V, E, \mathbf W)$,
+% \nati{I do not think we should have a notation section, but should somehow write this somewhere...}
 
+\section{Is graph convolution equivariant to rotation? [2 pages]} \label{sec:equivariance}
+
+\subsection{Problem formulation} 
 % The plan for this section
-% 0) Explain why the Laplacian is so important...
-By definition, the graph convolution (on the sphere) is rotation equivariant to rotation, if and only if, it commutes with the rotation operator. 
-As, in the context of this work, graph convolution can be performed is performed by successive application of the graph Laplacian, i.e: $g(\b{L}) \b{f} = \left(\sum_{i=0}^K \alpha_i \b{L}^i\right) \b{f}$, if the graph Laplacian $\b{L}$ commutes with the rotation operator, then, by recursion, it will also commute with the convolution $g(\b{L})$.
-Hence to simplify our analysis, we concentrate on the graph Laplacian.
+% 0.1 Explain the sampling problem
+As the graph convolution acts on a sampled version of the function $\b{f}$ and the rotation on its continuous counterpart $f$, a sampling operator is needed.
+Given a sampling scheme $V=\{v_i\in\mathbb S^2, i=0, \dots, n\}$ of the sphere and a function $f : \mathbb S^2 \supset F_V \to \mathbb R$, the sampling operator $T_V: L^2(\mathbb S^2) \supset F\to \mathbb R^n,\  T_V(f) = \b{f}$ is defined as $\b{f}:\ f_i=f(v_i)$, where $F_V$ suitable subspace of $L^2(\mathbb S^2)$ such that $T_V$ is invertible, i.e., we can unambiguously reconstruct the function $f\in F_V$ from its sampled values $\b{f}$.
+The existence of such subspace depends on the sampling scheme $V$, and its characterization is a common problem in signal processing \cite{driscoll1994Fouriersphere}.
+For most samplings, it is not known if $F_V$ exist and hence if $T_V$ is invertible. A special case is the \textit{equiangular sampling} scheme where a sampling theorem holds, and thus we have a closed form of $T_V^{-1}$ is known. % \cite{driscoll1994Fouriersphere}
+For sampling schemes where no such sampling formula is available, we leverage the discrete SHT to reconstruct $f$ from $\bf{f}$, thus approximating $T_V^{-1}$.
+For all theoretical consideration, we assume that $F_V$ exists and $f \in F_V$.
 
-% 0.5) Explain the sampling and metric
-We first need to deal with the sampling problem. The rotation operator $R_{b}$ \nati{define rotation} act on the continuous signal $R(b), b\in SO(3): R(b)f(\omega) = f(g^{-1}\omega)$
-graph laplacian on a discrete graph that is build from a sampling.
-So we need a sampling operator, ideally invertible. \nati{Define sampling}
-Eventually, we formulate the commute error of the graph Laplacian and the rotation operator as: 
-equ...
-Of course result will depend on the sampling and on the graph construction
-
-% !) summary the work of Khasanova
-
-% 2) explain our approach
-Our approach is different as we do not miminize eq... Instead we inspire ourselves with Belkin, which says that for \emph{uniform sampling} the graph Laplacian converges toward the Laplace-Beltrami. b) The Laplace Beltrami commute with rotation.
-The following theorem extend the work of Belkin and Niogi to fixed sampling \nati{(Including Healpix or not?)}
-THEOREM HERE
-This is \emph{not} a proof of equivariance of the graph convolution for a specific sampling. We simply observe that the graph Laplacian converges pointwisely toward an operator that commutes with rotation. To have the desired equality in eq..., we would need to prove a stronger result, for example uniform convergence (in the space of the operators).
-\nati{Should we put this here?: }This does not hold in general \cite{belkin-spectral}. However, we believe that this is achievable for a bandlimited signals.
-More importantly, the proof of ... in Appendix ... inspires us in the construction of our graph Laplacian. a) use gaussian kernel b) we need to adjust t with respect of n such that ...
-
-% 3) Show experimental results
-Define the error, show results and comments
-
-Explain the difference of errors... Uniform sampling is better
-
-\subsection{Theoretical evidence of equivariance}
-
-% \subsection{Equiangular}
-
-\cite{khasanova2017graphomni} designed a discrete Laplacian that is explicitly intended to work on the sphere with the equiangular sampling. They consider the set $\mathcal G$ of all the possible graphs where each node is connected only to four of its nearest neighbours (North, Sud, West, East) and propose a weighting scheme $w_{ij}$ that minimizes the difference in the response to the polynomial spectral filter $\mathcal F = \mathbf L$ evaluated on images of the same object seen at different latitudes. In other words, they solve the minimization problem
-\begin{equation} \label{eq:minimization frossard}
-	\min_{W\in\mathcal G} \left|\mathcal{F}\left(\mathbf{y}\left(v_{ e}\right)\right)-\mathcal{F}\left(\mathbf{y}\left(v_{ i}\right)\right)\right|
+% 0.2 Explain why the Laplacian is so important...
+By definition, our (spherical) graph convolution is rotation equivariant, if and only if, it commutes with the rotation operator defined as $R(g), g\in SO(3)$: $R(g) f(x) = f\left(g^{-1} x \right)$. 
+In the context of this work, graph convolution is performed by recursive applications of the graph Laplacian, i.e: $h(\b{L}) \b{f} = \left(\sum_{i=0}^K \alpha_i \b{L}^i\right) \b{f}$\nati{Put this equation somewhere else?}.  Hence, if $\b{L}$ commutes with the rotation operator, then, by recursion, it will also commute with the convolution $h(\b{L})$.
+As a result, to simplify our analysis, we concentrate on the graph Laplacian and $h(\b{L})$ is rotational invariant if and only if
+% 0.3 Formulate the problem
+\begin{equation} \label{eq:equivariance}
+	\b{R}_V(g) \b{L} \b{f} = \b{L} \b{R}_V(g) \b{f} \hspace{1cm} \forall f\in F_V \text{ and } \forall g\in SO(3),
 \end{equation}
-for the adjacency matrix $W$, where $\mathbf y(v_i)$ is the image of the object on the sphere centered on the vertex $v_i$, and $\mathcal F (\mathbf y(v_e))$ is the response of the filter at the vertex $v_e$ that lies at the same longitude of the vertex $v_i$ but on the equator. In their work they prove that the optimal weights solving the minimization problem (\ref{eq:minimization frossard}) are given by weights $w_{ij}$ inversely proportional to the Euclidean distance between vertices:
+where $\b{R}_V(g) = T_V R(g) T_V^{-1}$. For practical a evaluation of the equivariance, we define the \textit{normalized equivariance error} for a signal $\b{f}$, and a  rotation $g$ as:
+\begin{equation} \label{eq:equivariance error}
+	E_{\b{L}}(\b{f}, g) = \left(\frac{ \norm {\b{R}_V(g) \b{L} \b{f} - \b{L} \b{R}_V(g) \b{f}} }{\norm {\b{f}}}\right)^2,
+\end{equation}
+More generally for a class of signal $f \in C \subset F_V$, the \textit{mean equivariance error}
+\begin{equation} \label{eq:mean equivariance error}
+	\overline E_{\b{L}, C} = \mathbb E_{\b{f}\in C, g\in SO(3)} \ E_{\b{L}}(\b{f}, g).
+\end{equation}
+In practice, to analyze the equivariance error frequency,  the set $C$ we used is composed of functions $f$ made of spherical harmonic of a single degree $\ell$.
+The expected value is obtained by averaging over a finite number of random functions and random rotations.
+
+\subsection{Finding the optimal set of weights}
+% !) summary the work of Khasanova -> No! to be put in section 2) Method
+\cite{khasanova2017sphericalcnn} designed a Laplacian $\b{L}$ explicitly intended to work with the equiangular sampling.
+They consider the set $\mathcal{G}$ of all the possible graphs where each node is connected only to four of its nearest neighbours (North, Sud, West, East) and propose a weighting scheme $w_{ij}$ that minimizes \eqref{eq:equivariance error} for specific rotations on the longitude latitude axis.
+Their approach leads to weights $w_{ij}$ inversely proportional to the Euclidean distance between vertices:
 \begin{equation} \label{eq:frossard weights}
 	w_{ij} = \frac{1}{\norm{x_i-x_j}}
 \end{equation}
-This construction is interesting since it is adapted to the equiangular sampling, and leads to a very sparse graph with only 4 neighbors per vertex. Furthermore, to obtain the weights (\ref{eq:frossard weights}) every calculation was done in the \textit{spatial domain}, without any consideration about the spectral interpretation of the filter. In order to compare it to the HKGL we show the equivariance error by spherical harmonic degree in figure \ref{fig:Equivariance error of the Frossard-Khasanove graph}. It can be appreciated how this construction performs a little worse that the full HKGL for low bandwidth samplings, but converges faster than the \textit{full} HKGL, and its spectrum looks much more similar to the one of $\Delta_{\mathbb S^2}$.
 
-\begin{figure}
-	\centering
-	\includegraphics[width=\textwidth]{KhasanovaFrossardgraphonequiangularsampling.png}
-	\caption{Equivariance error of the Khasanova-Frossard graph on the equiangular sampling with bandwidth $b=8$ by spherical harmonic degree $\ell$.}
-	\label{fig:Equivariance error of the Frossard-Khasanove graph}
-\end{figure}
+% 2) explain our approach
+We chose a different approach and take inspiration from \cite{belkin2005towards}, which proves that for a random \emph{uniform sampling} scheme the graph Laplacian converges toward the Laplace-Beltrami operator $\Delta_{\mathbb{S}^2}$ as the number of sampling points goes to infinity.
+This convergence result is important as a) $\Delta_{\mathbb{S}^2}$ commutes with rotation ($\Delta_{\mathbb{S}^2}R(g) = R(g)\Delta_{\mathbb{S}^2}$) and b) is diagonalized by the spherical harmonics. 
+In this case the weighting scheme is full (every node is connected to every node) and is based on the exponential kernel: 
+\nati{@martino, please check this equation... Do you use 4t?}
+\begin{equation} \label{eq:belkin_weights}
+w_{ij} = e^{-\frac{1}{t} \norm{x_i-x_j}^2}
+\end{equation}
+In practice most of the weights are very close to $0$ and hence, to optimize for computational efficiency, we limit ourselves to only the $k$ nearest neighbors. Given $k$, we find the optimal $t$, a grid search is performed using \eqref{eq:mean equivariance error}.
 
-\paragraph{Link with the Laplace-Beltrami Operator}
 
-Given a sampling $x_0, \dots, x_{n-1}$ define $\sigma_i$ to be the patch of the surface of the sphere corresponding to the $i$-th point of the sampling, define $A_i$ to be its corresponding area and $d_i$ to be the radius of the smallest ball in $\mathbb R^3$ containing the $i$-th patch. Define $d^{(n)} := \max_{i=0, \dots, n}d_i$ and $A^{(n)}=\max_{i=0, \dots, n}A_i$.
+\subsection{Analysis of the proposed weighting scheme}
+We analyse our proposed weighting scheme both theoretically and empirically.
+
+\paragraph{Theoretical convergence.}
+We extend the work of Belkin and Nyiogi to a fixed sampling. 
+Given a sampling $V = \{x_0, \dots, x_{n-1}\}$, define $\sigma_i$ to be the patch of the surface of the sphere corresponding to $x_i$, define $A_i$ to be its corresponding area and $d_i$ to be the radius of the smallest ball in $\mathbb R^3$ containing $\sigma_i$. Define $d^{(n)} := \max_{i=0, \dots, n}d_i$ and $A^{(n)}=\max_{i=0, \dots, n}A_i$.
 
 \begin{theorem}
-	For a sampling $\mathcal P = \{x_i\in\mathbb S^2\}_{i=0}^{n-1}$ of the sphere that is equi area and such that $d^{(n)} \leq \frac{C}{\sqrt{n}}$, for all $f: \mathbb S^2 \rightarrow \mathbb R$ Lipschitz with respect to the euclidean distance in $\mathbb R^3$, for all $y\in\mathbb S^2$, there exists a sequence $t_n = n^\beta$ such that the rescaled Heat Kernel Graph Laplacian operator $\frac{|\mathbb S^2|}{4\pi t_n}L^t_n$ converges pointwise to the Laplace Beltrami operator on the sphere $\triangle_{\mathbb S^2}$  for $n\to\infty$:
-	$$ \lim_{n\to\infty}\frac{|\mathbb S^2|}{4\pi t_n} L_n^{t_n}f(y) =  \triangle_{\mathbb S^2}f(y).$$
-	\label{theo:pointwise convergence in the healpix case}
+	For a sampling $V = \{x_i\in\mathbb S^2\}_{i=0}^{n-1}$ of the sphere that is equi-area and such that $d^{(n)} \leq \frac{C}{\sqrt{n}}$, for all $f: \mathbb S^2 \rightarrow \mathbb R$ Lipschitz with respect to the Euclidean distance in $\mathbb R^3$, for all $y\in\mathbb S^2$, there exists a sequence $t_n = n^\beta$ such that the rescaled Heat Kernel Graph Laplacian $\frac{|\mathbb S^2|}{4\pi t_n}\b {L}^t_n$ converges pointwise to the Laplace Beltrami operator on the sphere $\Delta{\mathbb S^2}$  for $n\to\infty$:
+	$$ \lim_{n\to\infty} \frac{|\mathbb{S}^2|}{4\pi t_n} \b{L}_n^{t_n} T_V f(x_i) =  \Delta_{\mathbb{S}^2}f(x_i)\quad \forall i=0, ..., n-1.$$
+	\label{theo:pointwise convergence for a regular sampling}
 \end{theorem}
+This theorem implies immediately that $\b{L}$ converges pointwisely toward an operator ($\Delta_{\mathbb S^2}$) commuting with rotation and hence is a strong hint for equivariance.
+Importantly, the proof of Theorem \ref{theo:pointwise convergence for a regular sampling} in Appendix \ref{...} inspires us in the construction of our graph Laplacian. It gives us a strong hint how the parameter $t$ needs to be adjusted with respect to the number of points $n$.
+
+It is important to keep in mind the limits of Theorem \ref{theo:pointwise convergence for a regular sampling}.
+First, it is \emph{not} a proof of equivariance of the graph convolution for a specific sampling. To construct such a proof, a stronger convergence result is needed, for example uniform convergence (instead of pointwise).
+Unfortunately, the graph laplacian does \emph{not} converges uniformly in general \cite{belkin2007convergence}. This can probably be overcome by considering a specific class of functions, such as bandlimited function.
+Second, while do not have a proof for it, we strongly believe that the HEALpix sampling does satisfy the hypothesis $d^{(n)}\leq \frac{C}{\sqrt{n}}$ of Theorem \ref{theo:pointwise convergence for a regular sampling}. This is discussed in Appendix~\ref{...}
 
 
+% 3) Show experimental results
+\paragraph{Empirical convergence.}
 
-\subsection{Equivariance error}
+% 3.0) explain how we obtained the figures
+We calculated numerically the equivariance error (\ref{eq:mean equivariance error}) by generating $N$ monochromatic signals and $M$ random rotations for each signal. The colors that were used were chosen in the range $(0,\  3N_{side}-1)$ to allow for an almost perfect synthesis of the rotated signals, and thus an almost perfect implementation (up to numerical errors) of the operator $\b{R}_V$ (\cite{healpix_primer})
 
-\todo{
-* define a measure of equiv error \\
-* show convergence empirically (for Nside up to 1024) \\
-* improved upon V1 \\
-* no difference in practice (see experiment xx) $\Rightarrow$ NNs are resilient to equiv error \\
-}
-
-Take a sampling scheme $V=\{v_i\in\mathbb S^2, i=0, \dots, n\}$ of the sphere, a weighted undirected graph $G(V, E, \mathbf W)$, a signal $f: \mathbb S^2\to\mathbb R$ and its sampled representation $\mathbf f:\ f_i=f(v_i)$. Suppose that there exists a sampling operator $T_V: L^2(\mathbb S^2) \supset F\to \mathbb R^n,\  T_V(f) = \mathbf f$ defined on a suitable subspace $F$ of $L^2(\mathbb S^2)$ such that it is invertible, i.e., we can unambiguously reconstruct the function $f\in F$ from its sampled values $\mathbf f$. The existence of such subspace depends on the sampling scheme $V$, and its characterization is a common problem in signal processing \cite{Driscoll:1994:CFT:184069.184073}. Define the rotation operator $\Lambda(g), g\in SO(3)$: $\Lambda(g) f(\omega) = f\left(g^{-1} \omega\right)$.
-
-We now want to understand how to set the edges and the weights of $G$ such that
-\begin{equation} \label{eq:equivariance}
-	T \Lambda(g) T^{-1} \Omega_k T f = \Omega_k T \Lambda(g) f,
-\end{equation}
-i.e., the graph convolution $\Omega_k$ and any rotation $\Lambda(g)$ commute.
-
-Verifying equation (\ref{eq:equivariance}) is really hard in practice, due to the fact that for almost all sampling schemes $V$ it is not known if there exists a space $F$ in which $T$ is invertible. A special case is the \textit{equiangular sampling} scheme where a sampling theorem holds \cite{Driscoll:1994:CFT:184069.184073}, and thus we have a closed form of $T^{-1}$. For sampling schemes where no such sampling theorem is available, there are implementations of discrete SHT to reconstruct a sampled signal $\mathbf f$, thus providing a way to approximate $T^{-1}$. Thanks to this we are able, for a given sampling, a given function $f$, a given rotation $g$, and a given kernel $k$, to compute the \textit{normalized equivariance error}
-\begin{equation} \label{eq:equivariance error}
-	E_{G}(f, g) = \left(\frac{ \norm {T \Lambda(g) T^{-1} \Omega_k Tf - \Omega_k T \Lambda(g) f}_{L^2(\mathbb R^2)}}{\norm {Tf}_{L^2(\mathbb R^2)}}\right)^2,
-\end{equation}
-where $T^{-1}$ is substituted with a discrete SHT in case $T$ is not invertible.
-A measure of how equivariant a graph is with respect to rotations will then be given by the \textit{mean equivariance error}
-\begin{equation} \label{eq:mean equivariance error}
-	\overline E_G = \mathbb E_{f, g} \ E_G(f, g).
-\end{equation}
-In practice the expected value is obtained by averaging over a finite number of random functions and random rotations. The mean equivariance error $\overline E_G$ gives us an indication of how close the graph $G$ is from being equivariant to rotations. Now we state an intuitive concept that explains how to construct rotation invariant graphs, i.e., graphs such that $\overline{E_G}$ is small.
-The mean equivariance error $\overline{E_G}$ will be small if the scalar product $\mathbf f^T \mathbf v_{i(\ell, m)}$ well approximates $\hat {f}(\ell,m)$, i.e., the $L^2$ scalar product of the continuous signal $\hat {f}(\ell,m)= \int_{\eta \in \mathbb S^2}f(\eta)Y_\ell^m(\eta)d\mu(\eta)$.
-
-\textit{If $V$ is an equal area sampling scheme}, i.e., the area around each pixel $v_i$ is the same, $\overline{E_G}$ will be small if the graph Laplacian $\mathbf L$ is such that its eigenvectors $\mathbf v_i$ well approximate the eigenfunctions of the Laplace-Beltrami operator $\Delta_{\mathbb S^2}$ evaluated in the points of the sampling scheme, i.e., $\mathbf v_{i(\ell, m)} \approx Y_\ell^m(x_i)$.
-
-In this way we framed the problem of constructing a rotation invariant graph with the more general problem of coming up with a matrix $\mathbf L$ with some specific spectral properties.
+% 3.1) explain what the figures tell us
+From 20\% error on V1, we got to less than 2\% error on V2. The number of neighbors used for V2 is $50$. More neighbors implies naturally more precision, plus a better kernel width obtained by "minimizing" the equivariance error. \mart{How to explain how we found the kernel width? Micha\"el I need your help here!!} Literally, minimizing the kernel width would lead to a completely disconnected graph. What we did was finding a heuristic law (fix neighbors, set the kernel width $\hat t$ by imposing the minimum weight to be equal to $0.1$) and then minimizing the equivariance error in the range $(\hat t / 10, \hat t\cdot 10) $. We got better that Khasanova-Frossard \mart{(check the code)} that however uses only 4 neighbors. However, it is built to explicitely minimize the equivariance error, so we expect it to be a good benchmark against which to test our construction. 
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{DeepSphereV1}
+	\caption{Shall we put it here or in Appendix?
+	}
+	\label{fig:deepsphereV1}
+\end{figure}
 
 \begin{figure}
 	\centering
-	\includegraphics[width=\textwidth]{DeepSphereonHEALPix.png}
-	\includegraphics[width=\textwidth]{OptimalHKGLonHEALPix.png}
-	\caption{\label{fig:DeepSphere equivariance error}Mean equivariance error of the diffusion filter $\exp(-\Lambda)$ for $G$, $G'$ and the full HKGL, by spherical harmonic degree. Notice the difference in the scale of the y axis for DeepSphere, that reaches errors up to 30\%.}
+	\includegraphics[width=0.9\linewidth]{DeepSphereV2_50neighbors.pdf}
+	\caption{}
+	\label{fig:deepsphereV2}
 \end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{khasanova_frossard.pdf}
+	\caption{}
+	\label{fig:khasanova_frossard}
+\end{figure}
+
 
 \section{Experiments [2 pages]}
 
@@ -276,7 +313,7 @@ Show: \\
 * anisotropy doesn't help \\
 }
 
-\subsection{3D objects recognition}
+\subsection{3D objects recognition} \label{sec:exp:objects}
 
 \todo{
 * same perf as other spherical CNNs, but 40 times faster \\
@@ -291,9 +328,9 @@ Show: \\
         \multicolumn{1}{l}{} & \multicolumn{2}{c}{performance} & \multicolumn{1}{c}{size} & \multicolumn{2}{c}{speed}\\
         \cmidrule(lr){2-3} \cmidrule(lr){4-4} \cmidrule(lr){5-6}
         \multicolumn{1}{l}{Method} & F1 & mAP & params & inference [ms] & training \\ \hline
-        \cite{cohen_spherical_2018} & 78.85 & 67.6 & 1.4M & 38 & 50h\\
+        \cite{cohen2018sphericalcnn} & 78.85 & 67.6 & 1.4M & 38 & 50h\\
         % Cohen \emph{s2cnn\_simple} & 78.59 & 78.85 & 400k & 12ms & 32h\\
-        \cite{esteves_learning_2017} & 79.36 & 68.5 & 500k & 10 & 2h52\\ \hline
+        \cite{esteves2018sphericalcnn} & 79.36 & 68.5 & 500k & 10 & 2h52\\ \hline
         DeepSphere \emph{Equiangular} & 79.36 & 66.5 & 190k & 1 & 50m \\
         DeepSphere \emph{HEALPix} & 80.65 & 68.6 & 190k & 1 & 50m\\
         DeepSphere \emph{Improved HEALPix} & ? & ? & 190k & ? & ?
@@ -309,14 +346,27 @@ Show: \\
 * same conclusion, anisotropy unnecessary cost to pay\\
 * Limited by representation of data? yep, treat them as point clouds \\
 
-\subsection{Cosmological model discrimination}
+\subsection{Cosmological model discrimination} \label{sec:exp:cosmo}
 
 \todo{
 * other sphercial CNNs cannot scale to 10M pixels (tested on 10k at most) \\
 * redo the experiment with the optimal graph \\
+* DSv2 better than v1 -> equivariance has practical implications \\
+* clear cost-accuracy tradeoff with n_neighbors \\
+* show the baselines? (at least the 2D CNN?) \\
 }
 
-\subsection{Climate event detection}
+% \begin{table}[]
+%     \centering
+%     \begin{tabular}{c|c}
+%          &  \\
+%          &
+%     \end{tabular}
+%     \caption{Caption}
+%     \label{tab:cosmo_newgraph}
+% \end{table}
+
+\subsection{Climate event detection} \label{sec:exp:climate}
 
 * small: better perf than gauge and Jiang. due to icosahedron distortion? to be confirmed\\
 * cannot compare with Mudigonda (16 vs 1 input channel)\\
@@ -328,22 +378,27 @@ Show: \\
 	\cmidrule(lr){2-2} \cmidrule(lr){3-3} \cmidrule(lr){4-5}
 	\multicolumn{1}{l}{Method} & mean & mean & inference [ms] & training \\ \hline
 	%Mudigonda et al. & 97 & 74 & 65 & 78.67 & - & - & - \\
-	\cite{jiang_spherical_2019} & 94.67 & - & - & -\\
-	\cite{jiang_spherical_2019} \emph{rerun} & 94.95 & 38.41 & 10 & 10h\\
+	\cite{jiang2019sphericalcnn} & 94.67 & - & - & -\\
+	\cite{jiang2019sphericalcnn} \emph{rerun} & 94.95 & 38.41 & 10 & 10h\\
 	% 328'339
-	\cite{cohen_gauge_2019} (S2R) & 97.5 & 68.6 & - & -\\
-	\cite{cohen_gauge_2019} (R2R) & 97.7 & 75.9 & - & -\\ \hline
+	\cite{cohen2019gauge} (S2R) & 97.5 & 68.6 & - & -\\
+	\cite{cohen2019gauge} (R2R) & 97.7 & 75.9 & - & -\\ \hline
 	% unknown
 	DeepSphere (weighted) & $97.8\pm 0.3$ & $77.15\pm 1.94$ & 33 & 13h \\
 	DeepSphere (non-weighted) & $87.8\pm 0.5$ & $89.16\pm 1.37$ & 33 & 13h\\
 	% 12'926'432
 	\end{tabular}
-	\caption{Climate pattern segmentation mean accuracy (\%), mean Average Precision (\%) and speed for different models run on the icosahedron dataset from \cite{jiang_spherical_2019}}
+	\caption{Climate pattern segmentation mean accuracy (\%), mean Average Precision (\%) and speed for different models run on the icosahedron dataset from \cite{jiang2019sphericalcnn}}
 \end{table}
 
 * Jiang rerun with a batch size of 64 instead of 256 due to memory limit.\\
 * cross entropy loss between parenthesis\\
 * 5 runs for each loss to obtain mean and std\\
+* same architecture as gauge, more feature maps than Jiang\\
+* perf with same arch as Jiang in appendix => not enough channels!\\
+* even more feature maps give us one more point in perf\\
+* cannot compare with Mudigonda: not the same input data\\
+* why: icosahedron, can do anisotropy with isotropy + non-linearity + pooling
 
 * trade off between AP and accuracy in the case of TC class, it seems.\\
 * change base, influence?\\
@@ -353,10 +408,11 @@ Show: \\
 % jiang like correct: 99.81631631, 13.18655162, 52.62412867, 55.20899887;  0.3990812 , 0.80056251, 0.59982186; 4 ms; 2h40
 % more feat: 99.67871329, 38.78607557, 66.37910064, 68.2812965: 0.99981102, 0.60714174, 0.83236147, 0.71975161; 12ms; 6h20
 
-\subsection{GHCN}
+\subsection{GHCN} \label{sec:exp:ghcn}
 
 * task is artificial, but it shows DeepSphere's flexibility\\
 * structure (looking around) help for prediction\\
+* equivariance to be verified in this case (next paper)\\
 
 * non-regular sampling with different density over the globe (continent vs ocean)\\
 * resulting graph is not rotation equivariant\\
@@ -387,20 +443,45 @@ Show: \\
     \label{tab:GHCN_results}
 \end{table}
 
-
-
 \section{Conclusion [0.5 pages]}
 
-* DeepSphere seems to be in the sweet spot of tradeoffs. Recall the desiderata.\\
-  * respect geometry: No need for a very precise equivariance, i.e., a very good graph...\\
-  * Not the most general (restricted to isotropic filters), but didn't hurt perf in any experiment\\
-  * scales linearly $\Rightarrow$ cannot do better ($n^{1.25}$ for best HEALPix, linear for not optimal)\\
-  * flexible $\Rightarrow$ independent of the sampling\\
+This work showed that DeepSphere strikes an interesting balance between desiderata for a spherical CNN.
+A single parameter, the number of neighbors a pixel is connected to in the graph, controls the tradeoff between \todo{performance and efficiency}.
+% vague words
+As computational cost and memory consumption scales linearly with the number of pixels, DeepSphere easily deals with spherical maps made of millions of pixels.
+Such high resolutions are not necessary to represent thethe  depth maps of 3D objects, but are required to faithfully represent cosmological and climate data.
+% That has to do with the frequency content of the signals (see fig xx)
+% cannot do better
+Also relevant in scientific applications is the flexibility offered by a graph representation to deal with partial coverage and non-uniform samplings.
+% partial coverage / missing data
+Finally, the implementation of Laplacian-based graph convolutions is straightforward.
+The ubiquity of graph neural networks, pushing for a first-class support in Deep Learning frameworks, will make implementations even easier and more efficient.
 
-future work:\\
-* when anisotropy useful? (research question)\\
-* irregular sampling while respecting the geometry\\
-* beyond the sphere, any manifold\\
+A potential drawback of graph Laplacian-based approaches is that graph filters are isotropic, reducing the expressive power of the NN.
+% in principle -> may in fact not
+% Our experiments showed that DeepSphere nonetheless achieved state-of-the-art performance, on par with methods featuring anisotropic filters.
+% didn't hurt perf in any experiment
+% expressive power / generality / powerful / function approximator
+%Why anisotropic filters?
+Experiments from \citet{cohen2019gauge} suggest that more general convolutions achieve better performance.
+Our climate experiments (\secref{exp:climate}) however show that DeepSphere achieves similar performance than their most general convolution.
+Works on shape alignment indicates that anisotropic filters achieve better performance \todo{[Bronstein]}.
+Possible explanations for this discrepancy are that NNs somehow compensate for the lack of anisotropic filters, or that some tasks can be solved with isotropic filters.
+The distortions induced by the icosahedral projection in \citep{cohen2019gauge} or the leakage of curvature information in \todo{[Bronstein]} might also be explanations.
+Further research is needed to determine if anisotropic filters are an unnecessary price to pay or if they are needed for some applications.
+% As was recently shown for graph NNs used for graph classification, most general might not be the best, when the ultimate goal is generalization [Andreas paper? + previous by xx]
+
+Developing graph convolutions on irregular samplings that still respect the geometry of the sphere is another research direction of importance.
+% known underlying manifold
+Practitioners currently interpolate their measurements (coming from arbitrarily positioned weather stations, satellites or telescopes) to regular samplings.
+This practice either results in a waste of precision or computational and storage resources.
+Our ultimate goal is for practitioners to be able to work directly on their measurement, however distributed.
+
+% beyond the sphere => any manifold
+% what are other manifolds of interest?
+% done by monet & co on shapes
+
+% beyond scalar fields => simplicial complexes
 
 \newpage
 \subsubsection*{Author Contributions}
@@ -410,8 +491,8 @@ Left blank for anonymity reason
 
 \subsubsection*{Acknowledgments}
 Left blank for anonymity reason
-% Use unnumbered third level headings for the acknowledgments. All
-% acknowledgments, including those to funding agencies, go at the end of the paper.
+
+%We thank Taco Cohen for his inputs on the intriguing results of our comparisons with their gauge CNN \citep{}.
 
 \bibliography{references}
 \bibliographystyle{iclr2020_conference}
@@ -421,28 +502,35 @@ Left blank for anonymity reason
 \appendix
 
 \section{Proof of theorem}
-
+Since it is known that to prove the pointwise convergence of $\b{L}_n^t$ it is sufficient to prove the convergence of its continuous counterpart $L_n^t$ to $\Delta_{\mathbb S^2}$ (\cite{belkin2005towards}), we will prove here that 
+\begin{equation}\label{eq:continuous convergence}
+ \lim_{n\to\infty} \frac{|\mathbb{S}^2|}{4\pi t_n} {L}_n^{t_n} f(y) =  \Delta_{\mathbb{S}^2}f(y)
+\end{equation}
+where $L_n^t$ is defined as follows:
 \begin{definition}{}(Heat Kernel Graph Laplacian operator)\\
 	\label{def:Heat Kernel Graph Laplacian operator}
 	\text{Given a sampling $\{x_i\in\mathcal M\}_{i=0}^{n-1}$ of the manifold we define the \textbf{operator} }$L_n^t$ such that
 	$$L_n^tf(y) := \frac{1}{n}\left[ \sum_{i=0}^{n-1} \exp{-\frac{||x_i-y||^2}{4t}}\left(f(y)-f(x_i)\right)\right]$$
 \end{definition}
-\begin{definition}{}(from \cite[Belkin et al. ]{Belkin:2005:TTF:2138147.2138189}Functional approximation to the Laplace-Beltrami operator)\\ \label{eq: my L^t} Let $\mu$ be the uniform probability measure on the manifold $\mathcal M$, where $\text{vol}(\mathcal M)$ is the volume of $\mathcal M$. We define the functional approximation to the Laplace-Beltrami operator to be the operator $L^t: L^{2}(\mathcal{M}) \rightarrow L^{2}(\mathcal{M})$ such that
+For the sake of the proof we will need also the following facts:
+\begin{definition}{} \cite{belkin2005towards}\\ \label{eq: my L^t} Let $\mu$ be the uniform probability measure on the manifold $\mathcal M$, and let $\text{vol}(\mathcal M)$ be the volume of $\mathcal M$. We define the functional approximation to the Laplace-Beltrami operator to be the operator $L^t: L^{2}(\mathcal{M}) \rightarrow L^{2}(\mathcal{M})$ such that
 	\label{def:Functional approximation to the Laplace-Beltrami operator}
 	$$ L^tf(y) = \int_{\mathcal M}e^{-\frac{||y-x||^2}{4t}}\left(f(y)-f(x)\right)d\mu(x)$$
 \end{definition}
 
-The core of the work of Belkin et al. is the proof, that we will not discuss, of the following proposition.
-
-\begin{prop} 	Let $\mathcal M$ be a $k$-dimensional compact smooth manifold embedded in some euclidean space $\mathbb R^N$, and fix $p\in\mathcal M$. Let the data points $x_1, \dots, x_n$ be sampled form a uniform distribution on the manifold $\mathcal M$. Set $t_n=n^{-\frac{1}{k+2+\alpha}}$, for any $\alpha>0$ and let $f\in\mathcal C_\infty(\mathcal M)$. Then
+\begin{prop} \cite{belkin2005towards} \\
+Let $\mathcal M$ be a $k$-dimensional compact smooth manifold embedded in some Euclidean space $\mathbb R^N$, and fix $p\in\mathcal M$. Let the data points $x_1, \dots, x_n$ be sampled form a uniform distribution on the manifold $\mathcal M$. Set $t_n=n^{-\frac{1}{k+2+\alpha}}$, for any $\alpha>0$ and let $f\in\mathcal C_\infty(\mathcal M)$. Then
 	$$\frac{1}{t}\frac{1}{(4\pi t)^{k/2}} L^tf(p) \xrightarrow{t\to 0 } \frac{1}{\text{vol}(\mathcal M)}\triangle_{\mathcal M}f(p).$$
 	\label{prop:3}
 \end{prop}
 
-Our first goal is to prove the following Proposition:
+% brief introduction:
+This proof consists in two steps: first, we prove that $\b L_n^t \rightarrow L^t$, and second we use proposition \ref{prop:3} from Belkin et al. to prove equation \ref{eq:continuous convergence}. This equation, as already explained in \cite{belkin2007convergence}, directly implies theorem \ref{theo:pointwise convergence for a regular sampling}.
+
+Our first goal is thus to prove the following Proposition:
 \vspace{0.5cm}
 \begin{prop}\label{prop:1}
-	For an equal area sampling $\{x_i\in\mathbb S^2\}_{i=0}^{n-1}: A_i=A_j \forall i,j$ of the sphere it is true that for all $f: \mathbb S^2 \rightarrow \mathbb R$ Lipschitz with respect to the euclidean distance $||\cdot||$ with Lipschitz constant $\mathcal L_f$
+	For an equal area sampling $\{x_i\in\mathbb S^2\}_{i=0}^{n-1}: A_i=A_j \forall i,j$ of the sphere it is true that for all $f: \mathbb S^2 \rightarrow \mathbb R$ Lipschitz with respect to the Euclidean distance $||\cdot||$ with Lipschitz constant $\mathcal L_f$
 	$$
 	\left| \int_{\mathbb S^2}f({ x})\text{d}{\mu(x)} - \frac{1}{n}\sum_i f( x_i)\right|\leq \mathcal L_fd^{(n)}.
 	$$
@@ -478,8 +566,6 @@ $$
 $$
 \end{prop}
 \vspace{0.5cm}
-
-The main result of this section, theorem  \ref{theo:pointwise convergence in the healpix case}, is then an immediate consequence of Proposition \ref{prop:2} and Proposition \ref{prop:3}.
 
 \begin{proof}[Proof of Proposition \ref{prop:2}]
 
@@ -553,16 +639,17 @@ $$\begin{cases}
 
 \end{proof}
 
-The proof of theorem \ref{theo:pointwise convergence in the healpix case} is now trivial:
-\begin{proof}[Proof of Theorem \ref{theo:pointwise convergence in the healpix case}]
+
+Theorem  \ref{theo:pointwise convergence for a regular sampling}, is then an immediate consequence of Proposition \ref{prop:2} and Proposition \ref{prop:3}.
+\begin{proof}[Proof of Theorem \ref{theo:pointwise convergence for a regular sampling}]
 	Thanks to Proposition \ref{prop:2} and Proposition \ref{prop:3}	we conclude that $\forall y\in\mathbb S^2 $
 	$$\lim_{n\to\infty}\frac{1}{4\pi t_n^2} L_n^{t_n}f(y) =  \lim_{n\to\infty}\frac{1}{4\pi t_n^2} L^{t_n}f(y) = \frac{1}{|\mathbb S^2|}\triangle_{\mathbb S^2}f(y) $$
 \end{proof}
 
 The proof of this result is instructive since it shows that we need to impose some regularity conditions on the sampling. If the sampling is equal area as HEALPix, meaning that all the patches $\sigma_i$ have the same area, then we need to impose that $ d^{(n)}\leq \frac{1}{\sqrt{n}}$. If the sampling is not equal area, meaning that in general $A_i\neq A_j$, it can be shown that we need a slightly more complex condition: $\max_{i=0,\dots,n-1}d_iA_i\leq Cn^{-\frac{3}{2}}$.\\
-In the work of Belkin et al. \cite{Belkin:2005:TTF:2138147.2138189} the sampling is drawn form a uniform random distribution on the sphere, and their proof heavily relies on the uniformity properties of the distribution from which the sampling is drawn. In our case the sampling is deterministic, and the fact that for a sphere there doesn't exist a regular sampling with more than 12 points (the vertices of a icosahedron) is indeed a problem that we need to overcome by imposing the regularity conditions above.
+In the work of Belkin et al. \cite{belkin2005towards} the sampling is drawn form a uniform random distribution on the sphere, and their proof heavily relies on the uniformity properties of the distribution from which the sampling is drawn. In our case the sampling is deterministic, and the fact that for a sphere there doesn't exist a regular sampling with more than 12 points (the vertices of a icosahedron) is indeed a problem that we need to overcome by imposing the regularity conditions above.
 
-To conclude, we can see that the result obtained has the same form than the result obtained in \cite{Belkin:2005:TTF:2138147.2138189}. Given the kernel density $t(n)=n^\beta$, if Belkin et al. proved convergence in the random case for $\beta \in (-\frac{1}{4}, 0)$, we proved convergence in the HEALPix case for $\beta \in (-\frac{1}{5}, 0)$. This kind of result can be interpreted in the following way. In order to have this pointwise convergence, we need to reduce the kernel width but \textit{not so fast} compared to the resolution of the graph. In other words, the kernel width has to be reduced but is somewhat limited by the resolution of the graph. In the next section we'll see how to set in practice a good kernel width $t$ given a graph resolution $n$.
+To conclude, we can see that the result obtained has the same form than the result obtained in \cite{belkin2005towards}. Given the kernel density $t(n)=n^\beta$, if Belkin et al. proved convergence in the random case for $\beta \in (-\frac{1}{4}, 0)$, we proved convergence in the HEALPix case for $\beta \in (-\frac{1}{5}, 0)$. This kind of result can be interpreted in the following way. In order to have this pointwise convergence, we need to reduce the kernel width but \textit{not so fast} compared to the resolution of the graph. In other words, the kernel width has to be reduced but is somewhat limited by the resolution of the graph. In the next section we'll see how to set in practice a good kernel width $t$ given a graph resolution $n$.
 \begin{remark}
 	Pointwise convergence is just a necessary condition for spectral convergence.  Theorem \ref{theo:pointwise convergence in the healpix case} does not imply convergence of eigenvalues and eigenvectors.
 \end{remark}
@@ -656,11 +743,11 @@ HEALPix sampling, Nside = 1024, with improved graph
         \cmidrule(lr){2-5} \cmidrule(lr){6-6}
         \multicolumn{1}{l}{Method} & TC & AR & BG & mean & params \\ \hline
         %Mudigonda et al. & 97 & 74 & 65 & 78.67 & - & - & - \\
-        \cite{jiang_spherical_2019} & 94 & 93 & 97 & 94.67 & 330k\\
-        \cite{jiang_spherical_2019} \emph{rerun} & 93.9 & 95.7 & 95.2 & 94.95 & 330k\\
+        \cite{jiang2019sphericalcnn} & 94 & 93 & 97 & 94.67 & 330k\\
+        \cite{jiang2019sphericalcnn} \emph{rerun} & 93.9 & 95.7 & 95.2 & 94.95 & 330k\\
         % 328'339
-        \cite{cohen_gauge_2019} (S2R) & 97.3 & 97.3 & 97.8 & 97.5 & -\\
-        \cite{cohen_gauge_2019} (R2R) & 97.8 & 97.4 & 97.9 & 97.7 & -\\ \hline
+        \cite{cohen2019gauge} (S2R) & 97.3 & 97.3 & 97.8 & 97.5 & -\\
+        \cite{cohen2019gauge} (R2R) & 97.8 & 97.4 & 97.9 & 97.7 & -\\ \hline
         DS (weighted) & $97.4\pm 1.1$ & $97.7\pm 0.7$ & $98.2\pm 0.5$ & $97.8\pm 0.3$ & 13M\\
         DS (non-weighted) & $69.2\pm 3.7$ & $94.5\pm 2.9$ & $99.7\pm 0.1$ & $87.8\pm 0.5$ & 13M\\ \hline
         % 12'926'432
@@ -677,7 +764,7 @@ HEALPix sampling, Nside = 1024, with improved graph
 and AR classes plus mean accuracy.}
 \end{table}
 
-* DS-jiang is the similar architecture as \cite{jiang_spherical_2019}.\\
+* DS-jiang is the similar architecture as \cite{jiang2019sphericalcnn}.\\
 * DS-optimal has 2 times the number of feature maps of DS.\\
 
 \begin{table}
@@ -686,10 +773,10 @@ and AR classes plus mean accuracy.}
         \cmidrule(lr){2-4}\cmidrule(lr){5-6}
         \multicolumn{1}{l}{Method} & TC & AR & mean & inference [ms] & training \\ \hline
         %Mudigonda et al. & 97 & 74 & 65 & 78.67 & - & - & - \\
-        \cite{jiang_spherical_2019} \emph{rerun} & 11.08 & 65.21 & 38.41 & 10.2 & 10h14m\\
+        \cite{jiang2019sphericalcnn} \emph{rerun} & 11.08 & 65.21 & 38.41 & 10.2 & 10h14m\\
         % 328'339
-        \cite{cohen_gauge_2019} (S2R) & - & -& 68.6 & - & - \\
-        \cite{cohen_gauge_2019} (R2R) & - & -& 75.9 & - & -\\ \hline
+        \cite{cohen2019gauge} (S2R) & - & -& 68.6 & - & - \\
+        \cite{cohen2019gauge} (R2R) & - & -& 75.9 & - & -\\ \hline
         DS (weighted) & $58.88\pm 3.17$ & $95.41\pm 1.51$ & $77.15\pm 1.94$ & 33 & 13h \\
         DS (non-weighted) & $80.86\pm 2.42$ & $97.45\pm 0.38$ & $89.16\pm 1.37$ & 33 & 13h \\ \hline
         % 12'926'432
@@ -822,5 +909,7 @@ batch size 64, RMSprop optimizer, constant learning rate of $1 \cdot 10{-3}$, MS
 \begin{dmath}
     [GC_{50}\, +\, BN\, +\, ReLU]\, +\, [GC_{100}\, +\, BN\, +\, ReLU]\, +\, [GC_{100}\, +\, BN\, +\, ReLU]\, +\, GAP\, +\, FCN
 \end{dmath}
+
+
 
 \end{document}
