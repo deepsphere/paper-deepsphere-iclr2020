@@ -220,7 +220,7 @@ The gist of the method is to define the spherical convolution using a graph, and
 % The plan for this section
 % 0.1 Explain the sampling problem
 As the graph convolution acts on a sampled version of the function $\b{f}$ and the rotation on its continuous counterpart $f$, a sampling operator is needed.
-Given a sampling scheme $V=\{v_i\in\mathbb S^2, i=0, \dots, n\}$ of the sphere and a function $f : \mathbb S^2 \supset F_V \to \mathbb R$, the sampling operator $T_V: L^2(\mathbb S^2) \supset F\to \mathbb R^n,\  T_V(f) = \b{f}$ is defined as $\b{f}:\ f_i=f(v_i)$, where $F_V$ suitable subspace of $L^2(\mathbb S^2)$ such that $T_V$ is invertible, i.e., we can unambiguously reconstruct the function $f\in F_V$ from its sampled values $\b{f}$.
+Given a sampling scheme $V=\{x_i\in\mathbb S^2, i=0, \dots, n\}$ of the sphere and a function $f : \mathbb S^2 \supset F_V \to \mathbb R$, the sampling operator $T_V: L^2(\mathbb S^2) \supset F\to \mathbb R^n,\  T_V(f) = \b{f}$ is defined as $\b{f}:\ f_i=f(x_i)$, where $F_V$ suitable subspace of $L^2(\mathbb S^2)$ such that $T_V$ is invertible, i.e., we can unambiguously reconstruct the function $f\in F_V$ from its sampled values $\b{f}$.
 The existence of such subspace depends on the sampling scheme $V$, and its characterization is a common problem in signal processing (\cite{driscoll1994Fouriersphere}).
 For most sampling schemes, it is not known if $F_V$ exist and hence if $T_V$ is invertible. A special case is the \textit{equiangular sampling} scheme where a sampling theorem holds, and thus we have a closed form of $T_V^{-1}$ is known. % \cite{driscoll1994Fouriersphere}
 For sampling schemes where no such sampling formula is available, we leverage the discrete SHT to reconstruct $f$ from $\bf{f}$, thus approximating $T_V^{-1}$.
@@ -231,6 +231,7 @@ By definition, our (spherical) graph convolution is rotation equivariant, if and
 In the context of this work, graph convolution is performed by recursive applications of the graph Laplacian, i.e: $h(\b{L}) \b{f} = \left(\sum_{i=0}^K \alpha_i \b{L}^i\right) \b{f}$\nati{Put this equation somewhere else?}.  Hence, if $\b{L}$ commutes with the rotation operator, then, by recursion, it will also commute with the convolution $h(\b{L})$.
 As a result, to simplify our analysis, we concentrate on the graph Laplacian and $h(\b{L})$ is rotational invariant if and only if
 % 0.3 Formulate the problem
+\mart{Correct formula for equivariance error and the corresponding plots as soon as you changed it!}
 \begin{equation} \label{eq:equivariance}
 	\b{R}_V(g) \b{L} \b{f} = \b{L} \b{R}_V(g) \b{f} \hspace{1cm} \forall f\in F_V \text{ and } \forall g\in SO(3),
 \end{equation}
@@ -269,21 +270,21 @@ In practice most of the weights are very close to $0$ and hence, to optimize for
 We analyse our proposed weighting scheme both theoretically and empirically.
 
 \paragraph{Theoretical convergence.}
-We extend the work of Belkin and Nyiogi to a fixed sampling. 
-Given a sampling $V = \{x_0, \dots, x_{n-1}\}$, define $\sigma_i$ to be the patch of the surface of the sphere corresponding to $x_i$, define $A_i$ to be its corresponding area and $d_i$ to be the radius of the smallest ball in $\mathbb R^3$ containing $\sigma_i$. Define $d^{(n)} := \max_{i=0, \dots, n}d_i$ and $A^{(n)}=\max_{i=0, \dots, n}A_i$.
+We extend the work of Belkin and Nyiogi to a sufficiently regular, deterministic sampling scheme. 
+Given a sampling scheme $V = \{x_0, \dots, x_{n-1}\}$, define $\sigma_i$ to be the patch of the surface of the sphere corresponding to $x_i$, define $A_i$ to be its corresponding area and $d_i$ to be the radius of the smallest ball in $\mathbb R^3$ containing $\sigma_i$. Define $d^{(n)} := \max_{i=0, \dots, n}d_i$ and $A^{(n)}=\max_{i=0, \dots, n}A_i$.
 
 \begin{theorem}
-	For a sampling $V = \{x_i\in\mathbb S^2\}_{i=0}^{n-1}$ of the sphere that is equi-area and such that $d^{(n)} \leq \frac{C}{\sqrt{n}}$, for all $f: \mathbb S^2 \rightarrow \mathbb R$ Lipschitz with respect to the Euclidean distance in $\mathbb R^3$, for all $y\in\mathbb S^2$, there exists a sequence $t_n = n^\beta$ such that the rescaled Heat Kernel Graph Laplacian $\frac{|\mathbb S^2|}{4\pi t_n}\b {L}^t_n$ converges pointwise to the Laplace Beltrami operator on the sphere $\Delta{\mathbb S^2}$  for $n\to\infty$:
-	$$ \lim_{n\to\infty} \frac{|\mathbb{S}^2|}{4\pi t_n} \b{L}_n^{t_n} T_V f(x_i) =  \Delta_{\mathbb{S}^2}f(x_i)\quad \forall i=0, ..., n-1.$$
+	For a sampling $V = \{x_i\in\mathbb S^2\}_{i=0}^{n-1}$ of the sphere that is equi-area and such that $d^{(n)} \leq \frac{C}{\sqrt{n}}$, for all $f: \mathbb S^2 \rightarrow \mathbb R$ Lipschitz with respect to the Euclidean distance in $\mathbb R^3$, for all $y\in\mathbb S^2$, there exists a sequence $t_n = n^\beta$ such that the rescaled Heat Kernel Graph Laplacian $\frac{|\mathbb S^2|}{4\pi t_n^2}\b {L}^t_n$ converges pointwise to the Laplace Beltrami operator on the sphere $\Delta{\mathbb S^2}$  for $n\to\infty$:
+	$$ \lim_{n\to\infty} \frac{|\mathbb{S}^2|}{4\pi t_n^2} \b{L}_n^{t_n} f(x_i) =  \Delta_{\mathbb{S}^2}f(x_i)\quad \forall i=0, ..., n-1.$$
 	\label{theo:pointwise convergence for a regular sampling}
 \end{theorem}
 This theorem implies immediately that $\b{L}$ converges pointwisely toward an operator ($\Delta_{\mathbb S^2}$) commuting with rotation and hence is a strong hint for equivariance.
-Importantly, the proof of Theorem \ref{theo:pointwise convergence for a regular sampling} in Appendix \ref{...} inspires us in the construction of our graph Laplacian. It gives us a strong hint how the parameter $t$ needs to be adjusted with respect to the number of points $n$.
+Importantly, the proof of Theorem \ref{theo:pointwise convergence for a regular sampling} in Appendix \ref{sec: appendix: proof of theorem} inspires us in the construction of our graph Laplacian. It gives us a strong hint how the parameter $t$ needs to be adjusted with respect to the number of points $n$.
 
 It is important to keep in mind the limits of Theorem \ref{theo:pointwise convergence for a regular sampling}.
 First, it is \emph{not} a proof of equivariance of the graph convolution for a specific sampling. To construct such a proof, a stronger convergence result is needed, for example uniform convergence (instead of pointwise).
 Unfortunately, the graph laplacian does \emph{not} converges uniformly in general \cite{belkin2007convergence}. This can probably be overcome by considering a specific class of functions, such as bandlimited function.
-Second, while do not have a proof for it, we strongly believe that the HEALPix sampling does satisfy the hypothesis $d^{(n)}\leq \frac{C}{\sqrt{n}}$ of Theorem \ref{theo:pointwise convergence for a regular sampling}. This is discussed in Appendix~\ref{...}
+Second, while do not have a proof for it, we strongly believe that the HEALPix sampling does satisfy the hypothesis $d^{(n)}\leq \frac{C}{\sqrt{n}}$ of Theorem \ref{theo:pointwise convergence for a regular sampling}. This is discussed in Appendix \ref{sec: appendix: proof of theorem}.
 
 
 % 3) Show experimental results
@@ -553,17 +554,17 @@ Left blank for anonymity reason
 {\LARGE \sc {Supplementary Material}}
 \appendix
 
-\section{Proof of theorem}
-Given a sampling $\{x_i\in\mathcal M\}_{i=0}^{n-1}$ of a close, compact and infinitely differentiable manifold $\mathcal M$, a smooth function $f:\mathcal M \rightarrow \mathbb R$, and defined the vector $\b f$ of samples of $f$ as follows: $\b f\in \mathbb R^n,\ \b f_i = f(x_i)$, it is known that  (\cite{belkin2005towards}) to prove the convergence of $\b{L}_n^t \b f _i$ to $\Delta_{\mathbb S^2}f(x_i)$ it is sufficient to prove the convergence of its continuous counterpart $L_n^tf(x)$ to $\Delta_{\mathbb S^2}f(x)$
+\section{Proof of theorem}\label{sec: appendix: proof of theorem}
+Given a sampling $\{x_i\in\mathcal M\}_{i=0}^{n-1}$ of a closed, compact and infinitely differentiable manifold $\mathcal M$, a smooth function $f:\mathcal M \rightarrow \mathbb R$, and defined the vector $\b f$ of samples of $f$ as follows: $\b f\in \mathbb R^n,\ \b f_i = f(x_i)$, it is known that  (\cite{belkin2005towards}) to prove the convergence of $(\b {L}_n^t \b f) _i$ to $\Delta_{\mathbb S^2}f(x_i)$ it is sufficient to prove the convergence of its continuous counterpart $L_n^tf(x)$ to $\Delta_{\mathbb S^2}f(x)$
 where $L_n^t$ is defined as follows:
 \begin{definition}{}\\
 	\label{def:Heat Kernel Graph Laplacian operator}
 	\text{Given a sampling $\{x_i\in\mathcal M\}_{i=0}^{n-1}$ of the manifold we define the \textbf{operator} }$L_n^t$ such that
 	$$L_n^tf(y) := \frac{1}{n}\left[ \sum_{i=0}^{n-1} \exp \left\{ {-\frac{||x_i-y||^2}{4t}}\right\}\left(f(y)-f(x_i)\right)\right]$$
 \end{definition}
-Thus, it will be sufficient to prove that 
+Thus, to prove theorem \ref{theo:pointwise convergence for a regular sampling} it will be sufficient to prove that 
 \begin{equation}\label{eq:continuous convergence}
- \lim_{n\to\infty} \frac{|\mathbb{S}^2|}{4\pi t_n} {L}_n^{t_n} f(y) =  \Delta_{\mathbb{S}^2}f(y)
+ \lim_{n\to\infty} \frac{|\mathbb{S}^2|}{4\pi t_n^2} {L}_n^{t_n} f(y) =  \Delta_{\mathbb{S}^2}f(y)
 \end{equation}
 For the sake of the proof we will need also the following facts:
 \begin{definition}{} (\cite{belkin2005towards})\\ \label{eq: my L^t} Let $\mu$ be the uniform probability measure on the manifold $\mathcal M$, and let $\text{vol}(\mathcal M)$ be the volume of $\mathcal M$. We define the functional approximation to the Laplace-Beltrami operator to be the operator $L^t: L^{2}(\mathcal{M}) \rightarrow L^{2}(\mathcal{M})$ such that
@@ -578,7 +579,7 @@ Let $\mathcal M$ be a $k$-dimensional compact smooth manifold embedded in some E
 \end{prop}
 
 % brief introduction:
-This proof consists in two steps: first, we prove that $\b L_n^t \rightarrow L^t$, and second, we use proposition \ref{prop:3} to prove equation \eqref{eq:continuous convergence}. This equation, as already explained in \cite{belkin2007convergence}, directly implies theorem \ref{theo:pointwise convergence for a regular sampling}.
+This proof consists in two steps: first, we prove that $L_n^t \rightarrow L^t$, and second, we use proposition \ref{prop:3} to prove \eqref{eq:continuous convergence}. This equation, as already explained in \cite{belkin2007convergence}, directly implies theorem \ref{theo:pointwise convergence for a regular sampling}.
 
 Our first goal is thus to prove the following Proposition:
 \vspace{0.5cm}
