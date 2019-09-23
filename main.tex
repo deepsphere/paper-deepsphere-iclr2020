@@ -11,7 +11,7 @@
 \usepackage{bbm}        % for mathbbm
 \usepackage{graphicx} \graphicspath{{figures/}}
 %\usepackage{wrapfig}
-\usepackage{floatflt}
+%\usepackage{floatflt}
 \usepackage{amsthm}
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -327,15 +327,27 @@ Show: \\
 
 \subsection{3D objects recognition} \label{sec:exp:objects}
 
-\begin{floatingfigure}[r]{0.5\linewidth}
+\begin{figure}
+%\begin{floatingfigure}[r]{0.5\linewidth}
 %\begin{wrapfigure}{r}{0.5\linewidth}
-	\centering
-	\includegraphics[height=6em]{lamp_000018}
-	\includegraphics[height=6em]{lamp_000018_sphere_nobar}
-	\caption{Example of a 3D object represented as a spherical depth map. T}
-	\label{fig:depthmap}
+	\begin{minipage}[t]{0.57\linewidth}
+		\centering
+		\includegraphics[height=7em]{lamp_000018}
+		\hfill
+		\includegraphics[height=7em]{lamp_000018_sphere_nobar}
+		\caption{Example of a 3D object represented as a spherical depth map.}
+		\label{fig:depthmap}
+	\end{minipage}
+	\hfill
+	\begin{minipage}[t]{0.35\linewidth}
+		\centering
+		\includegraphics[height=7em]{spectrum}
+		\caption{Power spectral densities.}
+		\label{fig:spectrum}
+	\end{minipage}
 %\end{wrapfigure}
-\end{floatingfigure}
+%\end{floatingfigure}
+\end{figure}
 
 The recognition of 3D shapes is a rotation invariant task: rotating an object doesn't change its nature.
 While 3D shapes are usually represented as meshes or point clouds, representing them as spherical maps (\figref{depthmap}) naturally allows a rotation invariant treatment.
@@ -380,7 +392,7 @@ The maps are discretized using either an equiangular grid \citep{driscoll1994Fou
 Results are shown in \tabref{shrec17}.
 DeepSphere achieves the same performance as \citet{cohen2018sphericalcnn} and \citet{esteves2018sphericalcnn} while being much more efficient, suggesting that anisotropic filters are an unnecessary price to pay.
 % x times faster
-As the information in those spherical maps resides in the low frequencies (\todo{figure}), reducing the equivariance error didn't translate into improved performance.
+As the information in those spherical maps resides in the low frequencies (\figref{spectrum}), reducing the equivariance error didn't translate into improved performance.
 For the same reason, using the more uniform HEALPix discretization or lowering the resolution down to $N_{side} = 8$ didn't impact performance.
 \todo{The same conclusions are drawn from ModelNet 40 (see appendix ??).}
 
