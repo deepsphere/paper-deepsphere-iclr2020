@@ -60,7 +60,7 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 	\item shall we really name it? Or simply reference the general idea of a graph-based spherical CNN.
 	\item adjacency matrix: $A$ instead of $W$?
 	\item anonymize DeepSphere citation
-	\item climate spherical figure: inputs with TC and AR labels superimposed [Frédérick]
+% 	\item climate spherical figure: inputs with TC and AR labels superimposed [Frédérick]
 	\item citet for inline, citep for parenthesis
 	\item More details on related work? Not sure we have the space. If yes, detailed comparison with related work after method.
 	\item PSD of climate data: how does it compare to cosmo and 3D objects?
@@ -104,6 +104,8 @@ Examples are the inference of cosmological parameters from the distribution of m
 	\includegraphics[height=0.25\linewidth]{example_cosmo_cmb}
 	\hfill
 	\includegraphics[height=0.25\linewidth]{example_brain_meg}
+% 	\hfill
+% 	\includegraphics[height=0.25\linewidth]{example_climate_TMQ}
 	\hfill
 	\includegraphics[height=0.25\linewidth]{example_ghcn_daily_tmax}
 	\hfill
@@ -209,8 +211,8 @@ The gist of the method is to define the spherical convolution using a graph, and
 % 0.1 Explain the sampling problem
 As the graph convolution acts on a sampled version of the function $\b{f}$ and the rotation on its continuous counterpart $f$, a sampling operator is needed.
 Given a sampling scheme $V=\{v_i\in\mathbb S^2, i=0, \dots, n\}$ of the sphere and a function $f : \mathbb S^2 \supset F_V \to \mathbb R$, the sampling operator $T_V: L^2(\mathbb S^2) \supset F\to \mathbb R^n,\  T_V(f) = \b{f}$ is defined as $\b{f}:\ f_i=f(v_i)$, where $F_V$ suitable subspace of $L^2(\mathbb S^2)$ such that $T_V$ is invertible, i.e., we can unambiguously reconstruct the function $f\in F_V$ from its sampled values $\b{f}$.
-The existence of such subspace depends on the sampling scheme $V$, and its characterization is a common problem in signal processing \cite{driscoll1994Fouriersphere}.
-For most samplings, it is not known if $F_V$ exist and hence if $T_V$ is invertible. A special case is the \textit{equiangular sampling} scheme where a sampling theorem holds, and thus we have a closed form of $T_V^{-1}$ is known. % \cite{driscoll1994Fouriersphere}
+The existence of such subspace depends on the sampling scheme $V$, and its characterization is a common problem in signal processing (\cite{driscoll1994Fouriersphere}).
+For most sampling schemes, it is not known if $F_V$ exist and hence if $T_V$ is invertible. A special case is the \textit{equiangular sampling} scheme where a sampling theorem holds, and thus we have a closed form of $T_V^{-1}$ is known. % \cite{driscoll1994Fouriersphere}
 For sampling schemes where no such sampling formula is available, we leverage the discrete SHT to reconstruct $f$ from $\bf{f}$, thus approximating $T_V^{-1}$.
 For all theoretical consideration, we assume that $F_V$ exists and $f \in F_V$.
 
@@ -230,6 +232,7 @@ More generally for a class of signal $f \in C \subset F_V$, the \textit{mean equ
 \begin{equation} \label{eq:mean equivariance error}
 	\overline E_{\b{L}, C} = \mathbb E_{\b{f}\in C, g\in SO(3)} \ E_{\b{L}}(\b{f}, g).
 \end{equation}
+\mart{Talk about the probability measure used on C, SO(3)?}
 In practice, to analyze the equivariance error frequency,  the set $C$ we used is composed of functions $f$ made of spherical harmonic of a single degree $\ell$.
 The expected value is obtained by averaging over a finite number of random functions and random rotations.
 
@@ -246,9 +249,8 @@ Their approach leads to weights $w_{ij}$ inversely proportional to the Euclidean
 We chose a different approach and take inspiration from \cite{belkin2005towards}, which proves that for a random \emph{uniform sampling} scheme the graph Laplacian converges toward the Laplace-Beltrami operator $\Delta_{\mathbb{S}^2}$ as the number of sampling points goes to infinity.
 This convergence result is important as a) $\Delta_{\mathbb{S}^2}$ commutes with rotation ($\Delta_{\mathbb{S}^2}R(g) = R(g)\Delta_{\mathbb{S}^2}$) and b) is diagonalized by the spherical harmonics. 
 In this case the weighting scheme is full (every node is connected to every node) and is based on the exponential kernel: 
-\nati{@martino, please check this equation... Do you use 4t?}
 \begin{equation} \label{eq:belkin_weights}
-w_{ij} = e^{-\frac{1}{t} \norm{x_i-x_j}^2}
+w_{ij} = e^{-\frac{1}{4t} \norm{x_i-x_j}^2}
 \end{equation}
 In practice most of the weights are very close to $0$ and hence, to optimize for computational efficiency, we limit ourselves to only the $k$ nearest neighbors. Given $k$, we find the optimal $t$, a grid search is performed using \eqref{eq:mean equivariance error}.
 
@@ -733,6 +735,14 @@ The architecture of the Neural Network is exactly the same, with a stride of [2,
 \subsection{cosmo}
 HEALPix sampling, Nside = 1024, with improved graph
 
+\begin{dmath}
+    [GC_{16}\, +\, BN\, +\, ReLU]_{nside1024}\, +\, \textrm{Pool}\, +\, [GC_{32}\, +\, BN\, +\, ReLU]_{nside512}\, +\, \textrm{Pool}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{nside256}\, +\, \textrm{Pool}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{nside128}\, +\,\textrm{Pool}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{nside64}\, +\, \textrm{Pool}\, +\, [GC_{2}]_{nside32}\, +\, GAP\, +\, \textrm{softmax}
+\end{dmath}
+
+The order of the Chebyshev polynomial is 5 for each layer, the number of feature maps are [16, 32, 64, 64, 64, 3] respectively and down-sampling to the immediate smaller resolution for each layer.
+
+batch size = 8, 80 epochs, adam optimizer, cross-entropy loss, learning rate $2\cdot10^{-4}\cdot0.999^{\textrm{step}}$
+
 \subsection{climate event detection}
 \subsubsection*{Results}
 
@@ -804,7 +814,7 @@ decoder:\\
 \begin{dmath}
     \textrm{Unpool}\, +\,[GC_{512}\, +\, BN\, +\, ReLU]_{L1}\, +\, \textrm{concat}\, +\, [GC_{512}\, +\, BN\, +\, ReLU]_{L1}\, +\, \textrm{Unpool}\, +\, [GC_{256}\, +\, BN\, +\, ReLU]_{L2}\, +\, \textrm{concat}\, +\, [GC_{256}\, +\, BN\, +\, ReLU]_{L2}\, +\, \textrm{Unpool}\, +\, [GC_{128}\, +\, BN\, +\, ReLU]_{L3}\, +\, \textrm{concat}\, +\, [GC_{128}\, +\, BN\, +\, ReLU]_{L3}\, +\,\textrm{Unpool}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{L4}\,+\, \textrm{concat}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{L4}\, +\,\textrm{Unpool}\,  +\, [GC_{32}\, +\, BN\, +\, ReLU]_{L5}\,+ \, [GC_3]_{L5}
 \end{dmath}
-number of parameters: 2,2M
+% number of parameters: 2,2M
 
 concat the results of the corresponding encoder layer before the graph convolution. Not similar to Jiang and 4 times the feature maps.
 
@@ -820,7 +830,7 @@ decoder:\\
 \begin{dmath}
     \textrm{Unpool}\, +\,[GC_{128}\, +\, BN\, +\, ReLU]_{L1}\, +\, \textrm{concat}\, +\, [GC_{128}\, +\, BN\, +\, ReLU]_{L1}\, +\, \textrm{Unpool}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{L2}\, +\, \textrm{concat}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{L2}\, +\, \textrm{Unpool}\, +\, [GC_{32}\, +\, BN\, +\, ReLU]_{L3}\, +\, \textrm{concat}\, +\, [GC_{32}\, +\, BN\, +\, ReLU]_{L3}\, +\,\textrm{Unpool}\, +\, [GC_{16}\, +\, BN\, +\, ReLU]_{L4}\,+\, \textrm{concat}\, +\, [GC_{16}\, +\, BN\, +\, ReLU]_{L4}\, +\,\textrm{Unpool}\,  +\, [GC_{8}\, +\, BN\, +\, ReLU]_{L5}\,+\,\textrm{concat}\, +\, [GC_{8}\, +\, BN\, +\, ReLU]_{L5}\, + \,[GC_3]_{L5}
 \end{dmath}
-number of parameters: 590'976  % more feat is 16 times more
+% number of parameters: 590'976  % more feat is 16 times more
 
 concat the results of the corresponding encoder layer after the graph convolution. Similar to ``Jiang et al.''
 \subsubsection*{Equiangular}
