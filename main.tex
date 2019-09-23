@@ -240,7 +240,7 @@ As a result, to simplify our analysis, we concentrate on the graph Laplacian and
 \end{equation}
 where $\b{R}_V(g) = T_V R(g) T_V^{-1}$. For practical a evaluation of the equivariance, we define the \textit{normalized equivariance error} for a signal $\b{f}$, and a  rotation $g$ as:
 \begin{equation} \label{eq:equivariance error}
-	E_{\b{L}}(\b{f}, g) = \left(\frac{ \norm {\b{R}_V(g) \b{L} \b{f} - \b{L} \b{R}_V(g) \b{f}} }{\norm {\b{f}}}\right)^2,
+	E_{\b{L}}(\b{f}, g) = \left(\frac{ \norm {\b{R}_V(g) \b{L} \b{f} - \b{L} \b{R}_V(g) \b{f}} }{\norm {\b{L} \b{f}}}\right)^2,
 \end{equation}
 More generally for a class of signal $f \in C \subset F_V$, the \textit{mean equivariance error}
 \begin{equation} \label{eq:mean equivariance error}
