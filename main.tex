@@ -504,30 +504,31 @@ Left blank for anonymity reason
 \appendix
 
 \section{Proof of theorem}
-Since it is known that to prove the pointwise convergence of $\b{L}_n^t$ it is sufficient to prove the convergence of its continuous counterpart $L_n^t$ to $\Delta_{\mathbb S^2}$ (\cite{belkin2005towards}), we will prove here that 
+Given a sampling $\{x_i\in\mathcal M\}_{i=0}^{n-1}$ of a close, compact and infinitely differentiable manifold $\mathcal M$, a smooth function $f:\mathcal M \rightarrow \mathbb R$, and defined the vector $\b f$ of samples of $f$ as follows: $\b f\in \mathbb R^n,\ \b f_i = f(x_i)$, it is known that  (\cite{belkin2005towards}) to prove the convergence of $\b{L}_n^t \b f _i$ to $\Delta_{\mathbb S^2}f(x_i)$ it is sufficient to prove the convergence of its continuous counterpart $L_n^tf(x)$ to $\Delta_{\mathbb S^2}f(x)$
+where $L_n^t$ is defined as follows:
+\begin{definition}{}\\
+	\label{def:Heat Kernel Graph Laplacian operator}
+	\text{Given a sampling $\{x_i\in\mathcal M\}_{i=0}^{n-1}$ of the manifold we define the \textbf{operator} }$L_n^t$ such that
+	$$L_n^tf(y) := \frac{1}{n}\left[ \sum_{i=0}^{n-1} \exp \left\{ {-\frac{||x_i-y||^2}{4t}}\right\}\left(f(y)-f(x_i)\right)\right]$$
+\end{definition}
+Thus, it will be sufficient to prove that 
 \begin{equation}\label{eq:continuous convergence}
  \lim_{n\to\infty} \frac{|\mathbb{S}^2|}{4\pi t_n} {L}_n^{t_n} f(y) =  \Delta_{\mathbb{S}^2}f(y)
 \end{equation}
-where $L_n^t$ is defined as follows:
-\begin{definition}{}(Heat Kernel Graph Laplacian operator)\\
-	\label{def:Heat Kernel Graph Laplacian operator}
-	\text{Given a sampling $\{x_i\in\mathcal M\}_{i=0}^{n-1}$ of the manifold we define the \textbf{operator} }$L_n^t$ such that
-	$$L_n^tf(y) := \frac{1}{n}\left[ \sum_{i=0}^{n-1} \exp{-\frac{||x_i-y||^2}{4t}}\left(f(y)-f(x_i)\right)\right]$$
-\end{definition}
 For the sake of the proof we will need also the following facts:
-\begin{definition}{} \cite{belkin2005towards}\\ \label{eq: my L^t} Let $\mu$ be the uniform probability measure on the manifold $\mathcal M$, and let $\text{vol}(\mathcal M)$ be the volume of $\mathcal M$. We define the functional approximation to the Laplace-Beltrami operator to be the operator $L^t: L^{2}(\mathcal{M}) \rightarrow L^{2}(\mathcal{M})$ such that
+\begin{definition}{} (\cite{belkin2005towards})\\ \label{eq: my L^t} Let $\mu$ be the uniform probability measure on the manifold $\mathcal M$, and let $\text{vol}(\mathcal M)$ be the volume of $\mathcal M$. We define the functional approximation to the Laplace-Beltrami operator to be the operator $L^t: L^{2}(\mathcal{M}) \rightarrow L^{2}(\mathcal{M})$ such that
 	\label{def:Functional approximation to the Laplace-Beltrami operator}
-	$$ L^tf(y) = \int_{\mathcal M}e^{-\frac{||y-x||^2}{4t}}\left(f(y)-f(x)\right)d\mu(x)$$
+	$$ L^tf(y) = \int_{\mathcal M}\exp\left\{-\frac{||y-x||^2}{4t}\right\}\left(f(y)-f(x)\right)d\mu(x)$$
 \end{definition}
 
-\begin{prop} \cite{belkin2005towards} \\
-Let $\mathcal M$ be a $k$-dimensional compact smooth manifold embedded in some Euclidean space $\mathbb R^N$, and fix $p\in\mathcal M$. Let the data points $x_1, \dots, x_n$ be sampled form a uniform distribution on the manifold $\mathcal M$. Set $t_n=n^{-\frac{1}{k+2+\alpha}}$, for any $\alpha>0$ and let $f\in\mathcal C_\infty(\mathcal M)$. Then
-	$$\frac{1}{t}\frac{1}{(4\pi t)^{k/2}} L^tf(p) \xrightarrow{t\to 0 } \frac{1}{\text{vol}(\mathcal M)}\triangle_{\mathcal M}f(p).$$
+\begin{prop} (\cite{belkin2005towards}) \\
+Let $\mathcal M$ be a $k$-dimensional compact smooth manifold embedded in some Euclidean space $\mathbb R^N$, and fix $y\in\mathcal M$. Let the data points $x_1, \dots, x_n$ be sampled form a uniform distribution on the manifold $\mathcal M$. Set $t_n=n^{-\frac{1}{k+2+\alpha}}$, for any $\alpha>0$ and let $f\in\mathcal C_\infty(\mathcal M)$. Then
+	$$\frac{1}{t}\frac{1}{(4\pi t)^{k/2}} L^tf(y) \xrightarrow{t\to 0 } \frac{1}{\text{vol}(\mathcal M)}\triangle_{\mathcal M}f(y).$$
 	\label{prop:3}
 \end{prop}
 
 % brief introduction:
-This proof consists in two steps: first, we prove that $\b L_n^t \rightarrow L^t$, and second we use proposition \ref{prop:3} from Belkin et al. to prove equation \ref{eq:continuous convergence}. This equation, as already explained in \cite{belkin2007convergence}, directly implies theorem \ref{theo:pointwise convergence for a regular sampling}.
+This proof consists in two steps: first, we prove that $\b L_n^t \rightarrow L^t$, and second, we use proposition \ref{prop:3} to prove equation \eqref{eq:continuous convergence}. This equation, as already explained in \cite{belkin2007convergence}, directly implies theorem \ref{theo:pointwise convergence for a regular sampling}.
 
 Our first goal is thus to prove the following Proposition:
 \vspace{0.5cm}
