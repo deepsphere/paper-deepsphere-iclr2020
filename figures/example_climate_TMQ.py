@@ -62,7 +62,7 @@ ax = fig.add_subplot(1, 1, 1, projection=ccrs.Orthographic(90, 0))
 ax.set_global()
 ax.coastlines(linewidth=2)
 
-scat1 = plt.scatter(lon, lat, s=1,
+scat1 = plt.scatter(lon, lat, s=1, rasterized=True,
             c=data[0,:,:], cmap=plt.get_cmap('RdYlBu_r'), alpha=1, transform=ccrs.PlateCarree())
 
 AR = labels[:,:]==1
@@ -71,7 +71,7 @@ scat2 = ax.scatter(lon[AR], lat[AR], s=0.5, color='c', label='AR', transform=ccr
             #c=labels[show], cmap=plt.get_cmap('cool'), alpha=0.6, transform=ccrs.PlateCarree())
 scat3 = ax.scatter(lon[TC], lat[TC], s=0.5, color='m', label='TC', transform=ccrs.PlateCarree())
             #c=labels[show], cmap=plt.get_cmap('cool'), alpha=0.6, transform=ccrs.PlateCarree())
-ax.legend(markerscale=5, fontsize=10, loc=1, frameon=False, ncol=2, bbox_to_anchor=(1.25, 0.09))
+ax.legend(markerscale=5, fontsize=10, loc=1, frameon=False, ncol=1, bbox_to_anchor=(0.1, 0.18))
 ticks = range(np.min(data[0,:,:]).astype(int), np.max(data[0,:,:]).astype(int), 20)
 cb = plt.colorbar(scat1, ax=ax, orientation="horizontal",anchor=(1.0,0.0), shrink=0.7, pad=0.05, ticks=ticks)
 cb.ax.tick_params(labelsize=10)
@@ -81,4 +81,4 @@ ax.text(0, 7e6, f'HAPPI20 Climate, TMQ, {year}-{month:02d}-{day:02d}-{hour:02d}-
 
 #fig.tight_layout()
 filename = os.path.splitext(os.path.basename(__file__))[0] + '.pdf'
-fig.savefig(filename)
+fig.savefig(filename, transparent=True)
