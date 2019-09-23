@@ -455,6 +455,7 @@ For the same reason, using the more uniform HEALPix discretization or lowering t
 * same architecture as gauge, more feature maps than Jiang\\
 * perf with same arch as Jiang in appendix => not enough channels!\\
 * even more feature maps give us one more point in perf\\
+* need more feature maps and layers to compensate for isotropy \\
 * cannot compare with Mudigonda: not the same input data\\
 * why: icosahedron, can do anisotropy with isotropy + non-linearity + pooling
 
@@ -803,8 +804,8 @@ batch size = 8, 80 epochs, adam optimizer, cross-entropy loss, learning rate $2\
 
 * DS-jiang is the similar architecture as \cite{jiang2019sphericalcnn}. \\
 * DS-optimal has 2 times the number of feature maps of DS. \\
-* \todo{What is DS and DS-Cohen?} \\
-* \todo{Is (equi non-weighted) the full resolution?} \\
+* \todo{What is DS and DS-Cohen?} DS has 4 times more feature maps and one more layer than DS-Jiang. DS-optimal has still 2 times more feature maps. DS-Cohen should be mostly gauge (based on paper, no code): 4 times more feature maps, but 2 layers less than DS-Jiang. \\
+* \todo{Is (equi non-weighted) the full resolution?} Yes, but less feature maps and layers. Can run, but not enough GPU memory for an optimal architecture. \\
 * \todo{check column order for DS} \\
 
 \begin{table}
@@ -819,17 +820,17 @@ batch size = 8, 80 epochs, adam optimizer, cross-entropy loss, learning rate $2\
         \cite{cohen2019gauge} (S2R) & 97.8 & 97.3 & 97.3 & 97.5 \\
         \cite{cohen2019gauge} (R2R) & 97.9 & 97.8 & 97.4 & 97.7 \\
 		\midrule
-        DS (weighted) & $97.4\pm 1.1$ & $97.7\pm 0.7$ & $98.2\pm 0.5$ & $97.8\pm 0.3$ \\
-        DS-Jiang (weighted) & 97.1 & 97.6 & 96.5 & 97.1 \\
-        DS-optimal (weighted) & 91.5 & 93.4 & 99.0 & 94.6 \\
+		DS (Jiang architecture, weighted loss) & 97.1 & 97.6 & 96.5 & 97.1 \\
+        DS (weighted loss) & $97.4\pm 1.1$ & $97.7\pm 0.7$ & $98.2\pm 0.5$ & $97.8\pm 0.3$ \\
+		DS (wider architecture, weighted loss) & 91.5 & 93.4 & 99.0 & 94.6 \\
 		\midrule
-        DS (non-weighted) & $69.2\pm 3.7$ & $94.5\pm 2.9$ & $99.7\pm 0.1$ & $87.8\pm 0.5$ \\
-        DS-Jiang (non-weighted) & 33.6 & 93.6 & 99.3 & 75.5 \\
-        DS-optimal (non-weighted) & 73.4 & 92.7 & 99.8 & 88.7 \\
+        DS (Jiang architecture, non-weighted loss) & 33.6 & 93.6 & 99.3 & 75.5 \\
+        DS (non-weighted loss) & $69.2\pm 3.7$ & $94.5\pm 2.9$ & $99.7\pm 0.1$ & $87.8\pm 0.5$ \\
+        DS (wider architecture, non-weighted loss) & 73.4 & 92.7 & 99.8 & 88.7 \\
 		\midrule
-		\todo{DS-Cohen (weighted)} & 95.5 & 96.9 & 93.9 & 95.4 \\
-		\todo{DS-Cohen (non-weighted)} & 95.5 & 96.9 & 93.9 & 95.4 \\
-		\todo{DeepSphere (equi non-weighted)} & 31.3 & 75.2 & 99.9 & 68.80 \\
+		\todo{DS (Cohen architecture, weighted loss)} & 95.5 & 96.9 & 93.9 & 95.4 \\
+		\todo{DS (Cohen architecture, non-weighted loss)} & 95.5 & 96.9 & 93.9 & 95.4 \\
+		\todo{DS (full dataset, non-weighted loss)} & 31.3 & 75.2 & 99.9 & 68.80 \\
 		\bottomrule
     \end{tabular}
     \caption{
@@ -850,16 +851,16 @@ batch size = 8, 80 epochs, adam optimizer, cross-entropy loss, learning rate $2\
         \cite{cohen2019gauge} (S2R) & - & -& 68.6 \\
         \cite{cohen2019gauge} (R2R) & - & -& 75.9 \\
 		\midrule
-        DS (non-weighted) & $80.86\pm 2.42$ & $97.45\pm 0.38$ & $89.16\pm 1.37$ \\
-        DS-Jiang (non-weighted) & 46.2 & 93.9 & 70.0 \\
-        DS-optimal (non-weighted) & 84.71 & 98.05 & 91.38 \\
+        DS (Jiang architecture, non-weighted loss) & 46.2 & 93.9 & 70.0 \\
+        DS (non-weighted loss) & $80.86\pm 2.42$ & $97.45\pm 0.38$ & $89.16\pm 1.37$ \\
+        DS (wider architecture, non-weighted loss) & 84.71 & 98.05 & 91.38 \\
 		\midrule
-        DS (weighted) & $58.88\pm 3.17$ & $95.41\pm 1.51$ & $77.15\pm 1.94$ \\
-        DS-Jiang (weighted) & 49.7 & 89.2 & 69.5 \\
-        DS-optimal (weighted) & 52.80 & 94.78 & 73.79 \\
+        DS (Jiang architecture, weighted loss) & 49.7 & 89.2 & 69.5 \\
+        DS (weighted loss) & $58.88\pm 3.17$ & $95.41\pm 1.51$ & $77.15\pm 1.94$ \\
+        DS (wider architecture, weighted loss) & 52.80 & 94.78 & 73.79 \\
 		\midrule
-		\todo{DS-Cohen (weighted)} & 13.1 & 80.3 & 46.7 \\
-		\todo{DeepSphere (equi non-weighted)} & 55.53 & 94.85 & 75.19 \\
+		\todo{DS (Cohen architecture, weighted loss)} & 13.1 & 80.3 & 46.7 \\
+		\todo{DS (full dataset, non-weighted loss)} & 55.53 & 94.85 & 75.19 \\
 		\bottomrule
     \end{tabular}
     \caption{
@@ -881,11 +882,11 @@ batch size = 8, 80 epochs, adam optimizer, cross-entropy loss, learning rate $2\
 		\cite{jiang2019sphericalcnn} & 330\,k & 10\,ms & 10\,h \\ % 328'339
 		% \cite{cohen2019gauge} (S2R) & - & - & - \\
         % \cite{cohen2019gauge} (R2R) & - & - & - \\
-		DeepSphere (Jiang) & 590\,k & 5\,ms & 3\,h \\ % 590k
+		DeepSphere (Jiang architecture) & 590\,k & 5\,ms & 3\,h \\ % 590k
         DeepSphere & 13\,M & 33\,ms & 13\,h \\ % 12'926'432
-		DeepSphere (optimal) & 52\,M & 50\,ms & 20\,h \\
-		\todo{DS-Cohen (weighted)} & 2\,M & 11\,ms & 4\,h \\
-		\todo{DeepSphere (equi non-weighted)} & - & 567\,ms & 48\,h \\
+		DeepSphere (wider architecture) & 52\,M & 50\,ms & 20\,h \\
+		\todo{DS (Cohen architecture)} & 2\,M & 11\,ms & 4\,h \\
+		\todo{DS (full dataset)} & - & 567\,ms & 48\,h \\
 		\bottomrule
     \end{tabular}
     \caption{
