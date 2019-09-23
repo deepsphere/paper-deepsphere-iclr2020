@@ -10,6 +10,8 @@
 \usepackage{booktabs}
 \usepackage{bbm}        % for mathbbm
 \usepackage{graphicx} \graphicspath{{figures/}}
+%\usepackage{wrapfig}
+\usepackage{floatflt}
 \usepackage{amsthm}
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -65,6 +67,8 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 	\item More details on related work? Not sure we have the space. If yes, detailed comparison with related work after method.
 	\item PSD of climate data: how does it compare to cosmo and 3D objects?
 	\item align the spheres in figure 1
+	\item mention that \citep{esteves2018sphericalcnn} and \citep{cohen2018sphericalcnn} computed equivariance error
+	\item check footnotes
 \end{itemize}
 }
 \newpage
@@ -176,6 +180,12 @@ Experiments on multiple problems of practical interest show the competitiveness 
 
 The gist of the method is to define the spherical convolution using a graph, and the down-sampling operation using a hierarchical pixelisation of the sphere.
 
+\todo{
+	* discuss discretizations (equiangular, HEALPix) -> more uniform is better \\
+	* no uniform sampling: tradeoffs have to be made \\
+	* CNN vs FCN discussion (GAP for invariance) \\
+}
+
 * HEALPix: improvement from DeepSphere v1 \cite{perraudin2019deepspherecosmo} \\
 * equiangular: Renata \& Pascal \\
 
@@ -273,7 +283,7 @@ Importantly, the proof of Theorem \ref{theo:pointwise convergence for a regular 
 It is important to keep in mind the limits of Theorem \ref{theo:pointwise convergence for a regular sampling}.
 First, it is \emph{not} a proof of equivariance of the graph convolution for a specific sampling. To construct such a proof, a stronger convergence result is needed, for example uniform convergence (instead of pointwise).
 Unfortunately, the graph laplacian does \emph{not} converges uniformly in general \cite{belkin2007convergence}. This can probably be overcome by considering a specific class of functions, such as bandlimited function.
-Second, while do not have a proof for it, we strongly believe that the HEALpix sampling does satisfy the hypothesis $d^{(n)}\leq \frac{C}{\sqrt{n}}$ of Theorem \ref{theo:pointwise convergence for a regular sampling}. This is discussed in Appendix~\ref{...}
+Second, while do not have a proof for it, we strongly believe that the HEALPix sampling does satisfy the hypothesis $d^{(n)}\leq \frac{C}{\sqrt{n}}$ of Theorem \ref{theo:pointwise convergence for a regular sampling}. This is discussed in Appendix~\ref{...}
 
 
 % 3) Show experimental results
@@ -317,36 +327,64 @@ Show: \\
 
 \subsection{3D objects recognition} \label{sec:exp:objects}
 
-\todo{
-* same perf as other spherical CNNs, but 40 times faster \\
-* compare samplings (equi, HEALPix) $\Rightarrow$ not much difference \\
-* compare with improved graph (Nside=32) $\Rightarrow$ no improvement as information in the low frequencies (PSD, and works down to nside=8) \\
-* ModelNet 40: same conclusions $\Rightarrow$ appendix \\
-}
+\begin{floatingfigure}[r]{0.5\linewidth}
+%\begin{wrapfigure}{r}{0.5\linewidth}
+	\centering
+	\includegraphics[height=6em]{lamp_000018}
+	\includegraphics[height=6em]{lamp_000018_sphere_nobar}
+	\caption{Example of a 3D object represented as a spherical depth map. T}
+	\label{fig:depthmap}
+%\end{wrapfigure}
+\end{floatingfigure}
 
-\begin{table}
+The recognition of 3D shapes is a rotation invariant task: rotating an object doesn't change its nature.
+While 3D shapes are usually represented as meshes or point clouds, representing them as spherical maps (\figref{depthmap}) naturally allows a rotation invariant treatment.
+LIDAR actually acquires depth maps, which are a posteriori represented as point clouds.
+
+The SHREC'17 shape retrieval contest \citep{shrec17} contains 51,300 randomly oriented 3D models from ShapeNet \citep{shapenet}, to be classified in 55 categories (tables, lamps, airplanes, etc.).
+As in \citet{cohen2018sphericalcnn}, objects are represented by 6 spherical maps.
+At each pixel, a ray is traced towards the center of the sphere.
+The distance from the sphere to the object forms a depth map.
+The $\cos$ / $\sin$ of the surface angle forms two normal maps.
+The same is done for the object's convex hull.
+The maps are discretized using either an equiangular grid \citep{driscoll1994Fouriersphere} with bandwidth $b = 64$ ($N_{pix} = 4 b^2 = 16,384$), or an HEALPix \citep{healpix} grid with $N_{side} = 32$ ($N_{pix} = 12 N_{side}^2 = 12,288$).
+
+\todo{Graph, network architecture (info in the appendix, set the notation in the method section) and hyper-parameters. Or leave in appendix.}
+
+\begin{table}%[ht]
     \centering
-    \begin{tabular}{l|c c c c c}
-        \multicolumn{1}{l}{} & \multicolumn{2}{c}{performance} & \multicolumn{1}{c}{size} & \multicolumn{2}{c}{speed}\\
-        \cmidrule(lr){2-3} \cmidrule(lr){4-4} \cmidrule(lr){5-6}
-        \multicolumn{1}{l}{Method} & F1 & mAP & params & inference [ms] & training \\ \hline
-        \cite{cohen2018sphericalcnn} & 78.85 & 67.6 & 1.4M & 38 & 50h\\
-        % Cohen \emph{s2cnn\_simple} & 78.59 & 78.85 & 400k & 12ms & 32h\\
-        \cite{esteves2018sphericalcnn} & 79.36 & 68.5 & 500k & 10 & 2h52\\ \hline
-        DeepSphere \emph{Equiangular} & 79.36 & 66.5 & 190k & 1 & 50m \\
-        DeepSphere \emph{HEALPix} & 80.65 & 68.6 & 190k & 1 & 50m\\
-        DeepSphere \emph{Improved HEALPix} & ? & ? & 190k & ? & ?
-    \end{tabular}
-    \caption{Performance of different models for SHREC'17 task. F1-score computed with sklearn, mAP from the official script of the competition.}
-    \label{tab:SHREC17_class}
+	\begin{tabular}{l cc r rS[table-format=2.0]}
+		\toprule
+		& \multicolumn{2}{c}{performance} & \multicolumn{1}{c}{size} & \multicolumn{2}{c}{speed} \\
+		\cmidrule(lr){2-3} \cmidrule(lr){4-4} \cmidrule(lr){5-6}
+		& F1 & mAP & params & \multicolumn{1}{c}{inference} & \multicolumn{1}{c}{training} \\
+		\midrule
+		% $SO(3)$ vs $S^2$ vs graph
+		\citet{cohen2018sphericalcnn} ($b=128$) & 78.9 & 67.6 & 1400\,k & 38.0\,ms & 50\,h \\
+		\citet{cohen2018sphericalcnn} (simplified,\protect\footnotemark $b=64$) & 78.6 & 66.5 & 400\,k & 12.0\,ms & 32\,h \\
+		\citet{esteves2018sphericalcnn} ($b=64$) & 79.4 & 68.5 & 500\,k & 9.8\,ms & 3\,h \\
+		DeepSphere (equiangular $b=64$) & 79.4 & 66.5 & 190\,k & 0.9\,ms & 50\,m \\
+		DeepSphere (HEALPix $N_{side}=32$) & 80.7 & 68.6 & 190\,k & 0.9\,ms & 50\,m \\
+		\bottomrule
+	\end{tabular}
+    \caption{
+		Results on SHREC'17 (3D shapes): DeepSphere achieves similar performance at a much lower cost, suggesting that anisotropic filters are an unnecessary price to pay.
+		% F1-score computed with sklearn, mAP from the official script of the competition.
+		% inference speed = time for a single instance to do a single training pass
+		% training speed = time for the neural net to train to peak performance
+	}
+    \label{tab:shrec17}
 \end{table}
+\footnotetext[5]{As implemented in \url{https://github.com/jonas-koehler/s2cnn}.}
 
-* inference speed = time for a single instance to do a single training pass\\
-* training speed = time for the neural net to train to peak performance\\
+Results are shown in \tabref{shrec17}.
+DeepSphere achieves the same performance as \citet{cohen2018sphericalcnn} and \citet{esteves2018sphericalcnn} while being much more efficient, suggesting that anisotropic filters are an unnecessary price to pay.
+% x times faster
+As the information in those spherical maps resides in the low frequencies (\todo{figure}), reducing the equivariance error didn't translate into improved performance.
+For the same reason, using the more uniform HEALPix discretization or lowering the resolution down to $N_{side} = 8$ didn't impact performance.
+\todo{The same conclusions are drawn from ModelNet 40 (see appendix ??).}
 
-* diminish resolution $\Rightarrow$ no change in result until nside=8, no change for high resolution $\Rightarrow$ info in the low freq\\
-* same conclusion, anisotropy unnecessary cost to pay\\
-* Limited by representation of data? yep, treat them as point clouds \\
+% Limited by representation of data? yep, treat them as point clouds
 
 \subsection{Cosmological model discrimination} \label{sec:exp:cosmo}
 
