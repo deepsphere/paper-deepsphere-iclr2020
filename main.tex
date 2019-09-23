@@ -8,6 +8,7 @@
 \usepackage{url}
 \usepackage{breqn}
 \usepackage{booktabs}
+\usepackage{siunitx} % used in SHREC table
 \usepackage{bbm}        % for mathbbm
 \usepackage{graphicx} \graphicspath{{figures/}}
 %\usepackage{wrapfig}
@@ -69,6 +70,8 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 	\item align the spheres in figure 1
 	\item mention that \citep{esteves2018sphericalcnn} and \citep{cohen2018sphericalcnn} computed equivariance error
 	\item check footnotes
+	\item climate data on spectrum plot
+	\item result tables: only what supports the main message in the text, everything we have in the appendix
 \end{itemize}
 }
 \newpage
@@ -216,7 +219,7 @@ The gist of the method is to define the spherical convolution using a graph, and
 
 \section{Is graph convolution equivariant to rotation? [2 pages]} \label{sec:equivariance}
 
-\subsection{Problem formulation} 
+\subsection{Problem formulation}
 % The plan for this section
 % 0.1 Explain the sampling problem
 As the graph convolution acts on a sampled version of the function $\b{f}$ and the rotation on its continuous counterpart $f$, a sampling operator is needed.
@@ -227,7 +230,7 @@ For sampling schemes where no such sampling formula is available, we leverage th
 For all theoretical consideration, we assume that $F_V$ exists and $f \in F_V$.
 
 % 0.2 Explain why the Laplacian is so important...
-By definition, our (spherical) graph convolution is rotation equivariant, if and only if, it commutes with the rotation operator defined as $R(g), g\in SO(3)$: $R(g) f(x) = f\left(g^{-1} x \right)$. 
+By definition, our (spherical) graph convolution is rotation equivariant, if and only if, it commutes with the rotation operator defined as $R(g), g\in SO(3)$: $R(g) f(x) = f\left(g^{-1} x \right)$.
 In the context of this work, graph convolution is performed by recursive applications of the graph Laplacian, i.e: $h(\b{L}) \b{f} = \left(\sum_{i=0}^K \alpha_i \b{L}^i\right) \b{f}$\nati{Put this equation somewhere else?}.  Hence, if $\b{L}$ commutes with the rotation operator, then, by recursion, it will also commute with the convolution $h(\b{L})$.
 As a result, to simplify our analysis, we concentrate on the graph Laplacian and $h(\b{L})$ is rotational invariant if and only if
 % 0.3 Formulate the problem
@@ -257,8 +260,8 @@ Their approach leads to weights $w_{ij}$ inversely proportional to the Euclidean
 
 % 2) explain our approach
 We chose a different approach and take inspiration from \cite{belkin2005towards}, which proves that for a random \emph{uniform sampling} scheme the graph Laplacian converges toward the Laplace-Beltrami operator $\Delta_{\mathbb{S}^2}$ as the number of sampling points goes to infinity.
-This convergence result is important as a) $\Delta_{\mathbb{S}^2}$ commutes with rotation ($\Delta_{\mathbb{S}^2}R(g) = R(g)\Delta_{\mathbb{S}^2}$) and b) is diagonalized by the spherical harmonics. 
-In this case the weighting scheme is full (every node is connected to every node) and is based on the exponential kernel: 
+This convergence result is important as a) $\Delta_{\mathbb{S}^2}$ commutes with rotation ($\Delta_{\mathbb{S}^2}R(g) = R(g)\Delta_{\mathbb{S}^2}$) and b) is diagonalized by the spherical harmonics.
+In this case the weighting scheme is full (every node is connected to every node) and is based on the exponential kernel:
 \begin{equation} \label{eq:belkin_weights}
 w_{ij} = e^{-\frac{1}{4t} \norm{x_i-x_j}^2}
 \end{equation}
@@ -269,7 +272,7 @@ In practice most of the weights are very close to $0$ and hence, to optimize for
 We analyse our proposed weighting scheme both theoretically and empirically.
 
 \paragraph{Theoretical convergence.}
-We extend the work of Belkin and Nyiogi to a fixed sampling. 
+We extend the work of Belkin and Nyiogi to a fixed sampling.
 Given a sampling $V = \{x_0, \dots, x_{n-1}\}$, define $\sigma_i$ to be the patch of the surface of the sphere corresponding to $x_i$, define $A_i$ to be its corresponding area and $d_i$ to be the radius of the smallest ball in $\mathbb R^3$ containing $\sigma_i$. Define $d^{(n)} := \max_{i=0, \dots, n}d_i$ and $A^{(n)}=\max_{i=0, \dots, n}A_i$.
 
 \begin{theorem}
@@ -293,7 +296,7 @@ Second, while do not have a proof for it, we strongly believe that the HEALPix s
 We calculated numerically the equivariance error (\ref{eq:mean equivariance error}) by generating $N$ monochromatic signals and $M$ random rotations for each signal. The colors that were used were chosen in the range $(0,\  3N_{side}-1)$ to allow for an almost perfect synthesis of the rotated signals, and thus an almost perfect implementation (up to numerical errors) of the operator $\b{R}_V$ (\cite{healpix_primer})
 
 % 3.1) explain what the figures tell us
-From 20\% error on V1, we got to less than 2\% error on V2. The number of neighbors used for V2 is $50$. More neighbors implies naturally more precision, plus a better kernel width obtained by "minimizing" the equivariance error. \mart{How to explain how we found the kernel width? Micha\"el I need your help here!!} Literally, minimizing the kernel width would lead to a completely disconnected graph. What we did was finding a heuristic law (fix neighbors, set the kernel width $\hat t$ by imposing the minimum weight to be equal to $0.1$) and then minimizing the equivariance error in the range $(\hat t / 10, \hat t\cdot 10) $. We got better that Khasanova-Frossard \mart{(check the code)} that however uses only 4 neighbors. However, it is built to explicitely minimize the equivariance error, so we expect it to be a good benchmark against which to test our construction. 
+From 20\% error on V1, we got to less than 2\% error on V2. The number of neighbors used for V2 is $50$. More neighbors implies naturally more precision, plus a better kernel width obtained by "minimizing" the equivariance error. \mart{How to explain how we found the kernel width? Micha\"el I need your help here!!} Literally, minimizing the kernel width would lead to a completely disconnected graph. What we did was finding a heuristic law (fix neighbors, set the kernel width $\hat t$ by imposing the minimum weight to be equal to $0.1$) and then minimizing the equivariance error in the range $(\hat t / 10, \hat t\cdot 10) $. We got better that Khasanova-Frossard \mart{(check the code)} that however uses only 4 neighbors. However, it is built to explicitely minimize the equivariance error, so we expect it to be a good benchmark against which to test our construction.
 \begin{figure}
 	\centering
 	\includegraphics[width=0.9\linewidth]{DeepSphereV1}
@@ -361,10 +364,11 @@ The $\cos$ / $\sin$ of the surface angle forms two normal maps.
 The same is done for the object's convex hull.
 The maps are discretized using either an equiangular grid \citep{driscoll1994Fouriersphere} with bandwidth $b = 64$ ($N_{pix} = 4 b^2 = 16,384$), or an HEALPix \citep{healpix} grid with $N_{side} = 32$ ($N_{pix} = 12 N_{side}^2 = 12,288$).
 
-\todo{Graph, network architecture (info in the appendix, set the notation in the method section) and hyper-parameters. Or leave in appendix.}
+\todo{Graph (\#neighbors), network architecture (info in the appendix, set the notation in the method section) and hyper-parameters. Or leave in appendix.}
 
 \begin{table}%[ht]
     \centering
+	%\begin{tabular}{l cc r rr}
 	\begin{tabular}{l cc r rS[table-format=2.0]}
 		\toprule
 		& \multicolumn{2}{c}{performance} & \multicolumn{1}{c}{size} & \multicolumn{2}{c}{speed} \\
@@ -418,31 +422,33 @@ For the same reason, using the more uniform HEALPix discretization or lowering t
 %     \label{tab:cosmo_newgraph}
 % \end{table}
 
-\subsection{Climate event detection} \label{sec:exp:climate}
+\subsection{Climate event segmentation} \label{sec:exp:climate}
 
 * small: better perf than gauge and Jiang. due to icosahedron distortion? to be confirmed\\
 * cannot compare with Mudigonda (16 vs 1 input channel)\\
 * (full: we scale (50B pixels, 20TB) $\Rightarrow$ lead to better perf?) \\
 
 \begin{table}
-	\begin{tabular}{l|c c c c}
-	\multicolumn{1}{l}{} & Accuracy & Average Precision & \multicolumn{2}{c}{Speed}\\
-	\cmidrule(lr){2-2} \cmidrule(lr){3-3} \cmidrule(lr){4-5}
-	\multicolumn{1}{l}{Method} & mean & mean & inference [ms] & training \\ \hline
-	%Mudigonda et al. & 97 & 74 & 65 & 78.67 & - & - & - \\
-	\cite{jiang2019sphericalcnn} & 94.67 & - & - & -\\
-	\cite{jiang2019sphericalcnn} \emph{rerun} & 94.95 & 38.41 & 10 & 10h\\
-	% 328'339
-	\cite{cohen2019gauge} (S2R) & 97.5 & 68.6 & - & -\\
-	\cite{cohen2019gauge} (R2R) & 97.7 & 75.9 & - & -\\ \hline
-	% unknown
-	DeepSphere (weighted) & $97.8\pm 0.3$ & $77.15\pm 1.94$ & 33 & 13h \\
-	DeepSphere (non-weighted) & $87.8\pm 0.5$ & $89.16\pm 1.37$ & 33 & 13h\\
-	% 12'926'432
+	\centering
+	\begin{tabular}{l l l}
+	\toprule
+	& accuracy & mAP \\
+	\midrule
+	\cite{jiang2019sphericalcnn} (paper) & 94.67 & - \\
+	\cite{jiang2019sphericalcnn} (rerun) & 94.95 & 38.41 \\
+	\cite{cohen2019gauge} (S2R) & 97.5 & 68.6 \\
+	\cite{cohen2019gauge} (R2R) & 97.7 & 75.9 \\
+	DeepSphere (weighted loss) & $97.8\pm 0.3$ & $77.15\pm 1.94$ \\
+	DeepSphere (non-weighted loss) & $87.8\pm 0.5$ & $89.16\pm 1.37$ \\
+	\bottomrule
 	\end{tabular}
-	\caption{Climate pattern segmentation mean accuracy (\%), mean Average Precision (\%) and speed for different models run on the icosahedron dataset from \cite{jiang2019sphericalcnn}}
+	\caption{
+		Climate event segmentation results: mean accuracy and mean average precision (mAP). DeepSphere achieves state-of-the-art performance while using isotropic filters (S2S in \citet{cohen2019gauge}'s language), suggesting again that anisotropic filters are an unnecessary price to pay.
+		Note that \citet{jiang2019sphericalcnn} and \citet{cohen2019gauge} use a weighted cross-entropy loss, which is good for the accuracy metric (as it corrects for class imbalance) but bad for the mAP metric.
+	}
 \end{table}
 
+* icosahedron dataset from \cite{jiang2019sphericalcnn} \\
 * Jiang rerun with a batch size of 64 instead of 256 due to memory limit.\\
 * cross entropy loss between parenthesis\\
 * 5 runs for each loss to obtain mean and std\\
@@ -797,59 +803,96 @@ batch size = 8, 80 epochs, adam optimizer, cross-entropy loss, learning rate $2\
 \subsection{climate event detection}
 \subsubsection*{Results}
 
-\begin{table}
+* DS-jiang is the similar architecture as \cite{jiang2019sphericalcnn}. \\
+* DS-optimal has 2 times the number of feature maps of DS. \\
+* \todo{What is DS and DS-Cohen?} \\
+* \todo{Is (equi non-weighted) the full resolution?} \\
+* \todo{check column order for DS} \\
 
-\begin{tabular}{l|c c c c c}
-        \multicolumn{1}{l}{} & \multicolumn{4}{c}{Accuracy} & Size\\
-        \cmidrule(lr){2-5} \cmidrule(lr){6-6}
-        \multicolumn{1}{l}{Method} & TC & AR & BG & mean & params \\ \hline
-        %Mudigonda et al. & 97 & 74 & 65 & 78.67 & - & - & - \\
-        \cite{jiang2019sphericalcnn} & 94 & 93 & 97 & 94.67 & 330k\\
-        \cite{jiang2019sphericalcnn} \emph{rerun} & 93.9 & 95.7 & 95.2 & 94.95 & 330k\\
-        % 328'339
-        \cite{cohen2019gauge} (S2R) & 97.3 & 97.3 & 97.8 & 97.5 & -\\
-        \cite{cohen2019gauge} (R2R) & 97.8 & 97.4 & 97.9 & 97.7 & -\\ \hline
-        DS (weighted) & $97.4\pm 1.1$ & $97.7\pm 0.7$ & $98.2\pm 0.5$ & $97.8\pm 0.3$ & 13M\\
-        DS (non-weighted) & $69.2\pm 3.7$ & $94.5\pm 2.9$ & $99.7\pm 0.1$ & $87.8\pm 0.5$ & 13M\\ \hline
-        % 12'926'432
-        DS-Jiang (weighted) & 97.1 & 97.6 & 96.5 & 97.1 & 590k\\
-        DS-Jiang (non-weighted) & 33.6 & 93.6 & 99.3 & 75.5 & 590k\\ \hline
-        % 590k
-        DS-optimal (weighted) & 91.5 & 93.4 & 99.0 & 94.6 & 52M\\
-        DS-optimal (non-weighted) & 73.4 & 92.7 & 99.8 & 88.7 & 52M\\ \hline
-        %DS-Cohen (weighted) & 95.5 & 96.9 & 93.9 & 95.4 & 2M \\
-        %DS-Cohen (non-weighted) & 95.5 & 96.9 & 93.9 & 95.4 & 2M \\
-        % DeepSphere (equi non-weighted) & 31.3 & 75.2 & 99.9 & 68.80
+\begin{table}
+    \centering
+	\begin{tabular}{l l l l l}
+		\toprule
+        & TC & AR & BG & mean \\
+		\midrule
+		\cite{mudigonda2017climateevents} & 74 & 65 & 97 & 78.67 \\
+		\cite{jiang2019sphericalcnn} (paper) & 94 & 93 & 97 & 94.67 \\
+		\cite{jiang2019sphericalcnn} (rerun) & 93.9 & 95.7 & 95.2 & 94.95 \\
+        \cite{cohen2019gauge} (S2R) & 97.8 & 97.3 & 97.3 & 97.5 \\
+        \cite{cohen2019gauge} (R2R) & 97.9 & 97.8 & 97.4 & 97.7 \\
+		\midrule
+        DS (weighted) & $97.4\pm 1.1$ & $97.7\pm 0.7$ & $98.2\pm 0.5$ & $97.8\pm 0.3$ \\
+        DS-Jiang (weighted) & 97.1 & 97.6 & 96.5 & 97.1 \\
+        DS-optimal (weighted) & 91.5 & 93.4 & 99.0 & 94.6 \\
+		\midrule
+        DS (non-weighted) & $69.2\pm 3.7$ & $94.5\pm 2.9$ & $99.7\pm 0.1$ & $87.8\pm 0.5$ \\
+        DS-Jiang (non-weighted) & 33.6 & 93.6 & 99.3 & 75.5 \\
+        DS-optimal (non-weighted) & 73.4 & 92.7 & 99.8 & 88.7 \\
+		\midrule
+		\todo{DS-Cohen (weighted)} & 95.5 & 96.9 & 93.9 & 95.4 \\
+		\todo{DS-Cohen (non-weighted)} & 95.5 & 96.9 & 93.9 & 95.4 \\
+		\todo{DeepSphere (equi non-weighted)} & 31.3 & 75.2 & 99.9 & 68.80 \\
+		\bottomrule
     \end{tabular}
-    \caption{Climate pattern segmentation accuracy (\%) for BG, TC
-and AR classes plus mean accuracy.}
+    \caption{
+		Results on climate event segmentation: accuracy.
+		Tropical cyclones (TC) and atmospheric rivers (AR) are the two positive classes, against the background (BG).
+		\todo{\citet{mudigonda2017climateevents} is not directly comparable as they don't use the same input feature maps.}
+		Note that a non-weighted cross-entropy loss is not optimal for the accuracy metric.
+	}
 \end{table}
 
-* DS-jiang is the similar architecture as \cite{jiang2019sphericalcnn}.\\
-* DS-optimal has 2 times the number of feature maps of DS.\\
+\begin{table}
+	\centering
+	\begin{tabular}{l l l l}
+		\toprule
+        & TC & AR & mean \\
+		\midrule
+		\cite{jiang2019sphericalcnn} (rerun) & 11.08 & 65.21 & 38.41 \\
+        \cite{cohen2019gauge} (S2R) & - & -& 68.6 \\
+        \cite{cohen2019gauge} (R2R) & - & -& 75.9 \\
+		\midrule
+        DS (non-weighted) & $80.86\pm 2.42$ & $97.45\pm 0.38$ & $89.16\pm 1.37$ \\
+        DS-Jiang (non-weighted) & 46.2 & 93.9 & 70.0 \\
+        DS-optimal (non-weighted) & 84.71 & 98.05 & 91.38 \\
+		\midrule
+        DS (weighted) & $58.88\pm 3.17$ & $95.41\pm 1.51$ & $77.15\pm 1.94$ \\
+        DS-Jiang (weighted) & 49.7 & 89.2 & 69.5 \\
+        DS-optimal (weighted) & 52.80 & 94.78 & 73.79 \\
+		\midrule
+		\todo{DS-Cohen (weighted)} & 13.1 & 80.3 & 46.7 \\
+		\todo{DeepSphere (equi non-weighted)} & 55.53 & 94.85 & 75.19 \\
+		\bottomrule
+    \end{tabular}
+    \caption{
+		Results on climate event segmentation: average precision.
+		Tropical cyclones (TC) and atmospheric rivers (AR) are the two positive classes.
+		Note that a weighted cross-entropy loss is not optimal for the average precision metric.
+	}
+\end{table}
 
 \begin{table}
-\begin{tabular}{l|c c c c c}
-        \multicolumn{1}{l}{} & \multicolumn{3}{c}{Average Precision} & \multicolumn{2}{c}{Speed}\\
-        \cmidrule(lr){2-4}\cmidrule(lr){5-6}
-        \multicolumn{1}{l}{Method} & TC & AR & mean & inference [ms] & training \\ \hline
+	\centering
+	\begin{tabular}{l r r r}
+		\toprule
+		& \multicolumn{1}{c}{size} & \multicolumn{2}{c}{speed} \\
+        \cmidrule(lr){2-2} \cmidrule(lr){3-4}
+		& params & inference & training \\
+		\midrule
         %Mudigonda et al. & 97 & 74 & 65 & 78.67 & - & - & - \\
-        \cite{jiang2019sphericalcnn} \emph{rerun} & 11.08 & 65.21 & 38.41 & 10.2 & 10h14m\\
-        % 328'339
-        \cite{cohen2019gauge} (S2R) & - & -& 68.6 & - & - \\
-        \cite{cohen2019gauge} (R2R) & - & -& 75.9 & - & -\\ \hline
-        DS (weighted) & $58.88\pm 3.17$ & $95.41\pm 1.51$ & $77.15\pm 1.94$ & 33 & 13h \\
-        DS (non-weighted) & $80.86\pm 2.42$ & $97.45\pm 0.38$ & $89.16\pm 1.37$ & 33 & 13h \\ \hline
-        % 12'926'432
-        DS-Jiang (weighted) & 49.7 & 89.2 & 69.5 & 5 & 3h06m\\
-        DS-Jiang (non-weighted) & 46.2 & 93.9 & 70.0 & 5 & 3h04m \\ \hline
-        % 590k
-        DS-optimal (weighted) & 52.80 & 94.78 & 73.79 & 50 & 20h \\
-        DS-optimal (non-weighted) & 84.71 & 98.05 & 91.38 & 50 & 20h \\ \hline
-        %DS-Cohen (weighted) & 13.1 & 80.3 & 46.7 & 11 & 4h \\
-        % DeepSphere (equi non-weighted) & 55.53 & 94.85 & 75.19 & 567 ms & 48h
+		\cite{jiang2019sphericalcnn} & 330\,k & 10\,ms & 10\,h \\ % 328'339
+		% \cite{cohen2019gauge} (S2R) & - & - & - \\
+        % \cite{cohen2019gauge} (R2R) & - & - & - \\
+		DeepSphere (Jiang) & 590\,k & 5\,ms & 3\,h \\ % 590k
+        DeepSphere & 13\,M & 33\,ms & 13\,h \\ % 12'926'432
+		DeepSphere (optimal) & 52\,M & 50\,ms & 20\,h \\
+		\todo{DS-Cohen (weighted)} & 2\,M & 11\,ms & 4\,h \\
+		\todo{DeepSphere (equi non-weighted)} & - & 567\,ms & 48\,h \\
+		\bottomrule
     \end{tabular}
-    \caption{Climate pattern segmentation average precision for positive classes and mean as well, plus speed performance for inference (one training pass for one instance)  and training time.}
+    \caption{
+		Results on climate event segmentation: size and speed.
+	}
 \end{table}
 
 \subsubsection*{Icosahedron}
