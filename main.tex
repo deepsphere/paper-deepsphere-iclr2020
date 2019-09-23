@@ -11,6 +11,8 @@
 \usepackage{siunitx} % used in SHREC table
 \usepackage{bbm}        % for mathbbm
 \usepackage{graphicx} \graphicspath{{figures/}}
+\usepackage[export]{adjustbox} % figure vertical alignment
+\usepackage{subfig}
 %\usepackage{wrapfig}
 %\usepackage{floatflt}
 \usepackage{amsthm}
@@ -108,22 +110,31 @@ In many applications, labels or variables are to be inferred from spherical data
 Examples are the inference of cosmological parameters from the distribution of mass in the universe \citep{perraudin2019deepspherecosmo}, the segmentation of omnidirectional images \citep{khasanova2017sphericalcnn}, and the segmentation of cyclones from Earth observation \citep{mudigonda2017climateevents}.
 
 \begin{figure}[h]
-	\includegraphics[height=0.25\linewidth]{example_cosmo_cmb}
-	\hfill
-	\includegraphics[height=0.25\linewidth]{example_brain_meg}
-% 	\hfill
-% 	\includegraphics[height=0.25\linewidth]{example_climate_TMQ}
-	\hfill
-	\includegraphics[height=0.25\linewidth]{example_ghcn_daily_tmax}
-	\hfill
-	\includegraphics[height=0.25\linewidth]{example_ghcn_graph}
+	\centering
+	\subfloat[]{
+		\includegraphics[height=0.20\linewidth,valign=t]{example_cosmo_cmb}
+	} \hfill
+	\subfloat[]{
+		\includegraphics[height=0.20\linewidth,valign=t]{example_brain_meg}
+	} \hspace{0.1em}
+	\subfloat[]{
+		\includegraphics[height=0.20\linewidth,valign=t]{example_climate_TMQ}
+		\label{fig:examples:climate}
+	} \hfill
+	\subfloat[]{
+		\includegraphics[height=0.20\linewidth,valign=t]{example_ghcn_daily_tmax}
+	} \hfill
+	\subfloat[]{
+		\includegraphics[height=0.20\linewidth,valign=t]{example_ghcn_graph}
+	}
 	\caption{
 		Examples of intrinsically spherical data:
-		(left) the cosmic microwave background (CMB) temperature from \citet{planck2015overview},
-		(middle) brain activity recorded through magnetoencephalography (MEG),\protect\footnotemark
-		(right) daily maximum temperature from the Global Historical Climatology Network (GHCN).\protect\footnotemark
-		A rigid full-sphere pixelization is not ideal: the Milky Way's galactic plane masks observations, brain activity is only measured on the scalp, and the position of weather stations is arbitrary and changes over time.
-		Graphs can faithfully and efficiently represent sampled spherical data by placing vertices where data has been measured.
+		(a) the cosmic microwave background (CMB) temperature from \citet{planck2015overview},
+		(b) brain activity recorded through magnetoencephalography (MEG),\protect\footnotemark
+		(c) hourly precipitation from a climate simulation \citep{mudigonda2017climateevents},
+		(d) daily maximum temperature from the Global Historical Climatology Network (GHCN).\protect\footnotemark
+		A rigid full-sphere pixelization is not ideal: the Milky Way's galactic plane masks observations, brain activity is only measured on the scalp, climate scientists desire a variable resolution, and the position of weather stations is arbitrary and changes over time.
+		(e) Graphs can faithfully and efficiently represent sampled spherical data by placing vertices where data has been measured.
 		%\todo{something from climate, weather?}
 		%\todo{compare ideal full-spheres (like SHREC-17 projection from Esteves, 360 from Coors) to real-world measurements?}
 		%\todo{horizontal colorbar for brain}
