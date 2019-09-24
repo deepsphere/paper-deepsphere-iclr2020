@@ -74,6 +74,7 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 	\item check footnotes
 	\item climate data on spectrum plot
 	\item result tables: only what supports the main message in the text, everything we have in the appendix
+	\item Sampling, discretization, or pixelization of the sphere? Be consistent.
 \end{itemize}
 }
 \newpage
@@ -123,9 +124,11 @@ Examples are the inference of cosmological parameters from the distribution of m
 	} \hfill
 	\subfloat[]{
 		\includegraphics[height=0.20\linewidth,valign=t]{example_ghcn_daily_tmax}
+		\label{fig:examples:ghcn:tmax}
 	} \hfill
 	\subfloat[]{
 		\includegraphics[height=0.20\linewidth,valign=t]{example_ghcn_graph}
+		\label{fig:examples:ghcn:graph}
 	}
 	\caption{
 		Examples of intrinsically spherical data:
@@ -141,8 +144,8 @@ Examples are the inference of cosmological parameters from the distribution of m
 	}
 	\label{fig:examples}
 \end{figure}
-\footnotetext[1]{\scriptsize\url{https://www.ncdc.noaa.gov/ghcn-daily-description}}
-\footnotetext[2]{\scriptsize\url{https://martinos.org/mne/stable/auto_tutorials/plot_visualize_evoked.html}}
+\footnotetext[1]{\scriptsize\url{https://martinos.org/mne/stable/auto_tutorials/plot_visualize_evoked.html}}
+\footnotetext[2]{\scriptsize\url{https://www.ncdc.noaa.gov/ghcn-daily-description}}
 
 % balance of ??
 % Exploit the geometrical properties of the domain, symmetries.
@@ -477,40 +480,55 @@ Compared to \citet{cohen2019gauge}'s conclusion, it is surprising that S2R does 
 Potential explanations are (i) that their icosahedral projection introduces harmful distortions, or (ii) that a larger architecture can compensate for the lack of generality. % powerfulness?
 We indeed observed that more feature maps and depth led to higher performance (\ref{sec:climate:appendix}).
 
-\subsection{GHCN} \label{sec:exp:ghcn}
+\subsection{Uneven sampling} \label{sec:exp:ghcn}
 
-* task is artificial, but it shows DeepSphere's flexibility\\
-* structure (looking around) help for prediction\\
-* equivariance to be verified in this case (next paper)\\
-
-* non-regular sampling with different density over the globe (continent vs ocean)\\
-* resulting graph is not rotation equivariant\\
-* Two different tasks: a dense regression and a global regression\\
-
-\paragraph*{dense regression - future temperature estimation}~\\
-* Task is to find the temperature at day T, knowing the temperature of the 5 previous days.\\
-* Goal is to change the order of the chebyshev filter to find the influence of the structure.\\
-* order 0 is the same as time series, as the pixel have no information of its neighborhood.\\
-* increasing order is good until threshold.\\
-* The NN indeed predicts the correct temperature at day T, and not day T-1 (baseline) even though there is small difference.\\
-
-
-
-\paragraph*{global regression - day in year estimation}~\\
-* days represented by a sine to represent the periodic nature of the year.\\
-* task too easy, temperature feature already periodic $\Rightarrow$ second experiment with only precipitation feature\\
-* structure is still helping\\
+To demonstrate the flexibility of modeling the discretized sphere by a graph, we collected historical measurements from weather stations scattered across the Earth.\footnote{\url{https://www.ncdc.noaa.gov/ghcn-daily-description}}
+The spherical data is heavily non-uniformly sampled, with a much higher density of weather stations over North America than the Pacific (\figref{examples:ghcn:tmax}).
+There are \todo{xx} stations in total.
+For illustration, we devised two artificial tasks.
+A dense regression that consists of predicting the temperature on a given day knowing the temperature on the 5 previous days.
+A global regression that consists of predicting the day (represented as one period of a sine over the year) from temperature or precipitations.
 
 \begin{table}
     \centering
-    \begin{tabular}{c|ccc}
-        order & future temp & day (temperature) & day (precipitations) \\ \hline
-        0 & 0.896 & 0.881 & - 0.920\\
-        4 & 0.919 & 0.969 & 0.597\\
+    \begin{tabular}{
+			c
+			S[table-format=2.2]
+			S[table-format=1.2]
+			S[table-format=1.3]
+			S[table-format=1.2]
+			S[table-format=1.2]
+			S[table-format=1.3]
+			S[table-format=1.2]
+			S[table-format=1.2]
+			S[table-format=-1.3]
+		}
+		\toprule
+		& \multicolumn{3}{c}{temp. (from past temp.)} & \multicolumn{3}{c}{day (from temperature)} & \multicolumn{3}{c}{day (from precipitations)} \\
+		\cmidrule(lr){2-4} \cmidrule(lr){5-7} \cmidrule(lr){8-10}
+		order $K$ & {MSE} & {MAE} & {R2} & {MSE} & {MAE} & {R2} & {MSE} & {MAE} & {R2} \\
+		\midrule
+		$0$ & 10.88 & 2.42 & 0.896 & 0.10 & 0.10 & 0.881 & 0.58 & 0.42 & -0.920 \\
+		%%$1$ &  8.91 & 2.20 & 0.906 & - & - & - & - & - & - \\
+		$4$ &  8.20 & 2.11 & 0.919 & 0.05 & 0.06 & 0.969 & 0.50 & 0.18 &  0.597 \\
+		%$9$ &  8.38 & 2.12 & 0.915 & - & - & - & - & - & - \\
+		\bottomrule
     \end{tabular}
-    \caption{R2 coefficient for different tasks on the GHCN dataset}
-    \label{tab:GHCN_results}
+    \caption{
+		Prediction results on data from weather stations.
+		Structure always helps.
+	}
+    \label{tab:ghcn}
 \end{table}
+
+Results from \tabref{ghcn} show that treating the times series as a time-varying spherical signal (with filters of polynomial order $K>0$) yields higher performance than treating each time series independently ($K=0$).
+Note that predicting the day from temperature is much easier as temperature has a yearly pattern.
+Still, structure helps.
+
+% * increasing order is good until threshold \\
+% * equivariance to be verified in this case (next paper) -> in conclusion \\
+% * The NN indeed predicts the correct temperature at day T, and not day T-1 (baseline) even though there is small difference. \\
+% * \todo{performance of baseline} \\
 
 \section{Conclusion [0.5 pages]}
 
@@ -557,13 +575,16 @@ Our ultimate goal is for practitioners to be able to work directly on their meas
 \newpage
 \subsubsection*{Author Contributions}
 Left blank for anonymity reason
-% If you'd like to, you may include  a section for author contributions as is done
+% If you'd like to, you may include a section for author contributions as is done
 % in many journals. This is optional and at the discretion of the authors.
 
 \subsubsection*{Acknowledgments}
 Left blank for anonymity reason
 
-%We thank Taco Cohen for his inputs on the intriguing results of our comparisons with their gauge CNN \citep{}.
+%We thank Pierre Vandergheynst for advices, and Andreas Loukas for having processed the GHCN data.
+%We thank Taco Cohen for his inputs on the intriguing results of our comparison with \citet{cohen2019gauge}.
+%We used the Python Graph Signal Processing package (PyGSP) \citep{pygsp} for computations and plots.
+%The Python Graph Signal Processing package (PyGSP) \citep{pygsp} was used to build graphs, compute the Laplacian and Fourier basis, and perform graph convolutions.
 
 \bibliography{references}
 \bibliographystyle{iclr2020_conference}
@@ -575,7 +596,7 @@ Left blank for anonymity reason
 \section{Proof of theorem}\label{sec: appendix: proof of theorem}
 Given a sampling $\{x_i\in\mathcal M\}_{i=0}^{n-1}$ of a closed, compact and infinitely differentiable manifold $\mathcal M$, a smooth function $f:\mathcal M \rightarrow \mathbb R$, and defined the vector $\b f$ of samples of $f$ as follows: $\b f\in \mathbb R^n,\ \b f_i = f(x_i)$, it is known that  (\cite{belkin2005towards}) to prove the convergence of $(\b {L}_n^t \b f) _i$ to $\Delta_{\mathbb S^2}f(x_i)$ it is sufficient to prove the convergence of its continuous counterpart $L_n^tf(x)$ to $\Delta_{\mathbb S^2}f(x)$
 where $L_n^t$ is defined as follows:
-\begin{definition}{}\\
+\begin{definition}{}
 	\label{def:Heat Kernel Graph Laplacian operator}
 	\text{Given a sampling $\{x_i\in\mathcal M\}_{i=0}^{n-1}$ of the manifold we define the \textbf{operator} }$L_n^t$ such that
 	$$L_n^tf(y) := \frac{1}{n}\left[ \sum_{i=0}^{n-1} \exp \left\{ {-\frac{||x_i-y||^2}{4t}}\right\}\left(f(y)-f(x_i)\right)\right]$$
@@ -973,54 +994,6 @@ batch size 64, RMSprop optimizer, constant learning rate of $1 \cdot 10{-3}$, MS
 
 \subsubsection*{Results}
 
-\begin{table}
-    \centering
-    \begin{tabular}{c|ccc}
-        order & MSE & MAE & R2 \\ \hline
-        0 & 10.88 & 2.42 & 0.896\\
-        1 & 8.91 & 2.20 & 0.906\\
-        4 & 8.20 & 2.11 & 0.919\\
-        9 & 8.38 & 2.12 & 0.915\\
-    \end{tabular}
-    \caption{Future temperature estimation task. Evolution of performance in respect of the order of the graph filter}
-    \label{tab:future_results}
-    \hfill
-    %~\\[1cm]
-    % \begin{minipage}{0.48\linewidth}
-    % \begin{tabular}{c|ccc}
-    %     order & MSE & MAE & R2 \\ \hline
-    %     1 & 134.01 & 10.51 & -0.319\\
-    %     4 & 129.48 & 10.31 & -0.274\\
-    %     9 & 141.68 & 10.82 & -0.389\\
-    % \end{tabular}
-    % \caption{Baseline: testing with the present day (T-1) instead of the future day T}
-    % \label{tab:present_results}
-    % \end{minipage}
-\end{table}
-
-\begin{table}
-    \centering
-    \begin{minipage}{0.48\linewidth}
-    \begin{tabular}{c|ccc}
-        order & MSE & MAE & R2 \\ \hline
-        0 & 0.58 & 0.42 & -0.92\\
-        4 & 0.50 & 0.18 & 0.597\\
-    \end{tabular}
-    \caption{Find day in year using precipitation}
-    \label{tab:glob_prec}
-    \end{minipage}
-    \hfill
-    %~\\[1cm]
-    \begin{minipage}{0.48\linewidth}
-    \begin{tabular}{c|ccc}
-        order & MSE & MAE & R2 \\ \hline
-        0 & 0.10 & 0.10 & 0.881\\
-        4 & 0.05 & 0.05 & 0.969\\
-    \end{tabular}
-    \caption{Using temperature feature that is already periodical}
-    \label{tab:glob_all}
-    \end{minipage}
-\end{table}
 
 \subsubsection*{Dense}
 
