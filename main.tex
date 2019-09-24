@@ -11,6 +11,8 @@
 \usepackage{siunitx} % used in SHREC table
 \usepackage{bbm}        % for mathbbm
 \usepackage{graphicx} \graphicspath{{figures/}}
+\usepackage[export]{adjustbox} % figure vertical alignment
+\usepackage{subfig}
 %\usepackage{wrapfig}
 %\usepackage{floatflt}
 \usepackage{amsthm}
@@ -72,6 +74,7 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 	\item check footnotes
 	\item climate data on spectrum plot
 	\item result tables: only what supports the main message in the text, everything we have in the appendix
+	\item Unify vocabulary. Sampling, discretization, or pixelization of the sphere? Signal, maps, functions.
 \end{itemize}
 }
 \newpage
@@ -108,30 +111,41 @@ In many applications, labels or variables are to be inferred from spherical data
 Examples are the inference of cosmological parameters from the distribution of mass in the universe \citep{perraudin2019deepspherecosmo}, the segmentation of omnidirectional images \citep{khasanova2017sphericalcnn}, and the segmentation of cyclones from Earth observation \citep{mudigonda2017climateevents}.
 
 \begin{figure}[h]
-	\includegraphics[height=0.25\linewidth]{example_cosmo_cmb}
-	\hfill
-	\includegraphics[height=0.25\linewidth]{example_brain_meg}
-% 	\hfill
-% 	\includegraphics[height=0.25\linewidth]{example_climate_TMQ}
-	\hfill
-	\includegraphics[height=0.25\linewidth]{example_ghcn_daily_tmax}
-	\hfill
-	\includegraphics[height=0.25\linewidth]{example_ghcn_graph}
+	\centering
+	\subfloat[]{
+		\includegraphics[height=0.20\linewidth,valign=t]{example_cosmo_cmb}
+	} \hfill
+	\subfloat[]{
+		\includegraphics[height=0.20\linewidth,valign=t]{example_brain_meg}
+	} \hspace{0.1em}
+	\subfloat[]{
+		\includegraphics[height=0.20\linewidth,valign=t]{example_climate_TMQ}
+		\label{fig:examples:climate}
+	} \hfill
+	\subfloat[]{
+		\includegraphics[height=0.20\linewidth,valign=t]{example_ghcn_daily_tmax}
+		\label{fig:examples:ghcn:tmax}
+	} \hfill
+	\subfloat[]{
+		\includegraphics[height=0.20\linewidth,valign=t]{example_ghcn_graph}
+		\label{fig:examples:ghcn:graph}
+	}
 	\caption{
 		Examples of intrinsically spherical data:
-		(left) the cosmic microwave background (CMB) temperature from \citet{planck2015overview},
-		(middle) brain activity recorded through magnetoencephalography (MEG),\protect\footnotemark
-		(right) daily maximum temperature from the Global Historical Climatology Network (GHCN).\protect\footnotemark
-		A rigid full-sphere pixelization is not ideal: the Milky Way's galactic plane masks observations, brain activity is only measured on the scalp, and the position of weather stations is arbitrary and changes over time.
-		Graphs can faithfully and efficiently represent sampled spherical data by placing vertices where data has been measured.
+		(a) the cosmic microwave background (CMB) temperature from \citet{planck2015overview},
+		(b) brain activity recorded through magnetoencephalography (MEG),\protect\footnotemark
+		(c) hourly precipitation from a climate simulation \citep{jiang2019sphericalcnn}, %\citep{mudigonda2017climateevents},
+		(d) daily maximum temperature from the Global Historical Climatology Network (GHCN).\protect\footnotemark
+		A rigid full-sphere pixelization is not ideal: the Milky Way's galactic plane masks observations, brain activity is only measured on the scalp, climate scientists desire a variable resolution, and the position of weather stations is arbitrary and changes over time.
+		(e) Graphs can faithfully and efficiently represent sampled spherical data by placing vertices where data has been measured.
 		%\todo{something from climate, weather?}
 		%\todo{compare ideal full-spheres (like SHREC-17 projection from Esteves, 360 from Coors) to real-world measurements?}
 		%\todo{horizontal colorbar for brain}
 	}
 	\label{fig:examples}
 \end{figure}
-\footnotetext[1]{\scriptsize\url{https://www.ncdc.noaa.gov/ghcn-daily-description}}
-\footnotetext[2]{\scriptsize\url{https://martinos.org/mne/stable/auto_tutorials/plot_visualize_evoked.html}}
+\footnotetext[1]{\scriptsize\url{https://martinos.org/mne/stable/auto_tutorials/plot_visualize_evoked.html}}
+\footnotetext[2]{\scriptsize\url{https://www.ncdc.noaa.gov/ghcn-daily-description}}
 
 % balance of ??
 % Exploit the geometrical properties of the domain, symmetries.
@@ -172,7 +186,7 @@ As the lack of equivariance penalizes performance (\secref{exp:cosmo}) and expen
 The projection of the data from the sphere to the icosahedron however introduces distortions that might hinder performance (see the experiments in \secref{exp:climate}).
 \todo{Where does Jiang fit? Need a global coordinate system (ok for planets, not projections like cosmo)}
 
-Another approach represents the discretized sphere as a graph connecting pixels according to the distance between them \citep{khasanova2017sphericalcnn, perraudin2019deepspherecosmo}.
+Another approach represents the discretized sphere as a graph connecting pixels according to the distance between them \citep{bruna2013gnn, khasanova2017sphericalcnn, perraudin2019deepspherecosmo}.
 While Laplacian-based graph convolutions are more efficient than spherical convolutions, they are not exactly equivariant \citep{defferrard2019deepsphereequiv}.
 In this work, we argue that graph-based spherical CNNs strike an interesting balance, with a controllable tradeoff between cost and equivariance.
 Experiments on multiple problems of practical interest show the competitiveness and flexibility of this approach.
@@ -184,7 +198,7 @@ Experiments on multiple problems of practical interest show the competitiveness 
 The gist of the method is to define the spherical convolution using a graph, and the down-sampling operation using a hierarchical pixelisation of the sphere.
 
 \todo{
-	* discuss discretizations (equiangular, HEALPix) -> more uniform is better \\
+	* discuss discretizations (equiangular, HEALPix, icosahedral sphere) -> more uniform is better \\
 	* no uniform sampling: tradeoffs have to be made \\
 	* CNN vs FCN discussion (GAP for invariance) \\
 }
@@ -217,7 +231,8 @@ The gist of the method is to define the spherical convolution using a graph, and
 % % , a weighted undirected graph $G(V, E, \mathbf W)$,
 % \nati{I do not think we should have a notation section, but should somehow write this somewhere...}
 
-\section{Is graph convolution equivariant to rotation? [2 pages]} \label{sec:equivariance}
+\section{Graph convolution and equivariance [2 pages]} \label{sec:equivariance}
+%\section{Is graph convolution equivariant to rotation? [2 pages]} \label{sec:equivariance}
 
 \subsection{Problem formulation}
 % The plan for this section
@@ -321,12 +336,10 @@ From 20\% error on V1, we got to less than 2\% error on V2. The number of neighb
 
 \section{Experiments [2 pages]}
 
-\todo{
-Show: \\
-* meet the desiderata \\
-* DeepSphere V1 and V2 are equivalent in practice, wait on SHREC and cosmo exp \\
-* anisotropy doesn't help \\
-}
+% Show:
+% * meet the desiderata: scale
+% * DeepSphere V1 and V2 are equivalent in practice: better equivariance doesn't translate to better performance
+% * anisotropy doesn't help
 
 \subsection{3D objects recognition} \label{sec:exp:objects}
 
@@ -355,18 +368,19 @@ Show: \\
 The recognition of 3D shapes is a rotation invariant task: rotating an object doesn't change its nature.
 While 3D shapes are usually represented as meshes or point clouds, representing them as spherical maps (\figref{depthmap}) naturally allows a rotation invariant treatment.
 LIDAR actually acquires depth maps, which are a posteriori represented as point clouds.
+\todo{move to intro?}
 
 The SHREC'17 shape retrieval contest \citep{shrec17} contains 51,300 randomly oriented 3D models from ShapeNet \citep{shapenet}, to be classified in 55 categories (tables, lamps, airplanes, etc.).
 As in \citet{cohen2018sphericalcnn}, objects are represented by 6 spherical maps.
 At each pixel, a ray is traced towards the center of the sphere.
 The distance from the sphere to the object forms a depth map.
-The $\cos$ / $\sin$ of the surface angle forms two normal maps.
+The $\cos$ and $\sin$ of the surface angle forms two normal maps.
 The same is done for the object's convex hull.
 The maps are discretized using either an equiangular grid \citep{driscoll1994Fouriersphere} with bandwidth $b = 64$ ($N_{pix} = 4 b^2 = 16,384$), or an HEALPix \citep{healpix} grid with $N_{side} = 32$ ($N_{pix} = 12 N_{side}^2 = 12,288$).
 
-\todo{Graph (\#neighbors), network architecture (info in the appendix, set the notation in the method section) and hyper-parameters. Or leave in appendix.}
+\todo{Graph (\#neighbors), network architecture (info in the appendix, set the notation in the method section), loss, hyper-parameters. Or leave in appendix.}
 
-\begin{table}%[ht]
+\begin{table}
     \centering
 	%\begin{tabular}{l cc r rr}
 	\begin{tabular}{l cc r rS[table-format=2.0]}
@@ -394,7 +408,7 @@ The maps are discretized using either an equiangular grid \citep{driscoll1994Fou
 \footnotetext[5]{As implemented in \url{https://github.com/jonas-koehler/s2cnn}.}
 
 Results are shown in \tabref{shrec17}.
-DeepSphere achieves the same performance as \citet{cohen2018sphericalcnn} and \citet{esteves2018sphericalcnn} while being much more efficient, suggesting that anisotropic filters are an unnecessary price to pay.
+DeepSphere achieves the same performance as \citet{cohen2018sphericalcnn} and \citet{esteves2018sphericalcnn} at a much lower cost, suggesting that anisotropic filters are an unnecessary price to pay.
 % x times faster
 As the information in those spherical maps resides in the low frequencies (\figref{spectrum}), reducing the equivariance error didn't translate into improved performance.
 For the same reason, using the more uniform HEALPix discretization or lowering the resolution down to $N_{side} = 8$ didn't impact performance.
@@ -402,31 +416,64 @@ For the same reason, using the more uniform HEALPix discretization or lowering t
 
 % Limited by representation of data? yep, treat them as point clouds
 
-\subsection{Cosmological model discrimination} \label{sec:exp:cosmo}
+\subsection{Cosmological model classification} \label{sec:exp:cosmo}
+
+Given observations, cosmologists estimate the posterior probability of cosmological parameters, such as the matter density $\Omega_m$ and the normalization of the matter power spectrum $\sigma_8$.
+Those parameters are typically estimated by likelihood-free inference, which requires a function to predict the parameters from simulations.
+% such as Approximate Bayesian computation (ABC)
+As that is complicated to setup, prediction methods are typically benchmarked on the classification of spherical maps into cosmological model classes \citep{schmelze2017cosmologicalmodel}.
+We used the same task, data, and setup as \citet{perraudin2019deepspherecosmo}: the classification of $720$ partial convergence maps ($1/12 \approx 8\%$ of the sphere) made of $10^6$ pixels from two $\Lambda$CDM cosmological models, ($\Omega_m = 0.31$, $\sigma_8 = 0.82)$ and ($\Omega_m = 0.26$, $\sigma_8 = 0.91)$, at a relative noise level of $4$.
+% 60 maps * 12 parts = 720 parts
+Convergence maps represent the distribution of over- and under-densities of mass in the universe \citep[see][for a review of gravitational lensing]{bartelman2010gravitationallensing}.
+
+\todo{Graph (\#neighbors), network architecture (info in the appendix, set the notation in the method section), loss, hyper-parameters. Or leave in appendix.}
+
+\begin{table}
+    \centering
+    \begin{tabular}{l c c c}
+		\toprule
+		& accuracy & conv. equiv. error & NN inv. error \\
+		\midrule
+		2D CNN baseline \citep{perraudin2019deepspherecosmo} & \todo{??} & \todo{can we?} \\
+		8 neighbors, $\hat{t} = ??$, CNN variant, \citep{perraudin2019deepspherecosmo} & \todo{??} & \todo{??} \\
+		8 neighbors, $\hat{t} = ??$, FCN variant, \citep{perraudin2019deepspherecosmo} & \todo{??} & \todo{??} \\
+		8 neighbors, optimal kernel width $\hat{t} = ??$ & \todo{??} & \todo{??} \\
+		20 neighbors, optimal kernel width $\hat{t} = ??$ & \todo{??} & \todo{??} \\
+		40 neighbors, optimal kernel width $\hat{t} = ??$ & \todo{??} & \todo{??} \\
+		\bottomrule
+    \end{tabular}
+	\caption{
+		Results on the classification of partial convergence maps.
+		\todo{While extreme non-equivariance (the 2D CNN baseline) penalizes performance, improving equivariance doesn't improve performance.}
+	}
+    \label{tab:cosmo}
+\end{table}
 
 \todo{
-* other sphercial CNNs cannot scale to 10M pixels (tested on 10k at most) \\
-* redo the experiment with the optimal graph \\
-* DSv2 better than v1 -> equivariance has practical implications \\
-* clear cost-accuracy tradeoff with n_neighbors \\
-* show the baselines? (at least the 2D CNN?) \\
 }
 
-% \begin{table}[]
-%     \centering
-%     \begin{tabular}{c|c}
-%          &  \\
-%          &
-%     \end{tabular}
-%     \caption{Caption}
-%     \label{tab:cosmo_newgraph}
-% \end{table}
+Results are shown in \tabref{cosmo}.
+\todo{
+	While extreme non-equivariance (the 2D CNN baseline) penalizes performance, better equivariance doesn't improve performance.
+	It might be that the lack of built-in equivariance is compensated by learned equivariance (as done when augmenting data during training).}
+\todo{
+	Alternative: DSv2 better than v1 -> equivariance has practical implications.
+	Clear cost-accuracy tradeoff with the number of neighbors.
+}
+This experiment moreover demonstrates DeepSphere's flexibility (using partial spherical maps) and scalability (competing spherical CNNs were tested on maps of at most $10,000$ pixels).
 
 \subsection{Climate event segmentation} \label{sec:exp:climate}
 
-* small: better perf than gauge and Jiang. due to icosahedron distortion? to be confirmed\\
-* cannot compare with Mudigonda (16 vs 1 input channel)\\
-* (full: we scale (50B pixels, 20TB) $\Rightarrow$ lead to better perf?) \\
+We evaluate our method on a task proposed by \citep{mudigonda2017climateevents}: the segmentation of extreme climate events, Tropical Cyclones (TC) and Atmospheric Rivers (AR), in global climate simulations (\figref{examples:climate}).
+The data was produced by a 20-year run of the Community Atmospheric Model v5 (CAM5) and consists of 16 channels such as temperature, wind, humidity, and pressure at multiple altitudes.
+We used the pre-processed dataset from \citep{jiang2019sphericalcnn}.\footnote{Available at \url{http://island.me.berkeley.edu/ugscnn/data}.}
+%\url{https://github.com/maxjiang93/ugscnn}
+%\url{https://github.com/maxjiang93/ugscnn/blob/master/experiments/exp4_sphere_climate/run.sh}
+%\url{http://island.me.berkeley.edu/ugscnn/data/climate_sphere_l5.zip}
+There is 1,072,805 spherical maps, down-sampled to a level-5 icosahedral grid ($N_{pix} = 10 \cdot 4^l + 2 = 10,242$).
+The labels are heavily unbalanced with 0.1\% TC, 2.2\% AR, and 97.7\% background (BG) pixels.
+
+\todo{Graph (\#neighbors), network architecture (info in the appendix, set the notation in the method section), loss, hyper-parameters. Or leave in appendix.}
 
 \begin{table}
 	\centering
@@ -434,7 +481,7 @@ For the same reason, using the more uniform HEALPix discretization or lowering t
 	\toprule
 	& accuracy & mAP \\
 	\midrule
-	\cite{jiang2019sphericalcnn} (paper) & 94.67 & - \\
+	%\cite{jiang2019sphericalcnn} (paper) & 94.67 & - \\
 	\cite{jiang2019sphericalcnn} (rerun) & 94.95 & 38.41 \\
 	\cite{cohen2019gauge} (S2R) & 97.5 & 68.6 \\
 	\cite{cohen2019gauge} (R2R) & 97.7 & 75.9 \\
@@ -443,64 +490,72 @@ For the same reason, using the more uniform HEALPix discretization or lowering t
 	\bottomrule
 	\end{tabular}
 	\caption{
-		Climate event segmentation results: mean accuracy and mean average precision (mAP). DeepSphere achieves state-of-the-art performance while using isotropic filters (S2S in \citet{cohen2019gauge}'s language), suggesting again that anisotropic filters are an unnecessary price to pay.
-		Note that \citet{jiang2019sphericalcnn} and \citet{cohen2019gauge} use a weighted cross-entropy loss, which is good for the accuracy metric (as it corrects for class imbalance) but bad for the mAP metric.
+		Climate event segmentation results: mean accuracy (over TC, AR, BG) and mean average precision (over TC and AR).
+		DeepSphere achieves state-of-the-art performance. %, suggesting again that anisotropic filters are an unnecessary price to pay.
 	}
+	\label{tab:climate}
 \end{table}
 
-* icosahedron dataset from \cite{jiang2019sphericalcnn} \\
-* Jiang rerun with a batch size of 64 instead of 256 due to memory limit.\\
-* cross entropy loss between parenthesis\\
-* 5 runs for each loss to obtain mean and std\\
-* same architecture as gauge, more feature maps than Jiang\\
-* perf with same arch as Jiang in appendix => not enough channels!\\
-* even more feature maps give us one more point in perf\\
-* need more feature maps and layers to compensate for isotropy \\
-* cannot compare with Mudigonda: not the same input data\\
-* why: icosahedron, can do anisotropy with isotropy + non-linearity + pooling
+Results are shown in \tabref{climate} (details in tables~\ref{tab:climate:accuracy}, \ref{tab:climate:map} and~\ref{tab:climate:speed}).
+The mean and standard deviation are computed over 5 runs.
+Note that while \citet{jiang2019sphericalcnn} and \citet{cohen2019gauge} use a weighted cross-entropy loss, it is not ideal for the mAP metric.
+Results from \citet{mudigonda2017climateevents} cannot be directly compared as they don't use the same input channels.
+DeepSphere achieves state-of-the-art performance, suggesting again that anisotropic filters are not necessary.
 
-* trade off between AP and accuracy in the case of TC class, it seems.\\
-* change base, influence?\\
+Compared to \citet{cohen2019gauge}'s conclusion, it is surprising that S2R does worse than DeepSphere (which is limited to S2S).
+Potential explanations are (i) that their icosahedral projection introduces harmful distortions, or (ii) that a larger architecture can compensate for the lack of generality. % powerfulness?
+We indeed observed that more feature maps and depth led to higher performance (\ref{sec:climate:appendix}).
 
-* full dataset not enough memory to run a correct model
+\subsection{Uneven sampling} \label{sec:exp:ghcn}
 
-% jiang like correct: 99.81631631, 13.18655162, 52.62412867, 55.20899887;  0.3990812 , 0.80056251, 0.59982186; 4 ms; 2h40
-% more feat: 99.67871329, 38.78607557, 66.37910064, 68.2812965: 0.99981102, 0.60714174, 0.83236147, 0.71975161; 12ms; 6h20
+To demonstrate the flexibility of modeling the discretized sphere by a graph, we collected historical measurements from about 10,000 weather stations scattered across the Earth.\footnote{\url{https://www.ncdc.noaa.gov/ghcn-daily-description}}
+The spherical data is heavily non-uniformly sampled, with a much higher density of weather stations over North America than the Pacific (\figref{examples:ghcn:tmax}).
+For illustration, we devised two artificial tasks.
+A dense regression that consists of predicting the temperature on a given day knowing the temperature on the 5 previous days.
+A global regression that consists of predicting the day (represented as one period of a sine over the year) from temperature or precipitations.
 
-\subsection{GHCN} \label{sec:exp:ghcn}
-
-* task is artificial, but it shows DeepSphere's flexibility\\
-* structure (looking around) help for prediction\\
-* equivariance to be verified in this case (next paper)\\
-
-* non-regular sampling with different density over the globe (continent vs ocean)\\
-* resulting graph is not rotation equivariant\\
-* Two different tasks: a dense regression and a global regression\\
-
-\paragraph*{dense regression - future temperature estimation}~\\
-* Task is to find the temperature at day T, knowing the temperature of the 5 previous days.\\
-* Goal is to change the order of the chebyshev filter to find the influence of the structure.\\
-* order 0 is the same as time series, as the pixel have no information of its neighborhood.\\
-* increasing order is good until threshold.\\
-* The NN indeed predicts the correct temperature at day T, and not day T-1 (baseline) even though there is small difference.\\
-
-
-
-\paragraph*{global regression - day in year estimation}~\\
-* days represented by a sine to represent the periodic nature of the year.\\
-* task too easy, temperature feature already periodic $\Rightarrow$ second experiment with only precipitation feature\\
-* structure is still helping\\
+\todo{Graph (\#neighbors), network architecture (info in the appendix, set the notation in the method section), loss, hyper-parameters. Or leave in appendix.}
 
 \begin{table}
     \centering
-    \begin{tabular}{c|ccc}
-        order & future temp & day (temperature) & day (precipitations) \\ \hline
-        0 & 0.896 & 0.881 & - 0.920\\
-        4 & 0.919 & 0.969 & 0.597\\
+    \begin{tabular}{
+			c
+			S[table-format=2.2]
+			S[table-format=1.2]
+			S[table-format=1.3]
+			S[table-format=1.2]
+			S[table-format=1.2]
+			S[table-format=1.3]
+			S[table-format=1.2]
+			S[table-format=1.2]
+			S[table-format=-1.3]
+		}
+		\toprule
+		& \multicolumn{3}{c}{temp. (from past temp.)} & \multicolumn{3}{c}{day (from temperature)} & \multicolumn{3}{c}{day (from precipitations)} \\
+		\cmidrule(lr){2-4} \cmidrule(lr){5-7} \cmidrule(lr){8-10}
+		order $K$ & {MSE} & {MAE} & {R2} & {MSE} & {MAE} & {R2} & {MSE} & {MAE} & {R2} \\
+		\midrule
+		$0$ & 10.88 & 2.42 & 0.896 & 0.10 & 0.10 & 0.881 & 0.58 & 0.42 & -0.920 \\
+		%%$1$ &  8.91 & 2.20 & 0.906 & - & - & - & - & - & - \\
+		$4$ &  8.20 & 2.11 & 0.919 & 0.05 & 0.06 & 0.969 & 0.50 & 0.18 &  0.597 \\
+		%$9$ &  8.38 & 2.12 & 0.915 & - & - & - & - & - & - \\
+		\bottomrule
     \end{tabular}
-    \caption{R2 coefficient for different tasks on the GHCN dataset}
-    \label{tab:GHCN_results}
+    \caption{
+		Prediction results on data from weather stations.
+		Structure always helps.
+	}
+    \label{tab:ghcn}
 \end{table}
+
+Results from \tabref{ghcn} show that treating the times series as a time-varying spherical signal (with filters of polynomial order $K>0$) yields higher performance than treating each time series independently ($K=0$).
+Note that predicting the day from temperature is much easier as temperature has a yearly pattern.
+Still, structure helps.
+
+% * increasing order is good until threshold \\
+% * equivariance to be verified in this case (next paper) -> in conclusion \\
+% * The NN indeed predicts the correct temperature at day T, and not day T-1 (baseline) even though there is small difference. \\
+% * \todo{performance of baseline} \\
 
 \section{Conclusion [0.5 pages]}
 
@@ -508,7 +563,7 @@ This work showed that DeepSphere strikes an interesting balance between desidera
 A single parameter, the number of neighbors a pixel is connected to in the graph, controls the tradeoff between \todo{performance and efficiency}.
 % vague words
 As computational cost and memory consumption scales linearly with the number of pixels, DeepSphere easily deals with spherical maps made of millions of pixels.
-Such high resolutions are not necessary to represent thethe  depth maps of 3D objects, but are required to faithfully represent cosmological and climate data.
+Such high resolutions are not necessary to represent the depth maps of 3D objects, but are required to faithfully represent cosmological and climate data.
 % That has to do with the frequency content of the signals (see fig xx)
 % cannot do better
 Also relevant in scientific applications is the flexibility offered by a graph representation to deal with partial coverage and non-uniform samplings.
@@ -524,8 +579,10 @@ A potential drawback of graph Laplacian-based approaches is that graph filters a
 %Why anisotropic filters?
 Experiments from \citet{cohen2019gauge} suggest that more general convolutions achieve better performance.
 Our climate experiments (\secref{exp:climate}) however show that DeepSphere achieves similar performance than their most general convolution.
+% the SHREC17 experiment too shows that isotropic filters are sufficient
 Works on shape alignment indicates that anisotropic filters achieve better performance \todo{[Bronstein]}.
 Possible explanations for this discrepancy are that NNs somehow compensate for the lack of anisotropic filters, or that some tasks can be solved with isotropic filters.
+% why: icosahedron, can do anisotropy with isotropy + non-linearity + pooling
 The distortions induced by the icosahedral projection in \citep{cohen2019gauge} or the leakage of curvature information in \todo{[Bronstein]} might also be explanations.
 Further research is needed to determine if anisotropic filters are an unnecessary price to pay or if they are needed for some applications.
 % As was recently shown for graph NNs used for graph classification, most general might not be the best, when the ultimate goal is generalization [Andreas paper? + previous by xx]
@@ -545,13 +602,16 @@ Our ultimate goal is for practitioners to be able to work directly on their meas
 \newpage
 \subsubsection*{Author Contributions}
 Left blank for anonymity reason
-% If you'd like to, you may include  a section for author contributions as is done
+% If you'd like to, you may include a section for author contributions as is done
 % in many journals. This is optional and at the discretion of the authors.
 
 \subsubsection*{Acknowledgments}
 Left blank for anonymity reason
 
-%We thank Taco Cohen for his inputs on the intriguing results of our comparisons with their gauge CNN \citep{}.
+%We thank Pierre Vandergheynst for advices, and Andreas Loukas for having processed the GHCN data.
+%We thank Taco Cohen for his inputs on the intriguing results of our comparison with \citet{cohen2019gauge}.
+%We used the Python Graph Signal Processing package (PyGSP) \citep{pygsp} for computations and plots.
+%The Python Graph Signal Processing package (PyGSP) \citep{pygsp} was used to build graphs, compute the Laplacian and Fourier basis, and perform graph convolutions.
 
 \bibliography{references}
 \bibliographystyle{iclr2020_conference}
@@ -840,14 +900,21 @@ The order of the Chebyshev polynomial is 5 for each layer, the number of feature
 
 batch size = 8, 80 epochs, adam optimizer, cross-entropy loss, learning rate $2\cdot10^{-4}\cdot0.999^{\textrm{step}}$
 
-\subsection{climate event detection}
-\subsubsection*{Detailled results}
 
+\subsection{Climate event segmentation} \label{sec:climate:appendix}
+
+* Jiang rerun with a batch size of 64 instead of 256 due to memory limit.\\
 * DS-jiang is the similar architecture as \cite{jiang2019sphericalcnn}. \\
 * DS-optimal has 2 times the number of feature maps of DS. \\
 * \todo{What is DS and DS-Cohen?} DS has 4 times more feature maps and one more layer than DS-Jiang. DS-optimal has still 2 times more feature maps. DS-Cohen should be mostly gauge (based on paper, no code): 4 times more feature maps, but 2 layers less than DS-Jiang. \\
 * \todo{Is (equi non-weighted) the full resolution?} Yes, but less feature maps and layers. Can run, but not enough GPU memory for an optimal architecture. \\
 * \todo{check column order for DS} \\
+* perf with same arch as Jiang in appendix => not enough channels!\\
+* even more feature maps give us one more point in perf\\
+
+% trade off between AP and accuracy in the case of TC class, it seems.\\
+% (full: we scale (50B pixels, 20TB) $\Rightarrow$ lead to better perf?)
+% full dataset not enough memory to run a correct model
 
 \begin{table}
     \centering
@@ -879,6 +946,7 @@ batch size = 8, 80 epochs, adam optimizer, cross-entropy loss, learning rate $2\
 		Tropical cyclones (TC) and atmospheric rivers (AR) are the two positive classes, against the background (BG).
 		\todo{\citet{mudigonda2017climateevents} is not directly comparable as they don't use the same input feature maps.}
 		Note that a non-weighted cross-entropy loss is not optimal for the accuracy metric.
+		\label{tab:climate:accuracy}
 	}
 \end{table}
 
@@ -910,6 +978,7 @@ batch size = 8, 80 epochs, adam optimizer, cross-entropy loss, learning rate $2\
 		Tropical cyclones (TC) and atmospheric rivers (AR) are the two positive classes.
 		Note that a weighted cross-entropy loss is not optimal for the average precision metric.
 	}
+		\label{tab:climate:map}
 \end{table}
 
 \begin{table}
@@ -934,6 +1003,7 @@ batch size = 8, 80 epochs, adam optimizer, cross-entropy loss, learning rate $2\
     \caption{
 		Results on climate event segmentation: size and speed.
 	}
+		\label{tab:climate:speed}
 \end{table}
 
 \subsubsection*{DS Icosahedron architecture}
@@ -996,54 +1066,6 @@ batch size 64, RMSprop optimizer, constant learning rate of $1 \cdot 10{-3}$, MS
 
 \subsubsection*{Deatilled results}
 
-\begin{table}
-    \centering
-    \begin{tabular}{c|ccc}
-        order & MSE & MAE & R2 \\ \hline
-        0 & 10.88 & 2.42 & 0.896\\
-        1 & 8.91 & 2.20 & 0.906\\
-        4 & 8.20 & 2.11 & 0.919\\
-        9 & 8.38 & 2.12 & 0.915\\
-    \end{tabular}
-    \caption{Future temperature estimation task. Evolution of performance in respect of the order of the graph filter}
-    \label{tab:future_results}
-    \hfill
-    %~\\[1cm]
-    % \begin{minipage}{0.48\linewidth}
-    % \begin{tabular}{c|ccc}
-    %     order & MSE & MAE & R2 \\ \hline
-    %     1 & 134.01 & 10.51 & -0.319\\
-    %     4 & 129.48 & 10.31 & -0.274\\
-    %     9 & 141.68 & 10.82 & -0.389\\
-    % \end{tabular}
-    % \caption{Baseline: testing with the present day (T-1) instead of the future day T}
-    % \label{tab:present_results}
-    % \end{minipage}
-\end{table}
-
-\begin{table}
-    \centering
-    \begin{minipage}{0.48\linewidth}
-    \begin{tabular}{c|ccc}
-        order & MSE & MAE & R2 \\ \hline
-        0 & 0.58 & 0.42 & -0.92\\
-        4 & 0.50 & 0.18 & 0.597\\
-    \end{tabular}
-    \caption{Find day in year using precipitation}
-    \label{tab:glob_prec}
-    \end{minipage}
-    \hfill
-    %~\\[1cm]
-    \begin{minipage}{0.48\linewidth}
-    \begin{tabular}{c|ccc}
-        order & MSE & MAE & R2 \\ \hline
-        0 & 0.10 & 0.10 & 0.881\\
-        4 & 0.05 & 0.05 & 0.969\\
-    \end{tabular}
-    \caption{Using temperature feature that is already periodical}
-    \label{tab:glob_all}
-    \end{minipage}
-\end{table}
 
 \subsubsection*{Dense task architecture}
 
