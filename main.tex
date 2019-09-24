@@ -75,6 +75,7 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 	\item climate data on spectrum plot
 	\item result tables: only what supports the main message in the text, everything we have in the appendix
 	\item Unify vocabulary. Sampling, discretization, or pixelization of the sphere? Signal, maps, functions.
+	\item unify enumerations. I like (i), (ii), etc.
 \end{itemize}
 }
 \newpage
@@ -308,7 +309,7 @@ Second, while do not have a proof for it, we strongly believe that the HEALPix s
 \paragraph{Empirical convergence.}
 
 % 3.0) explain how we obtained the figures
-We calculated numerically the equivariance error (\ref{eq:mean equivariance error}) by generating $N$ monochromatic signals and $M$ random rotations for each signal. The colors that were used were chosen in the range $(0,\  3N_{side}-1)$ to allow for an almost perfect synthesis of the rotated signals, and thus an almost perfect implementation (up to numerical errors) of the operator $\b{R}_V$ (\cite{healpix_primer})
+We calculated numerically the equivariance error (\ref{eq:mean equivariance error}) by generating $N$ monochromatic signals and $M$ random rotations for each signal. The colors that were used were chosen in the range $(0,\  3N_{side}-1)$ to allow for an almost perfect synthesis of the rotated signals, and thus an almost perfect implementation (up to numerical errors) of the operator $\b{R}_V$ \citep{healpix_primer}.
 
 % 3.1) explain what the figures tell us
 From 20\% error on V1, we got to less than 2\% error on V2. The number of neighbors used for V2 is $50$. More neighbors implies naturally more precision, plus a better kernel width obtained by "minimizing" the equivariance error. \mart{How to explain how we found the kernel width? Micha\"el I need your help here!!} Literally, minimizing the kernel width would lead to a completely disconnected graph. What we did was finding a heuristic law (fix neighbors, set the kernel width $\hat t$ by imposing the minimum weight to be equal to $0.1$) and then minimizing the equivariance error in the range $(\hat t / 10, \hat t\cdot 10) $. We got better that Khasanova-Frossard \mart{(check the code)} that however uses only 4 neighbors. However, it is built to explicitely minimize the equivariance error, so we expect it to be a good benchmark against which to test our construction.
@@ -376,7 +377,7 @@ At each pixel, a ray is traced towards the center of the sphere.
 The distance from the sphere to the object forms a depth map.
 The $\cos$ and $\sin$ of the surface angle forms two normal maps.
 The same is done for the object's convex hull.\footnote{Albeit we didn't observe much improvement by using the convex hull.}
-The maps are discretized using either an equiangular grid \citep{driscoll1994Fouriersphere} with bandwidth $b = 64$ ($N_{pix} = 4 b^2 = 16,384$), or an HEALPix \citep{healpix} grid with $N_{side} = 32$ ($N_{pix} = 12 N_{side}^2 = 12,288$).
+The maps are discretized using either an equiangular grid \citep{driscoll1994Fouriersphere} with bandwidth $b = 64$ ($n = 4 b^2 = 16,384$ pixels), or an HEALPix \citep{healpix} grid with $N_{side} = 32$ ($n = 12 N_{side}^2 = 12,288$ pixels).
 
 \todo{Graph (\#neighbors), network architecture (info in the appendix, set the notation in the method section), loss, hyper-parameters. Or leave in appendix.}
 
@@ -423,7 +424,7 @@ Given observations, cosmologists estimate the posterior probability of cosmologi
 Those parameters are typically estimated by likelihood-free inference, which requires a function to predict the parameters from simulations.
 % such as Approximate Bayesian computation (ABC)
 As that is complicated to setup, prediction methods are typically benchmarked on the classification of spherical maps into cosmological model classes \citep{schmelze2017cosmologicalmodel}.
-We used the same task, data, and setup as \citet{perraudin2019deepspherecosmo}: the classification of $720$ partial convergence maps ($1/12 \approx 8\%$ of the sphere) made of $10^6$ pixels from two $\Lambda$CDM cosmological models, ($\Omega_m = 0.31$, $\sigma_8 = 0.82)$ and ($\Omega_m = 0.26$, $\sigma_8 = 0.91)$, at a relative noise level of $4$.
+We used the same task, data, and setup as \citet{perraudin2019deepspherecosmo}: the classification of $720$ partial convergence maps ($1/12 \approx 8\%$ of the sphere) made of $n \approx 10^6$ pixels from two $\Lambda$CDM cosmological models, ($\Omega_m = 0.31$, $\sigma_8 = 0.82)$ and ($\Omega_m = 0.26$, $\sigma_8 = 0.91)$, at a relative noise level of $4$.
 % 60 maps * 12 parts = 720 parts
 Convergence maps represent the distribution of over- and under-densities of mass in the universe \citep[see][for a review of gravitational lensing]{bartelman2010gravitationallensing}.
 
@@ -471,7 +472,7 @@ We used the pre-processed dataset from \citep{jiang2019sphericalcnn}.\footnote{A
 %\url{https://github.com/maxjiang93/ugscnn}
 %\url{https://github.com/maxjiang93/ugscnn/blob/master/experiments/exp4_sphere_climate/run.sh}
 %\url{http://island.me.berkeley.edu/ugscnn/data/climate_sphere_l5.zip}
-There is 1,072,805 spherical maps, down-sampled to a level-5 icosahedral grid ($N_{pix} = 10 \cdot 4^l + 2 = 10,242$).
+There is 1,072,805 spherical maps, down-sampled to a level-5 icosahedral grid ($n = 10 \cdot 4^l + 2 = 10,242$ pixels).
 The labels are heavily unbalanced with 0.1\% TC, 2.2\% AR, and 97.7\% background (BG) pixels.
 
 \todo{Graph (\#neighbors), network architecture (info in the appendix, set the notation in the method section), loss, hyper-parameters. Or leave in appendix.}
@@ -510,7 +511,7 @@ We indeed observed that more feature maps and depth led to higher performance (\
 \subsection{Uneven sampling} \label{sec:exp:ghcn}
 % Weather prediction? But it's not a real task. Rather a demo.
 
-To demonstrate the flexibility of modeling the discretized sphere by a graph, we collected historical measurements from about 10,000 weather stations scattered across the Earth.\footnote{\url{https://www.ncdc.noaa.gov/ghcn-daily-description}}
+To demonstrate the flexibility of modeling the discretized sphere by a graph, we collected historical measurements from about $n = 10,000$ weather stations scattered across the Earth.\footnote{\url{https://www.ncdc.noaa.gov/ghcn-daily-description}}
 The spherical data is heavily non-uniformly sampled, with a much higher density of weather stations over North America than the Pacific (\figref{examples:ghcn:tmax}).
 For illustration, we devised two artificial tasks.
 A dense regression that consists of predicting the temperature on a given day knowing the temperature on the 5 previous days.
