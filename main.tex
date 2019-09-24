@@ -2,7 +2,8 @@
 \usepackage{iclr2020_conference,times}
 
 % Optional math commands from https://github.com/goodfeli/dlbook_notation.
-\input{math_commands.tex}
+%\input{math_commands.tex}
+\usepackage{amsmath,amsfonts,bm}
 
 \usepackage{hyperref}
 \usepackage{url}
@@ -18,11 +19,6 @@
 \usepackage{amsthm}
 \usepackage{amsmath}
 \usepackage{amssymb}
-\newtheorem{definition}{Definition}[section]
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{prop}{Proposition}
-\newtheorem*{remark}{Remark}
-\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
 
 %\title{Which spherical CNN should you use?\\ DeepSphere V2}
 \title{DeepSphere: a graph-based spherical CNN}
@@ -38,7 +34,15 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 \texttt{nathanael.perraudin@sdsc.ethz.ch}
 }
 
+\newtheorem{definition}{Definition}[section]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{prop}{Proposition}
+\newtheorem*{remark}{Remark}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
 \renewcommand{\b}[1]{{\bm{#1}}}   % bold symbol
+\newcommand{\bO}{\mathcal{O}}
+\newcommand{\R}{\mathbb{R}}
+\renewcommand{\S}{\mathbb{S}}
 
 \newcommand{\fix}{\marginpar{FIX}}
 \newcommand{\new}{\marginpar{NEW}}
@@ -46,13 +50,12 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 \newcommand{\nati}[1]{{\color[rgb]{.3,.5,.9}{#1}}}
 \newcommand{\mart}[1]{{\color[rgb]{.9,.5,.3}{#1}}}
 
-
-\renewcommand{\figref}[1]{figure~\ref{fig:#1}}
-\renewcommand{\Figref}[1]{Figure~\ref{fig:#1}}
+\newcommand{\figref}[1]{figure~\ref{fig:#1}}
+\newcommand{\Figref}[1]{Figure~\ref{fig:#1}}
 \newcommand{\tabref}[1]{table~\ref{tab:#1}}
 \newcommand{\Tabref}[1]{Table~\ref{tab:#1}}
-\renewcommand{\secref}[1]{section~\ref{sec:#1}}
-\renewcommand{\Secref}[1]{Section~\ref{sec:#1}}
+\newcommand{\secref}[1]{section~\ref{sec:#1}}
+\newcommand{\Secref}[1]{Section~\ref{sec:#1}}
 %\newcommand{\secref}[1]{\S\ref{sec:#1}}
 \newcommand{\eqnref}[1]{equation~(\ref{eqn:#1})}
 \newcommand{\Eqnref}[1]{Equation~(\ref{eqn:#1})}
@@ -246,7 +249,7 @@ The gist of the method is to define the spherical convolution using a graph, and
 % The plan for this section
 % 0.1 Explain the sampling problem
 As the graph convolution acts on a sampled version of the function $\b{f}$ and the rotation on its continuous counterpart $f$, a sampling operator is needed.
-Given a sampling scheme $V=\{x_i\in\mathbb S^2, i=0, \dots, n\}$ of the sphere and a function $f : \mathbb S^2 \supset F_V \to \mathbb R$, the sampling operator $T_V: L^2(\mathbb S^2) \supset F\to \mathbb R^n,\  T_V(f) = \b{f}$ is defined as $\b{f}:\ f_i=f(x_i)$, where $F_V$ suitable subspace of $L^2(\mathbb S^2)$ such that $T_V$ is invertible, i.e., we can unambiguously reconstruct the function $f\in F_V$ from its sampled values $\b{f}$.
+Given a sampling scheme $V=\{x_i\in\S^2, i=0, \dots, n\}$ of the sphere and a function $f : \S^2 \supset F_V \to \R$, the sampling operator $T_V: L^2(\S^2) \supset F\to \R^n,\  T_V(f) = \b{f}$ is defined as $\b{f}:\ f_i=f(x_i)$, where $F_V$ suitable subspace of $L^2(\S^2)$ such that $T_V$ is invertible, i.e., we can unambiguously reconstruct the function $f\in F_V$ from its sampled values $\b{f}$.
 The existence of such subspace depends on the sampling scheme $V$, and its characterization is a common problem in signal processing (\cite{driscoll1994Fouriersphere}).
 For most sampling schemes, it is not known if $F_V$ exist and hence if $T_V$ is invertible. A special case is the \textit{equiangular sampling} scheme where a sampling theorem holds, and thus we have a closed form of $T_V^{-1}$ is known. % \cite{driscoll1994Fouriersphere}
 For sampling schemes where no such sampling formula is available, we leverage the discrete SHT to reconstruct $f$ from $\bf{f}$, thus approximating $T_V^{-1}$.
@@ -297,13 +300,13 @@ We analyse our proposed weighting scheme both theoretically and empirically.
 
 \paragraph{Theoretical convergence.}
 We extend the work of Belkin and Nyiogi to a sufficiently regular, deterministic sampling scheme. 
-Given a sampling scheme $V = \{x_0, \dots, x_{n-1}\}$, define $\sigma_i$ to be the patch of the surface of the sphere corresponding to $x_i$, define $A_i$ to be its corresponding area and $d_i$ to be the radius of the smallest ball in $\mathbb R^3$ containing $\sigma_i$. Define $d^{(n)} := \max_{i=0, \dots, n}d_i$ and $A^{(n)}=\max_{i=0, \dots, n}A_i$.
+Given a sampling scheme $V = \{x_0, \dots, x_{n-1}\}$, define $\sigma_i$ to be the patch of the surface of the sphere corresponding to $x_i$, define $A_i$ to be its corresponding area and $d_i$ to be the radius of the smallest ball in $\R^3$ containing $\sigma_i$. Define $d^{(n)} := \max_{i=0, \dots, n}d_i$ and $A^{(n)}=\max_{i=0, \dots, n}A_i$.
 \begin{theorem}
-	For a sampling $V = \{x_i\in\mathbb S^2\}_{i=0}^{n-1}$ of the sphere that is equi-area and such that $d^{(n)} \leq \frac{C}{\sqrt{n}}$, for all $f: \mathbb S^2 \rightarrow \mathbb R$ Lipschitz with respect to the Euclidean distance in $\mathbb R^3$, for all $y\in\mathbb S^2$, there exists a sequence $t_n = n^\beta$ such that the rescaled Heat Kernel Graph Laplacian $\frac{|\mathbb S^2|}{4\pi t_n^2}\b {L}^t_n$ converges pointwise to the Laplace Beltrami operator on the sphere $\Delta{\mathbb S^2}$  for $n\to\infty$:
+	For a sampling $V = \{x_i\in\S^2\}_{i=0}^{n-1}$ of the sphere that is equi-area and such that $d^{(n)} \leq \frac{C}{\sqrt{n}}$, for all $f: \S^2 \rightarrow \R$ Lipschitz with respect to the Euclidean distance in $\R^3$, for all $y\in\S^2$, there exists a sequence $t_n = n^\beta$ such that the rescaled Heat Kernel Graph Laplacian $\frac{|\S^2|}{4\pi t_n^2}\b {L}^t_n$ converges pointwise to the Laplace Beltrami operator on the sphere $\Delta{\S^2}$  for $n\to\infty$:
 	$$ \lim_{n\to\infty} \frac{|\mathbb{S}^2|}{4\pi t_n^2} \b{L}_n^{t_n} f(x_i) =  \Delta_{\mathbb{S}^2}f(x_i)\quad \forall i=0, ..., n-1.$$
 	\label{theo:pointwise convergence for a regular sampling}
 \end{theorem}
-This theorem implies immediately that $\b{L}$ converges pointwisely toward an operator ($\Delta_{\mathbb S^2}$) commuting with rotation and hence is a strong hint for equivariance.
+This theorem implies immediately that $\b{L}$ converges pointwisely toward an operator ($\Delta_{\S^2}$) commuting with rotation and hence is a strong hint for equivariance.
 Importantly, the proof of Theorem \ref{theo:pointwise convergence for a regular sampling} in Appendix \ref{sec: appendix: proof of theorem} inspires us in the construction of our graph Laplacian. It gives us a strong hint how the parameter $t$ needs to be adjusted with respect to the number of points $n$.
 
 It is important to keep in mind the limits of Theorem \ref{theo:pointwise convergence for a regular sampling}.
@@ -656,7 +659,7 @@ The proof is constructed by leveraging 3 different operators:
         \label{eq:laplace-beltrami}
         \Delta_{\mathcal M}f(y):= -\text{div}(\nabla_{\mathcal M}f)
     \end{equation}
-    of a differentiable function $f: \mathcal M\rightarrow \mathbb R$. The gradient $\nabla f: \mathcal M \rightarrow T_p\mathcal M$ is a vector field defined on the manifold pointing towards the direction of steepest ascent of $f$, where $T_p\mathcal M$ is the affine space of all vectors tangent to $\mathcal M$ at $p$
+    of a differentiable function $f: \mathcal M\rightarrow \R$. The gradient $\nabla f: \mathcal M \rightarrow T_p\mathcal M$ is a vector field defined on the manifold pointing towards the direction of steepest ascent of $f$, where $T_p\mathcal M$ is the affine space of all vectors tangent to $\mathcal M$ at $p$
     
 \end{itemize}
 
@@ -686,7 +689,7 @@ for a particular class of sampling and b) apply Proposition \ref{prop:3}.
 % 	$$L_n^tf(y) := \frac{1}{n}\left[ \sum_{i=0}^{n-1} \exp \left\{ {-\frac{||x_i-y||^2}{4t}}\right\}\left(f(y)-f(x_i)\right)\right]$$
 % \end{definition}
 
-% it is known that  (\cite{belkin2005towards}) to prove the convergence of $(\b {L}_n^t \b f) _i$ to $\Delta_{\mathbb S^2}f(x_i)$ it is sufficient to prove the convergence of its continuous counterpart $L_n^tf(x)$ to $\Delta_{\mathbb S^2}f(x)$
+% it is known that  (\cite{belkin2005towards}) to prove the convergence of $(\b {L}_n^t \b f) _i$ to $\Delta_{\S^2}f(x_i)$ it is sufficient to prove the convergence of its continuous counterpart $L_n^tf(x)$ to $\Delta_{\S^2}f(x)$
 % where $L_n^t$ is defined as follows:
 
 % For the sake of the proof we will need also the following facts:
@@ -701,27 +704,27 @@ for a particular class of sampling and b) apply Proposition \ref{prop:3}.
 We start by proving the following Proposition:
 \vspace{0.5cm}
 \begin{prop}\label{prop:1}
-	For an equal area sampling $\{x_i\in\mathbb S^2\}_{i=0}^{n-1}: A_i=A_j \forall i,j$ of the sphere it is true that for all $f: \mathbb S^2 \rightarrow \mathbb R$ Lipschitz with respect to the Euclidean distance $\|\cdot\|$ with Lipschitz constant $\mathcal L_f$
+	For an equal area sampling $\{x_i\in\S^2\}_{i=0}^{n-1}: A_i=A_j \forall i,j$ of the sphere it is true that for all $f: \S^2 \rightarrow \R$ Lipschitz with respect to the Euclidean distance $\|\cdot\|$ with Lipschitz constant $\mathcal L_f$
 	$$
-	\left| \int_{\mathbb S^2}f({ x})\text{d}{\mu(x)} - \frac{1}{n}\sum_i f( x_i)\right|\leq \mathcal L_fd^{(n)}.
+	\left| \int_{\S^2}f({ x})\text{d}{\mu(x)} - \frac{1}{n}\sum_i f( x_i)\right|\leq \mathcal L_fd^{(n)}.
 	$$
-	Furthermore, for all $y\in\mathbb S^2$ the Heat Kernel Graph Laplacian operator $L^t_n$ converges pointwise to the functional approximation of the Laplace Beltrami operator $L^t$
+	Furthermore, for all $y\in\S^2$ the Heat Kernel Graph Laplacian operator $L^t_n$ converges pointwise to the functional approximation of the Laplace Beltrami operator $L^t$
 	$$ L_n^tf(y)\xrightarrow{n\to\infty} L^tf(y).$$
 \end{prop}
 \vspace{0.5cm}
 
 \begin{proof}
 
-	Let us assume that the function $f:\mathbb R^3\rightarrow \mathbb R$ is Lipschitz with Lipschitz constant $\mathcal L_f$, we have
+	Let us assume that the function $f:\R^3\rightarrow \R$ is Lipschitz with Lipschitz constant $\mathcal L_f$, we have
 
 	$$\left| \int_{\sigma_{i}}f({ x})\text{d}{\mu(x)} - \frac{1}{n}f( x_i)\right| \leq \mathcal L_fd^{(n)}\frac{1}{n} $$
 
 	So, by triangular inequality and by summing all the contributions of all the $n$ patches
-	$$\left| \int_{\mathbb S^2}f({ x})\text{d}{\mu(x)} - \frac{1}{n}\sum_i f( x_i)\right| \leq \sum_i \left| \int_{\sigma_{i}}f({ x})\text{d}{\mu(x)} - \frac{1}{n}f( x_i)\right|\leq n  \mathcal L_fd^{(n)}\frac{1}{n} = \mathcal L_fd^{(n)}$$
+	$$\left| \int_{\S^2}f({ x})\text{d}{\mu(x)} - \frac{1}{n}\sum_i f( x_i)\right| \leq \sum_i \left| \int_{\sigma_{i}}f({ x})\text{d}{\mu(x)} - \frac{1}{n}f( x_i)\right|\leq n  \mathcal L_fd^{(n)}\frac{1}{n} = \mathcal L_fd^{(n)}$$
 	Thanks to this result, we have the following two pointwise convergences
 
-	$$\forall f \text{ Lipschiz,}\quad \forall y\in\mathbb S^2,  \quad\quad \frac{1}{n}\sum_i e^{-\frac{||x_i-y||^2}{4t}}\rightarrow \int e^{-\frac{||x-y||^2}{4t}}d\mu(x)$$
-	$$\forall f \text{ Lipschiz,}\quad \forall y\in\mathbb S^2,  \quad\quad \frac{1}{n}\sum_i e^{-\frac{||x_i-y||^2}{4t}}f(x_i)\rightarrow \int e^{-\frac{||x-y||^2}{4t}}f(x)d\mu(x)$$
+	$$\forall f \text{ Lipschiz,}\quad \forall y\in\S^2,  \quad\quad \frac{1}{n}\sum_i e^{-\frac{||x_i-y||^2}{4t}}\rightarrow \int e^{-\frac{||x-y||^2}{4t}}d\mu(x)$$
+	$$\forall f \text{ Lipschiz,}\quad \forall y\in\S^2,  \quad\quad \frac{1}{n}\sum_i e^{-\frac{||x_i-y||^2}{4t}}f(x_i)\rightarrow \int e^{-\frac{||x-y||^2}{4t}}f(x)d\mu(x)$$
 
 	Definitions \ref{eq:Heat Kernel Graph Laplacian operator} and \ref{eq:Functional approximation to the Laplace-Beltrami operator} end the proof.
 \end{proof}
@@ -731,9 +734,9 @@ Now, we just proved that \textit{keeping t fixed} $L_n^tf(x)\rightarrow L^tf(x)$
 
 \vspace{0.5cm}
 \begin{prop}\label{prop:2}
-	Given a sampling regular enough, i.e., for which we assume $A_i=A_j \ \forall i,j\text{ and }d^{(n)}\leq \frac{C}{\sqrt{n}}$, for a fixed $t>0$, a fixed Lipschitz function $f$ and a fixed point $y\in\mathbb S^2$ there exists a sequence $t_n = n^\beta, \beta<0$ such that
+	Given a sampling regular enough, i.e., for which we assume $A_i=A_j \ \forall i,j\text{ and }d^{(n)}\leq \frac{C}{\sqrt{n}}$, for a fixed $t>0$, a fixed Lipschitz function $f$ and a fixed point $y\in\S^2$ there exists a sequence $t_n = n^\beta, \beta<0$ such that
 $$
-\forall f \text{ Lipschitz, } \forall x\in\mathbb S^2 \quad \left|\frac{1}{4\pi t_n^2}\left(L_n^{t_n}f(x) - L^{t_n}f(x)\right)\right|\xrightarrow{n\to \infty}0.
+\forall f \text{ Lipschitz, } \forall x\in\S^2 \quad \left|\frac{1}{4\pi t_n^2}\left(L_n^{t_n}f(x) - L^{t_n}f(x)\right)\right|\xrightarrow{n\to \infty}0.
 $$
 \end{prop}
 \vspace{0.5cm}
@@ -747,14 +750,14 @@ We define for simplicity of notation
 \end{align}
 We start by writing the following chain of inequalities
 \begin{align*}
-	||L_n^tf-L^tf||_\infty &= \max _{y\in \mathbb S^2} \left|L_n^tf(y)-L^tf(y)\right|\\
-	&= \max _{y\in \mathbb S^2} \left| \frac{1}{n} \sum_{i=1}^n \phi^t(x_i; y)- \int_{\mathbb S^2} \phi^t(x;y)d\mu(x) \right|\\
-	&\leq \max _{y\in \mathbb S^2}  \sum_{i=1}^n   \left| \frac{1}{n}  \phi^t(x_i; y)- \int_{\sigma_i} \phi^t(x;y)d\mu(x) \right|\\
-	&\leq  \max _{y\in \mathbb S^2} \left[\mathcal L_{\phi^t_y}d^{(n)} \right]\\
+	||L_n^tf-L^tf||_\infty &= \max _{y\in \S^2} \left|L_n^tf(y)-L^tf(y)\right|\\
+	&= \max _{y\in \S^2} \left| \frac{1}{n} \sum_{i=1}^n \phi^t(x_i; y)- \int_{\S^2} \phi^t(x;y)d\mu(x) \right|\\
+	&\leq \max _{y\in \S^2}  \sum_{i=1}^n   \left| \frac{1}{n}  \phi^t(x_i; y)- \int_{\sigma_i} \phi^t(x;y)d\mu(x) \right|\\
+	&\leq  \max _{y\in \S^2} \left[\mathcal L_{\phi^t_y}d^{(n)} \right]\\
 \end{align*}
 where $\mathcal L_{\phi^t_y}$ is the Lipschitz constant of $x \rightarrow \phi^t(x, y)$ and where we used for the last inequality Proposition \ref{prop:1}. If we assume $d^{(n)}\leq \frac{C}{\sqrt{n}}$ we have that
 
-$$||L_n^tf-L^tf||_\infty  \leq  \max _{y\in \mathbb S^2} \left[ \mathcal L_{\phi^t_y} \frac{C}{\sqrt{n}} \right]$$
+$$||L_n^tf-L^tf||_\infty  \leq  \max _{y\in \S^2} \left[ \mathcal L_{\phi^t_y} \frac{C}{\sqrt{n}} \right]$$
 
 Let's now find the explicit dependence $t\rightarrow \mathcal L_{\phi^t_y}$
 \begin{align*}
@@ -773,7 +776,7 @@ $\mathcal L_{K^t_y} = \norm{\partial_x e^{-\frac{x^2}{4t}}}_\infty = \norm{\frac
 
 So we can continue
 $$\begin{aligned}
-	\max _{y\in \mathbb S^2} \left[  \mathcal L_{\phi^t_y} \frac{C}{\sqrt{n}} \right]
+	\max _{y\in \S^2} \left[  \mathcal L_{\phi^t_y} \frac{C}{\sqrt{n}} \right]
 	&\leq  \frac{C}{\sqrt{n}} \left( (2et)^{-\frac{1}{2}} \norm{f}_\infty + \mathcal L_f \right)\\
 	&\leq \frac{C\norm{f}_\infty}{\sqrt{n}(2et)^{1/2}} +   \frac{C}{\sqrt{n}}\mathcal L_f\\
 \end{aligned}$$
@@ -813,8 +816,8 @@ $$\begin{cases}
 
 Theorem  \ref{theo:pointwise convergence for a regular sampling}, is then an immediate consequence of Proposition \ref{prop:2} and Proposition \ref{prop:3}.
 \begin{proof}[Proof of Theorem \ref{theo:pointwise convergence for a regular sampling}]
-	Thanks to Proposition \ref{prop:2} and Proposition \ref{prop:3}	we conclude that $\forall y\in\mathbb S^2 $
-	$$\lim_{n\to\infty}\frac{1}{4\pi t_n^2} L_n^{t_n}f(y) =  \lim_{n\to\infty}\frac{1}{4\pi t_n^2} L^{t_n}f(y) = \frac{1}{|\mathbb S^2|}\triangle_{\mathbb S^2}f(y) $$
+	Thanks to Proposition \ref{prop:2} and Proposition \ref{prop:3}	we conclude that $\forall y\in\S^2 $
+	$$\lim_{n\to\infty}\frac{1}{4\pi t_n^2} L_n^{t_n}f(y) =  \lim_{n\to\infty}\frac{1}{4\pi t_n^2} L^{t_n}f(y) = \frac{1}{|\S^2|}\triangle_{\S^2}f(y) $$
 \end{proof}
 
 The proof of this result is instructive since it shows that we need to impose some regularity conditions on the sampling. If the sampling is equal area as HEALPix, meaning that all the patches $\sigma_i$ have the same area, then we need to impose that $ d^{(n)}\leq \frac{1}{\sqrt{n}}$. \\
