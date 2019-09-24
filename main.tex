@@ -76,6 +76,8 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 	\item result tables: only what supports the main message in the text, everything we have in the appendix
 	\item Unify vocabulary. Sampling, discretization, or pixelization of the sphere? Signal, maps, functions.
 	\item unify enumerations. I like (i), (ii), etc.
+	\item notation: should we use indices from 1 to n instead of 0 to n-1 for compactness?
+	\item add \citet{bruna2013gnn} in equivariance? They were the first to do a spherical CNN with graphs. Graph is built from a uniform random sampling of the sphere.
 \end{itemize}
 }
 \newpage
@@ -301,6 +303,7 @@ Importantly, the proof of Theorem \ref{theo:pointwise convergence for a regular 
 
 It is important to keep in mind the limits of Theorem \ref{theo:pointwise convergence for a regular sampling}.
 First, it is \emph{not} a proof of equivariance of the graph convolution for a specific sampling. To construct such a proof, a stronger convergence result is needed, for example uniform convergence (instead of pointwise).
+\todo{Can we intuitively write what pointwise convergence means, and how it is more limited than spectral or uniform convergence?}
 Unfortunately, the graph laplacian does \emph{not} converges uniformly in general \cite{belkin2007convergence}. This can probably be overcome by considering a specific class of functions, such as bandlimited function.
 Second, while do not have a proof for it, we strongly believe that the HEALPix sampling does satisfy the hypothesis $d^{(n)}\leq \frac{C}{\sqrt{n}}$ of Theorem \ref{theo:pointwise convergence for a regular sampling}. This is discussed in Appendix \ref{sec: appendix: proof of theorem}.
 
