@@ -620,37 +620,78 @@ Left blank for anonymity reason
 {\LARGE \sc {Supplementary Material}}
 \appendix
 
-\section{Proof of theorem}\label{sec: appendix: proof of theorem}
-Given a sampling $\{x_i\in\mathcal M\}_{i=0}^{n-1}$ of a closed, compact and infinitely differentiable manifold $\mathcal M$, a smooth function $f:\mathcal M \rightarrow \mathbb R$, and defined the vector $\b f$ of samples of $f$ as follows: $\b f\in \mathbb R^n,\ \b f_i = f(x_i)$, it is known that  (\cite{belkin2005towards}) to prove the convergence of $(\b {L}_n^t \b f) _i$ to $\Delta_{\mathbb S^2}f(x_i)$ it is sufficient to prove the convergence of its continuous counterpart $L_n^tf(x)$ to $\Delta_{\mathbb S^2}f(x)$
-where $L_n^t$ is defined as follows:
-\begin{definition}{}
-	\label{def:Heat Kernel Graph Laplacian operator}
-	\text{Given a sampling $\{x_i\in\mathcal M\}_{i=0}^{n-1}$ of the manifold we define the \textbf{operator} }$L_n^t$ such that
-	$$L_n^tf(y) := \frac{1}{n}\left[ \sum_{i=0}^{n-1} \exp \left\{ {-\frac{||x_i-y||^2}{4t}}\right\}\left(f(y)-f(x_i)\right)\right]$$
-\end{definition}
-Thus, to prove theorem \ref{theo:pointwise convergence for a regular sampling} it will be sufficient to prove that 
-\begin{equation}\label{eq:continuous convergence}
- \lim_{n\to\infty} \frac{|\mathbb{S}^2|}{4\pi t_n^2} {L}_n^{t_n} f(y) =  \Delta_{\mathbb{S}^2}f(y)
-\end{equation}
-For the sake of the proof we will need also the following facts:
-\begin{definition}{} (\cite{belkin2005towards})\\ \label{eq: my L^t} Let $\mu$ be the uniform probability measure on the manifold $\mathcal M$, and let $\text{vol}(\mathcal M)$ be the volume of $\mathcal M$. We define the functional approximation to the Laplace-Beltrami operator to be the operator $L^t: L^{2}(\mathcal{M}) \rightarrow L^{2}(\mathcal{M})$ such that
-	\label{def:Functional approximation to the Laplace-Beltrami operator}
-	$$ L^tf(y) = \int_{\mathcal M}\exp\left\{-\frac{||y-x||^2}{4t}\right\}\left(f(y)-f(x)\right)d\mu(x)$$
-\end{definition}
+\section{Proof of theorem \ref{theo:pointwise convergence for a regular sampling}}\label{sec: appendix: proof of theorem}
 
-\begin{prop} (\cite{belkin2005towards}) \\
-Let $\mathcal M$ be a $k$-dimensional compact smooth manifold embedded in some Euclidean space $\mathbb R^N$, and fix $y\in\mathcal M$. Let the data points $x_1, \dots, x_n$ be sampled form a uniform distribution on the manifold $\mathcal M$. Set $t_n=n^{-\frac{1}{k+2+\alpha}}$, for any $\alpha>0$ and let $f\in\mathcal C_\infty(\mathcal M)$. Then
-	$$\frac{1}{t}\frac{1}{(4\pi t)^{k/2}} L^tf(y) \xrightarrow{t\to 0 } \frac{1}{\text{vol}(\mathcal M)}\triangle_{\mathcal M}f(y).$$
-	\label{prop:3}
+\paragraph{Preliminaries.}
+The proof of theorem \ref{theo:pointwise convergence for a regular sampling} is inspired from the work of \cite{belkin2005towards}. As a result, we start by restating some of their results.
+Given a sampling $V = \{x_i\in\mathcal M\}_{i=0}^{n-1}$ of a closed, compact and infinitely differentiable manifold $\mathcal{M}$, a smooth ($\in\mathcal{C}_\infty(\mathcal{M)}$) function  $f:\mathcal{M} \rightarrow \mathbb{R}$, and defined the vector $\b{f}$ of samples of $f$ as follows: $T_Vf=\b{f} \in \mathbb{R}^n,\ \b{f}_i = f(x_i)$.
+The proof is constructed by leveraging 3 different operators:
+\begin{itemize}
+    \item The extended graph Laplacian operator is a functional $L_n^t: L^{2}(\mathcal{M}) \rightarrow L^{2}(\mathcal{M})$  is defined given a sampling $\{x_i\in\mathcal M\}_{i=0}^{n-1}$ and $y\in \mathcal{M}$  as
+	\begin{equation}
+	\label{eq:Heat Kernel Graph Laplacian operator}
+	 L_n^tf(y) := \frac{1}{n}\sum_{i=0}^{n-1} e^{ -\frac{\|x_i-y\|^2}{4t}} \left(f(y)-f(x_i)\right).
+	\end{equation}
+	Note that we have the following relation $\b{L}_n^t \b{f} = T_V L_n^t f$.
+	\item The functional approximation to the Laplace-Beltrami operator is a functional $L^t: L^{2}(\mathcal{M}) \rightarrow L^{2}(\mathcal{M})$ defined  as
+	\begin{equation}
+    \label{eq:Functional approximation to the Laplace-Beltrami operator}
+	L^tf(y) = \int_{\mathcal{M}} \exp^{-\frac{\|y-x\|^2}{4t}}\left(f(y)-f(x)\right)d\mu(x),
+	\end{equation}
+	where given $\mu$ be the uniform probability measure on the manifold $\mathcal{M}$, and let $\text{vol}(\mathcal{M})$ be the volume of $\mathcal{M}$.
+	\item 
+	The Laplace-Beltrami operator $\Delta_{\mathcal{M}}$ is defined as the divergence of the gradient
+	\begin{equation}
+        \label{eq:laplace-beltrami}
+        \Delta_{\mathcal M}f(y):= -\text{div}(\nabla_{\mathcal M}f)
+    \end{equation}
+    of a differentiable function $f: \mathcal M\rightarrow \mathbb R$. The gradient $\nabla f: \mathcal M \rightarrow T_p\mathcal M$ is a vector field defined on the manifold pointing towards the direction of steepest ascent of $f$, where $T_p\mathcal M$ is the affine space of all vectors tangent to $\mathcal M$ at $p$
+    
+\end{itemize}
+
+Leaveraging these three operators \cite{belkin2005towards, belkin2007convergence} have build proofs of both pointwise and spectral convergence of the extended graph Laplacian toward the Laplace-Beltrami operator.
+The proofs consists in establishing that \eqref{eq:Heat Kernel Graph Laplacian operator} converges toward \eqref{eq:Functional approximation to the Laplace-Beltrami operator} as $n\rightarrow \infty$ and \eqref{eq:Functional approximation to the Laplace-Beltrami operator} converges toward \eqref{eq:laplace-beltrami} as $t\rightarrow 0$. In particular, this second step is given by the following:
+\begin{prop}
+[\cite{belkin2005towards}, Proposition 4.4]
+Let $\mathcal{M}$ be a $k$-dimensional compact smooth manifold embedded in some Euclidean space $\mathbb{R}^N$, and fix $y\in\mathcal{M}$. Let $f\in\mathcal{C}_\infty(\mathcal{M)}$. Then
+\begin{equation}
+\frac{1}{t}\frac{1}{(4\pi t)^{k/2}} L^tf(y) \xrightarrow{t\to 0 } \frac{1}{\text{vol}(\mathcal M)}\Delta_{\mathcal M}f(y).    
+\end{equation}
+\label{prop:3}
 \end{prop}
 
-% brief introduction:
-This proof consists in two steps: first, we prove that $L_n^t \rightarrow L^t$, and second, we use proposition \ref{prop:3} to prove \eqref{eq:continuous convergence}. This equation, as already explained in \cite{belkin2007convergence}, directly implies theorem \ref{theo:pointwise convergence for a regular sampling}.
+\paragraph{Building the proof.}
+As the sphere is a compact smooth manifold embedded in $\mathbb{R}^3$, we can reuse the second part or their proofs where \eqref{eq:Functional approximation to the Laplace-Beltrami operator} $\rightarrow$ \eqref{eq:laplace-beltrami}.
+Thus, our strategy to prove Theorem \ref{theo:pointwise convergence for a regular sampling} is to a) show that 
+\begin{equation}\label{eq:continuous convergence}
+ \lim_{n\to\infty}L_n^{t} f(y) =  L^t(y)
+\end{equation}
+for a particular class of sampling and b) apply Proposition \ref{prop:3}.
 
-Our first goal is thus to prove the following Proposition:
+
+%  \frac{|\mathbb{S}^2|}{4\pi t} 
+% \begin{definition}{}\\
+% 	\label{def:Heat Kernel Graph Laplacian operator}
+% 	\text{Given a sampling $\{x_i\in\mathcal M\}_{i=0}^{n-1}$ of the manifold we define the \textbf{operator} }$L_n^t$ such that
+% 	$$L_n^tf(y) := \frac{1}{n}\left[ \sum_{i=0}^{n-1} \exp \left\{ {-\frac{||x_i-y||^2}{4t}}\right\}\left(f(y)-f(x_i)\right)\right]$$
+% \end{definition}
+
+% it is known that  (\cite{belkin2005towards}) to prove the convergence of $(\b {L}_n^t \b f) _i$ to $\Delta_{\mathbb S^2}f(x_i)$ it is sufficient to prove the convergence of its continuous counterpart $L_n^tf(x)$ to $\Delta_{\mathbb S^2}f(x)$
+% where $L_n^t$ is defined as follows:
+
+% For the sake of the proof we will need also the following facts:
+% \begin{definition}{} (\cite{belkin2005towards})\\ \label{eq: my L^t} Let $\mu$ be the uniform probability measure on the manifold $\mathcal M$, and let $\text{vol}(\mathcal M)$ be the volume of $\mathcal M$. We define the functional approximation to the Laplace-Beltrami operator to be the operator $L^t: L^{2}(\mathcal{M}) \rightarrow L^{2}(\mathcal{M})$ such that
+% 	\label{def:Functional approximation to the Laplace-Beltrami operator}
+% 	$$ L^tf(y) = \int_{\mathcal M}\exp\left\{-\frac{||y-x||^2}{4t}\right\}\left(f(y)-f(x)\right)d\mu(x)$$
+% \end{definition}
+
+% brief introduction:
+% This proof consists in two steps: first, we prove that $L_n^t \rightarrow L^t$, and second, we use proposition \ref{prop:3} to prove \eqref{eq:continuous convergence}. This equation, as already explained in \cite{belkin2007convergence}, directly implies theorem \ref{theo:pointwise convergence for a regular sampling}.
+
+We start by proving the following Proposition:
 \vspace{0.5cm}
 \begin{prop}\label{prop:1}
-	For an equal area sampling $\{x_i\in\mathbb S^2\}_{i=0}^{n-1}: A_i=A_j \forall i,j$ of the sphere it is true that for all $f: \mathbb S^2 \rightarrow \mathbb R$ Lipschitz with respect to the Euclidean distance $||\cdot||$ with Lipschitz constant $\mathcal L_f$
+	For an equal area sampling $\{x_i\in\mathbb S^2\}_{i=0}^{n-1}: A_i=A_j \forall i,j$ of the sphere it is true that for all $f: \mathbb S^2 \rightarrow \mathbb R$ Lipschitz with respect to the Euclidean distance $\|\cdot\|$ with Lipschitz constant $\mathcal L_f$
 	$$
 	\left| \int_{\mathbb S^2}f({ x})\text{d}{\mu(x)} - \frac{1}{n}\sum_i f( x_i)\right|\leq \mathcal L_fd^{(n)}.
 	$$
@@ -791,7 +832,7 @@ To conclude, we can see that the result obtained has the same form than the resu
         Esteves \emph{sphericalcnn} & 79.18 & 79.36 & 9.8ms & 2h52\\ \hline
         DeepSphere \emph{Equiangular} & 79.25 & 79.36 & 0.9ms & 47m \\
         DeepSphere \emph{HEALPix} & 80.42 & 80.65 & 0.9ms & 46m\\
-        DeepSphere \emph{Improved HEALPix} & 80.76 & & &
+        % DeepSphere \emph{Improved HEALPix} & 80.76 & & &
     \end{tabular}
     \caption{Performance of different models}
     \label{tab:SHREC17_class}
@@ -807,7 +848,7 @@ To conclude, we can see that the result obtained has the same form than the resu
     Esteves \emph{sphericalcnn} & 0.717 & 0.737 & - & 0.685 & 0.450 & 0.550 & - & 0.444\\ \hline
     DeepSphere \emph{Equiangular} & 0.709 & 0.700 & 0.698 & 0.665 & 0.439 & 0.489 & 0.439 & 0.403 \\
     DeepSphere \emph{HEALPix} & 0.725 & 0.717 & 0.715 & 0.686 & 0.475 & 0.508 & 0.468 & 0.428\\
-    DeepSphere \emph{Improved HEALPix} & & & & &
+    % DeepSphere \emph{Improved HEALPix} & & & & &
     \end{tabular}
     \caption{Performance of different models over SHREC17 perturbed dataset as a retrieval task, using the official script of the competition.}
     \label{tab:SHREC17_retriev}
@@ -829,7 +870,7 @@ DeepSphere & 87.8 & 86.8 & 86.7 & 76.9
     \label{tab:mn40_results}
 \end{table}
 
-\subsubsection*{HEALPix}
+\subsubsection*{HEALPix architecure}
 
 HEALPix sampling, input signal at Nside = 32
 
@@ -844,8 +885,8 @@ number of parameter: 190k TODO exact number?
 batch size 32, adam optimizer, constant learning rate of $5 \cdot 10^{-2}$
 cross-entropy loss, and add triplet loss from ``Esteves et al.''
 
-30 epochs with augmented dataset, 3 random translation perturbation, or 90 epochs over dataset that can be augmented
-\subsubsection*{Equiangular}
+30 epochs with augmented dataset, 3 random translation perturbation (same as 90 epochs over dataset with 3 possible random rotation)
+\subsubsection*{Equiangular architecture}
 Equiangular sampling with bandwidth of 64 in longitude and latitude.
 The architecture of the Neural Network is exactly the same, with a stride of [2, 2] for each pooling layer
 \subsection{cosmo}
@@ -858,6 +899,7 @@ HEALPix sampling, Nside = 1024, with improved graph
 The order of the Chebyshev polynomial is 5 for each layer, the number of feature maps are [16, 32, 64, 64, 64, 3] respectively and down-sampling to the immediate smaller resolution for each layer.
 
 batch size = 8, 80 epochs, adam optimizer, cross-entropy loss, learning rate $2\cdot10^{-4}\cdot0.999^{\textrm{step}}$
+
 
 \subsection{Climate event segmentation} \label{sec:climate:appendix}
 
@@ -895,7 +937,7 @@ batch size = 8, 80 epochs, adam optimizer, cross-entropy loss, learning rate $2\
         DS (wider architecture, non-weighted loss) & 73.4 & 92.7 & 99.8 & 88.7 \\
 		\midrule
 		\todo{DS (Cohen architecture, weighted loss)} & 95.5 & 96.9 & 93.9 & 95.4 \\
-		\todo{DS (Cohen architecture, non-weighted loss)} & 95.5 & 96.9 & 93.9 & 95.4 \\
+		\todo{DS (Cohen architecture, non-weighted loss)} & 56.4 & 90.0 & 98.9 & 81.8 \\
 		\todo{DS (full dataset, non-weighted loss)} & 31.3 & 75.2 & 99.9 & 68.80 \\
 		\bottomrule
     \end{tabular}
@@ -927,6 +969,7 @@ batch size = 8, 80 epochs, adam optimizer, cross-entropy loss, learning rate $2\
         DS (wider architecture, weighted loss) & 52.80 & 94.78 & 73.79 \\
 		\midrule
 		\todo{DS (Cohen architecture, weighted loss)} & 13.1 & 80.3 & 46.7 \\
+		\todo{DS (Cohen architecture, non-weighted loss)} & 59.8 & 85.0 & 72.4 \\
 		\todo{DS (full dataset, non-weighted loss)} & 55.53 & 94.85 & 75.19 \\
 		\bottomrule
     \end{tabular}
@@ -963,7 +1006,7 @@ batch size = 8, 80 epochs, adam optimizer, cross-entropy loss, learning rate $2\
 		\label{tab:climate:speed}
 \end{table}
 
-\subsubsection*{Icosahedron}
+\subsubsection*{DS Icosahedron architecture}
 
 icosahedron sampling, level-5 resolution
 
@@ -983,7 +1026,9 @@ concat the results of the corresponding encoder layer before the graph convoluti
 batch size 64, adam optimizer, constant learning rate of $1 \cdot 10{-3}$, cross-entropy loss, both weighted and non weighted. Weight chosen with scikit-learn "compute\_class\_weight" on the training set
 
 30 epochs
-\subsubsection*{DS-jiang}
+
+wider architecture is the same, but with 2 time the feature maps.
+\subsubsection*{DS (Jiang architecture)}
 encoder:\\
 \begin{dmath}
     [GC_{8}\, +\, BN\, +\, ReLU]_{L5}\,+\,\textrm{Pool}\,+\, [GC_{16}\, +\, BN\, +\, ReLU]_{L4}\, +\, \textrm{Pool}\, +\, [GC_{32}\, +\, BN\, +\, ReLU]_{L3}\, +\, \textrm{Pool}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{L2}\, +\,\textrm{Pool}\, +\, [GC_{128}\, +\, BN\, +\, ReLU]_{L1}\, +\, \textrm{Pool}\,  +\, [GC_{128}\, +\, BN\, +\, ReLU]_{L0}
@@ -995,7 +1040,7 @@ decoder:\\
 % number of parameters: 590'976  % more feat is 16 times more
 
 concat the results of the corresponding encoder layer after the graph convolution. Similar to ``Jiang et al.''
-\subsubsection*{Equiangular}
+\subsubsection*{Full dataset - Equiangular architecture}
 Equiangular sampling, with a latitude bandwidth 384 and longitude bandwidth 576.
 
 Due to memory problem, could not use the same architecture
@@ -1019,16 +1064,16 @@ batch size 64, RMSprop optimizer, constant learning rate of $1 \cdot 10{-3}$, MS
 
 250 epochs with no augmentation
 
-\subsubsection*{Results}
+\subsubsection*{Deatilled results}
 
 
-\subsubsection*{Dense}
+\subsubsection*{Dense task architecture}
 
 \begin{dmath}
     [GC_{50}\, +\, BN\, +\, ReLU]\, +\, [GC_{100}\, +\, BN\, +\, ReLU]\, +\, [GC_{100}\, +\, BN\, +\, ReLU]\, +\, [GC_{1}\, +\, BN\, +\, ReLU]
 \end{dmath}
 
-\subsubsection*{Global}
+\subsubsection*{Global task architecture}
 
 \begin{dmath}
     [GC_{50}\, +\, BN\, +\, ReLU]\, +\, [GC_{100}\, +\, BN\, +\, ReLU]\, +\, [GC_{100}\, +\, BN\, +\, ReLU]\, +\, GAP\, +\, FCN
