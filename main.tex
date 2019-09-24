@@ -74,7 +74,7 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 	\item check footnotes
 	\item climate data on spectrum plot
 	\item result tables: only what supports the main message in the text, everything we have in the appendix
-	\item Sampling, discretization, or pixelization of the sphere? Be consistent.
+	\item Unify vocabulary. Sampling, discretization, or pixelization of the sphere? Signal, maps, functions.
 \end{itemize}
 }
 \newpage
@@ -186,7 +186,7 @@ As the lack of equivariance penalizes performance (\secref{exp:cosmo}) and expen
 The projection of the data from the sphere to the icosahedron however introduces distortions that might hinder performance (see the experiments in \secref{exp:climate}).
 \todo{Where does Jiang fit? Need a global coordinate system (ok for planets, not projections like cosmo)}
 
-Another approach represents the discretized sphere as a graph connecting pixels according to the distance between them \citep{khasanova2017sphericalcnn, perraudin2019deepspherecosmo}.
+Another approach represents the discretized sphere as a graph connecting pixels according to the distance between them \citep{bruna2013gnn, khasanova2017sphericalcnn, perraudin2019deepspherecosmo}.
 While Laplacian-based graph convolutions are more efficient than spherical convolutions, they are not exactly equivariant \citep{defferrard2019deepsphereequiv}.
 In this work, we argue that graph-based spherical CNNs strike an interesting balance, with a controllable tradeoff between cost and equivariance.
 Experiments on multiple problems of practical interest show the competitiveness and flexibility of this approach.
@@ -231,7 +231,8 @@ The gist of the method is to define the spherical convolution using a graph, and
 % % , a weighted undirected graph $G(V, E, \mathbf W)$,
 % \nati{I do not think we should have a notation section, but should somehow write this somewhere...}
 
-\section{Is graph convolution equivariant to rotation? [2 pages]} \label{sec:equivariance}
+\section{Graph convolution and equivariance [2 pages]} \label{sec:equivariance}
+%\section{Is graph convolution equivariant to rotation? [2 pages]} \label{sec:equivariance}
 
 \subsection{Problem formulation}
 % The plan for this section
@@ -335,12 +336,10 @@ From 20\% error on V1, we got to less than 2\% error on V2. The number of neighb
 
 \section{Experiments [2 pages]}
 
-\todo{
-Show: \\
-* meet the desiderata \\
-* DeepSphere V1 and V2 are equivalent in practice, wait on SHREC and cosmo exp \\
-* anisotropy doesn't help \\
-}
+% Show:
+% * meet the desiderata: scale
+% * DeepSphere V1 and V2 are equivalent in practice: better equivariance doesn't translate to better performance
+% * anisotropy doesn't help
 
 \subsection{3D objects recognition} \label{sec:exp:objects}
 
@@ -369,6 +368,7 @@ Show: \\
 The recognition of 3D shapes is a rotation invariant task: rotating an object doesn't change its nature.
 While 3D shapes are usually represented as meshes or point clouds, representing them as spherical maps (\figref{depthmap}) naturally allows a rotation invariant treatment.
 LIDAR actually acquires depth maps, which are a posteriori represented as point clouds.
+\todo{move to intro?}
 
 The SHREC'17 shape retrieval contest \citep{shrec17} contains 51,300 randomly oriented 3D models from ShapeNet \citep{shapenet}, to be classified in 55 categories (tables, lamps, airplanes, etc.).
 As in \citet{cohen2018sphericalcnn}, objects are represented by 6 spherical maps.
@@ -416,25 +416,51 @@ For the same reason, using the more uniform HEALPix discretization or lowering t
 
 % Limited by representation of data? yep, treat them as point clouds
 
-\subsection{Cosmological model discrimination} \label{sec:exp:cosmo}
+\subsection{Cosmological model classification} \label{sec:exp:cosmo}
+
+Given observations, cosmologists estimate the posterior probability of cosmological parameters, such as the matter density $\Omega_m$ and the normalization of the matter power spectrum $\sigma_8$.
+Those parameters are typically estimated by likelihood-free inference, which requires a function to predict the parameters from simulations.
+% such as Approximate Bayesian computation (ABC)
+As that is complicated to setup, prediction methods are typically benchmarked on the classification of spherical maps into cosmological model classes \citep{schmelze2017cosmologicalmodel}.
+We used the same task, data, and setup as \citet{perraudin2019deepspherecosmo}: the classification of $720$ partial convergence maps ($1/12 \approx 8\%$ of the sphere) made of $10^6$ pixels from two $\Lambda$CDM cosmological models, ($\Omega_m = 0.31$, $\sigma_8 = 0.82)$ and ($\Omega_m = 0.26$, $\sigma_8 = 0.91)$, at a relative noise level of $4$.
+% 60 maps * 12 parts = 720 parts
+Convergence maps represent the distribution of over- and under-densities of mass in the universe \citep[see][for a review of gravitational lensing]{bartelman2010gravitationallensing}.
+
+\todo{Graph (\#neighbors), network architecture (info in the appendix, set the notation in the method section), loss, hyper-parameters. Or leave in appendix.}
+
+\begin{table}
+    \centering
+    \begin{tabular}{l c c c}
+		\toprule
+		& accuracy & conv. equiv. error & NN inv. error \\
+		\midrule
+		2D CNN baseline \citep{perraudin2019deepspherecosmo} & \todo{??} & \todo{can we?} \\
+		8 neighbors, $\hat{t} = ??$, CNN variant, \citep{perraudin2019deepspherecosmo} & \todo{??} & \todo{??} \\
+		8 neighbors, $\hat{t} = ??$, FCN variant, \citep{perraudin2019deepspherecosmo} & \todo{??} & \todo{??} \\
+		8 neighbors, optimal kernel width $\hat{t} = ??$ & \todo{??} & \todo{??} \\
+		20 neighbors, optimal kernel width $\hat{t} = ??$ & \todo{??} & \todo{??} \\
+		40 neighbors, optimal kernel width $\hat{t} = ??$ & \todo{??} & \todo{??} \\
+		\bottomrule
+    \end{tabular}
+	\caption{
+		Results on the classification of partial convergence maps.
+		\todo{While extreme non-equivariance (the 2D CNN baseline) penalizes performance, improving equivariance doesn't improve performance.}
+	}
+    \label{tab:cosmo}
+\end{table}
 
 \todo{
-* other sphercial CNNs cannot scale to 10M pixels (tested on 10k at most) \\
-* redo the experiment with the optimal graph \\
-* DSv2 better than v1 -> equivariance has practical implications \\
-* clear cost-accuracy tradeoff with n_neighbors \\
-* show the baselines? (at least the 2D CNN?) \\
 }
 
-% \begin{table}[]
-%     \centering
-%     \begin{tabular}{c|c}
-%          &  \\
-%          &
-%     \end{tabular}
-%     \caption{Caption}
-%     \label{tab:cosmo_newgraph}
-% \end{table}
+Results are shown in \tabref{cosmo}.
+\todo{
+	While extreme non-equivariance (the 2D CNN baseline) penalizes performance, better equivariance doesn't improve performance.
+	It might be that the lack of built-in equivariance is compensated by learned equivariance (as done when augmenting data during training).}
+\todo{
+	Alternative: DSv2 better than v1 -> equivariance has practical implications.
+	Clear cost-accuracy tradeoff with the number of neighbors.
+}
+This experiment moreover demonstrates DeepSphere's flexibility (using partial spherical maps) and scalability (competing spherical CNNs were tested on maps of at most $10,000$ pixels).
 
 \subsection{Climate event segmentation} \label{sec:exp:climate}
 
@@ -482,12 +508,13 @@ We indeed observed that more feature maps and depth led to higher performance (\
 
 \subsection{Uneven sampling} \label{sec:exp:ghcn}
 
-To demonstrate the flexibility of modeling the discretized sphere by a graph, we collected historical measurements from weather stations scattered across the Earth.\footnote{\url{https://www.ncdc.noaa.gov/ghcn-daily-description}}
+To demonstrate the flexibility of modeling the discretized sphere by a graph, we collected historical measurements from about 10,000 weather stations scattered across the Earth.\footnote{\url{https://www.ncdc.noaa.gov/ghcn-daily-description}}
 The spherical data is heavily non-uniformly sampled, with a much higher density of weather stations over North America than the Pacific (\figref{examples:ghcn:tmax}).
-There are \todo{xx} stations in total.
 For illustration, we devised two artificial tasks.
 A dense regression that consists of predicting the temperature on a given day knowing the temperature on the 5 previous days.
 A global regression that consists of predicting the day (represented as one period of a sine over the year) from temperature or precipitations.
+
+\todo{Graph (\#neighbors), network architecture (info in the appendix, set the notation in the method section), loss, hyper-parameters. Or leave in appendix.}
 
 \begin{table}
     \centering
