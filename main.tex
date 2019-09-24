@@ -121,11 +121,11 @@ Examples are the inference of cosmological parameters from the distribution of m
 \begin{figure}[h]
 	\centering
 	\subfloat[]{
-		\includegraphics[height=0.20\linewidth,valign=t]{example_cosmo_cmb}
-	} \hfill
-	\subfloat[]{
 		\includegraphics[height=0.20\linewidth,valign=t]{example_brain_meg}
 	} \hspace{0.1em}
+	\subfloat[]{
+		\includegraphics[height=0.20\linewidth,valign=t]{example_cosmo_cmb}
+	} \hfill
 	\subfloat[]{
 		\includegraphics[height=0.20\linewidth,valign=t]{example_climate_TMQ}
 		\label{fig:examples:climate}
@@ -140,11 +140,11 @@ Examples are the inference of cosmological parameters from the distribution of m
 	}
 	\caption{
 		Examples of intrinsically spherical data:
-		(a) the cosmic microwave background (CMB) temperature from \citet{planck2015overview},
-		(b) brain activity recorded through magnetoencephalography (MEG),\protect\footnotemark
+		(a) brain activity recorded through magnetoencephalography (MEG),\protect\footnotemark
+		(b) the cosmic microwave background (CMB) temperature from \citet{planck2015overview},
 		(c) hourly precipitation from a climate simulation \citep{jiang2019sphericalcnn}, %\citep{mudigonda2017climateevents},
 		(d) daily maximum temperature from the Global Historical Climatology Network (GHCN).\protect\footnotemark
-		A rigid full-sphere pixelization is not ideal: the Milky Way's galactic plane masks observations, brain activity is only measured on the scalp, climate scientists desire a variable resolution, and the position of weather stations is arbitrary and changes over time.
+		A rigid full-sphere pixelization is not ideal: brain activity is only measured on the scalp, the Milky Way's galactic plane masks observations, climate scientists desire a variable resolution, and the position of weather stations is arbitrary and changes over time.
 		(e) Graphs can faithfully and efficiently represent sampled spherical data by placing vertices where data has been measured.
 		%\todo{something from climate, weather?}
 		%\todo{compare ideal full-spheres (like SHREC-17 projection from Esteves, 360 from Coors) to real-world measurements?}
