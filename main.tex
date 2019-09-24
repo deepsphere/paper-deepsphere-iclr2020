@@ -375,7 +375,7 @@ As in \citet{cohen2018sphericalcnn}, objects are represented by 6 spherical maps
 At each pixel, a ray is traced towards the center of the sphere.
 The distance from the sphere to the object forms a depth map.
 The $\cos$ and $\sin$ of the surface angle forms two normal maps.
-The same is done for the object's convex hull.
+The same is done for the object's convex hull.\footnote{Albeit we didn't observe much improvement by using the convex hull.}
 The maps are discretized using either an equiangular grid \citep{driscoll1994Fouriersphere} with bandwidth $b = 64$ ($N_{pix} = 4 b^2 = 16,384$), or an HEALPix \citep{healpix} grid with $N_{side} = 32$ ($N_{pix} = 12 N_{side}^2 = 12,288$).
 
 \todo{Graph (\#neighbors), network architecture (info in the appendix, set the notation in the method section), loss, hyper-parameters. Or leave in appendix.}
@@ -412,6 +412,7 @@ DeepSphere achieves the same performance as \citet{cohen2018sphericalcnn} and \c
 % x times faster
 As the information in those spherical maps resides in the low frequencies (\figref{spectrum}), reducing the equivariance error didn't translate into improved performance.
 For the same reason, using the more uniform HEALPix discretization or lowering the resolution down to $N_{side} = 8$ didn't impact performance.
+\todo{be sure that it fits with the cosmo conclusion}
 \todo{The same conclusions are drawn from ModelNet 40 (see appendix ??).}
 
 % Limited by representation of data? yep, treat them as point clouds
@@ -507,6 +508,7 @@ Potential explanations are (i) that their icosahedral projection introduces harm
 We indeed observed that more feature maps and depth led to higher performance (\ref{sec:climate:appendix}).
 
 \subsection{Uneven sampling} \label{sec:exp:ghcn}
+% Weather prediction? But it's not a real task. Rather a demo.
 
 To demonstrate the flexibility of modeling the discretized sphere by a graph, we collected historical measurements from about 10,000 weather stations scattered across the Earth.\footnote{\url{https://www.ncdc.noaa.gov/ghcn-daily-description}}
 The spherical data is heavily non-uniformly sampled, with a much higher density of weather stations over North America than the Pacific (\figref{examples:ghcn:tmax}).
@@ -601,12 +603,12 @@ Our ultimate goal is for practitioners to be able to work directly on their meas
 
 \newpage
 \subsubsection*{Author Contributions}
-Left blank for anonymity reason
+Left blank for anonymity reason.
 % If you'd like to, you may include a section for author contributions as is done
 % in many journals. This is optional and at the discretion of the authors.
 
 \subsubsection*{Acknowledgments}
-Left blank for anonymity reason
+Left blank for anonymity reason.
 
 %We thank Pierre Vandergheynst for advices, and Andreas Loukas for having processed the GHCN data.
 %We thank Taco Cohen for his inputs on the intriguing results of our comparison with \citet{cohen2019gauge}.
@@ -815,7 +817,7 @@ To conclude, we can see that the result obtained has the same form than the resu
 
 \section{Experimental details}
 
-* Network architecture and details
+* Network architecture and training details
 
 \subsection{3D object Recognition}
 \subsubsection*{Detailed results}
