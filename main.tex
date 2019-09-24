@@ -131,7 +131,7 @@ Examples are the inference of cosmological parameters from the distribution of m
 		Examples of intrinsically spherical data:
 		(a) the cosmic microwave background (CMB) temperature from \citet{planck2015overview},
 		(b) brain activity recorded through magnetoencephalography (MEG),\protect\footnotemark
-		(c) hourly precipitation from a climate simulation \citep{mudigonda2017climateevents},
+		(c) hourly precipitation from a climate simulation \citep{jiang2019sphericalcnn}, %\citep{mudigonda2017climateevents},
 		(d) daily maximum temperature from the Global Historical Climatology Network (GHCN).\protect\footnotemark
 		A rigid full-sphere pixelization is not ideal: the Milky Way's galactic plane masks observations, brain activity is only measured on the scalp, climate scientists desire a variable resolution, and the position of weather stations is arbitrary and changes over time.
 		(e) Graphs can faithfully and efficiently represent sampled spherical data by placing vertices where data has been measured.
@@ -195,7 +195,7 @@ Experiments on multiple problems of practical interest show the competitiveness 
 The gist of the method is to define the spherical convolution using a graph, and the down-sampling operation using a hierarchical pixelisation of the sphere.
 
 \todo{
-	* discuss discretizations (equiangular, HEALPix) -> more uniform is better \\
+	* discuss discretizations (equiangular, HEALPix, icosahedral sphere) -> more uniform is better \\
 	* no uniform sampling: tradeoffs have to be made \\
 	* CNN vs FCN discussion (GAP for invariance) \\
 }
@@ -371,13 +371,13 @@ The SHREC'17 shape retrieval contest \citep{shrec17} contains 51,300 randomly or
 As in \citet{cohen2018sphericalcnn}, objects are represented by 6 spherical maps.
 At each pixel, a ray is traced towards the center of the sphere.
 The distance from the sphere to the object forms a depth map.
-The $\cos$ / $\sin$ of the surface angle forms two normal maps.
+The $\cos$ and $\sin$ of the surface angle forms two normal maps.
 The same is done for the object's convex hull.
 The maps are discretized using either an equiangular grid \citep{driscoll1994Fouriersphere} with bandwidth $b = 64$ ($N_{pix} = 4 b^2 = 16,384$), or an HEALPix \citep{healpix} grid with $N_{side} = 32$ ($N_{pix} = 12 N_{side}^2 = 12,288$).
 
-\todo{Graph (\#neighbors), network architecture (info in the appendix, set the notation in the method section) and hyper-parameters. Or leave in appendix.}
+\todo{Graph (\#neighbors), network architecture (info in the appendix, set the notation in the method section), loss, hyper-parameters. Or leave in appendix.}
 
-\begin{table}%[ht]
+\begin{table}
     \centering
 	%\begin{tabular}{l cc r rr}
 	\begin{tabular}{l cc r rS[table-format=2.0]}
@@ -405,7 +405,7 @@ The maps are discretized using either an equiangular grid \citep{driscoll1994Fou
 \footnotetext[5]{As implemented in \url{https://github.com/jonas-koehler/s2cnn}.}
 
 Results are shown in \tabref{shrec17}.
-DeepSphere achieves the same performance as \citet{cohen2018sphericalcnn} and \citet{esteves2018sphericalcnn} while being much more efficient, suggesting that anisotropic filters are an unnecessary price to pay.
+DeepSphere achieves the same performance as \citet{cohen2018sphericalcnn} and \citet{esteves2018sphericalcnn} at a much lower cost, suggesting that anisotropic filters are an unnecessary price to pay.
 % x times faster
 As the information in those spherical maps resides in the low frequencies (\figref{spectrum}), reducing the equivariance error didn't translate into improved performance.
 For the same reason, using the more uniform HEALPix discretization or lowering the resolution down to $N_{side} = 8$ didn't impact performance.
@@ -435,9 +435,16 @@ For the same reason, using the more uniform HEALPix discretization or lowering t
 
 \subsection{Climate event segmentation} \label{sec:exp:climate}
 
-* small: better perf than gauge and Jiang. due to icosahedron distortion? to be confirmed\\
-* cannot compare with Mudigonda (16 vs 1 input channel)\\
-* (full: we scale (50B pixels, 20TB) $\Rightarrow$ lead to better perf?) \\
+We evaluate our method on a task proposed by \citep{mudigonda2017climateevents}: the segmentation of extreme climate events, Tropical Cyclones (TC) and Atmospheric Rivers (AR), in global climate simulations (\figref{examples:climate}).
+The data was produced by a 20-year run of the Community Atmospheric Model v5 (CAM5) and consists of 16 channels such as temperature, wind, humidity, and pressure at multiple altitudes.
+We used the pre-processed dataset from \citep{jiang2019sphericalcnn}.\footnote{Available at \url{http://island.me.berkeley.edu/ugscnn/data}.}
+%\url{https://github.com/maxjiang93/ugscnn}
+%\url{https://github.com/maxjiang93/ugscnn/blob/master/experiments/exp4_sphere_climate/run.sh}
+%\url{http://island.me.berkeley.edu/ugscnn/data/climate_sphere_l5.zip}
+There is 1,072,805 spherical maps, down-sampled to a level-5 icosahedral grid ($N_{pix} = 10 \cdot 4^l + 2 = 10,242$).
+The labels are heavily unbalanced with 0.1\% TC, 2.2\% AR, and 97.7\% background (BG) pixels.
+
+\todo{Graph (\#neighbors), network architecture (info in the appendix, set the notation in the method section), loss, hyper-parameters. Or leave in appendix.}
 
 \begin{table}
 	\centering
@@ -445,7 +452,7 @@ For the same reason, using the more uniform HEALPix discretization or lowering t
 	\toprule
 	& accuracy & mAP \\
 	\midrule
-	\cite{jiang2019sphericalcnn} (paper) & 94.67 & - \\
+	%\cite{jiang2019sphericalcnn} (paper) & 94.67 & - \\
 	\cite{jiang2019sphericalcnn} (rerun) & 94.95 & 38.41 \\
 	\cite{cohen2019gauge} (S2R) & 97.5 & 68.6 \\
 	\cite{cohen2019gauge} (R2R) & 97.7 & 75.9 \\
@@ -454,29 +461,21 @@ For the same reason, using the more uniform HEALPix discretization or lowering t
 	\bottomrule
 	\end{tabular}
 	\caption{
-		Climate event segmentation results: mean accuracy and mean average precision (mAP). DeepSphere achieves state-of-the-art performance while using isotropic filters (S2S in \citet{cohen2019gauge}'s language), suggesting again that anisotropic filters are an unnecessary price to pay.
-		Note that \citet{jiang2019sphericalcnn} and \citet{cohen2019gauge} use a weighted cross-entropy loss, which is good for the accuracy metric (as it corrects for class imbalance) but bad for the mAP metric.
+		Climate event segmentation results: mean accuracy (over TC, AR, BG) and mean average precision (over TC and AR).
+		DeepSphere achieves state-of-the-art performance. %, suggesting again that anisotropic filters are an unnecessary price to pay.
 	}
+	\label{tab:climate}
 \end{table}
 
-* icosahedron dataset from \cite{jiang2019sphericalcnn} \\
-* Jiang rerun with a batch size of 64 instead of 256 due to memory limit.\\
-* cross entropy loss between parenthesis\\
-* 5 runs for each loss to obtain mean and std\\
-* same architecture as gauge, more feature maps than Jiang\\
-* perf with same arch as Jiang in appendix => not enough channels!\\
-* even more feature maps give us one more point in perf\\
-* need more feature maps and layers to compensate for isotropy \\
-* cannot compare with Mudigonda: not the same input data\\
-* why: icosahedron, can do anisotropy with isotropy + non-linearity + pooling
+Results are shown in \tabref{climate} (details in tables~\ref{tab:climate:accuracy}, \ref{tab:climate:map} and~\ref{tab:climate:speed}).
+The mean and standard deviation are computed over 5 runs.
+Note that while \citet{jiang2019sphericalcnn} and \citet{cohen2019gauge} use a weighted cross-entropy loss, it is not ideal for the mAP metric.
+Results from \citet{mudigonda2017climateevents} cannot be directly compared as they don't use the same input channels.
+DeepSphere achieves state-of-the-art performance, suggesting again that anisotropic filters are not necessary.
 
-* trade off between AP and accuracy in the case of TC class, it seems.\\
-* change base, influence?\\
-
-* full dataset not enough memory to run a correct model
-
-% jiang like correct: 99.81631631, 13.18655162, 52.62412867, 55.20899887;  0.3990812 , 0.80056251, 0.59982186; 4 ms; 2h40
-% more feat: 99.67871329, 38.78607557, 66.37910064, 68.2812965: 0.99981102, 0.60714174, 0.83236147, 0.71975161; 12ms; 6h20
+Compared to \citet{cohen2019gauge}'s conclusion, it is surprising that S2R does worse than DeepSphere (which is limited to S2S).
+Potential explanations are (i) that their icosahedral projection introduces harmful distortions, or (ii) that a larger architecture can compensate for the lack of generality. % powerfulness?
+We indeed observed that more feature maps and depth led to higher performance (\ref{sec:climate:appendix}).
 
 \subsection{GHCN} \label{sec:exp:ghcn}
 
@@ -519,7 +518,7 @@ This work showed that DeepSphere strikes an interesting balance between desidera
 A single parameter, the number of neighbors a pixel is connected to in the graph, controls the tradeoff between \todo{performance and efficiency}.
 % vague words
 As computational cost and memory consumption scales linearly with the number of pixels, DeepSphere easily deals with spherical maps made of millions of pixels.
-Such high resolutions are not necessary to represent thethe  depth maps of 3D objects, but are required to faithfully represent cosmological and climate data.
+Such high resolutions are not necessary to represent the depth maps of 3D objects, but are required to faithfully represent cosmological and climate data.
 % That has to do with the frequency content of the signals (see fig xx)
 % cannot do better
 Also relevant in scientific applications is the flexibility offered by a graph representation to deal with partial coverage and non-uniform samplings.
@@ -535,8 +534,10 @@ A potential drawback of graph Laplacian-based approaches is that graph filters a
 %Why anisotropic filters?
 Experiments from \citet{cohen2019gauge} suggest that more general convolutions achieve better performance.
 Our climate experiments (\secref{exp:climate}) however show that DeepSphere achieves similar performance than their most general convolution.
+% the SHREC17 experiment too shows that isotropic filters are sufficient
 Works on shape alignment indicates that anisotropic filters achieve better performance \todo{[Bronstein]}.
 Possible explanations for this discrepancy are that NNs somehow compensate for the lack of anisotropic filters, or that some tasks can be solved with isotropic filters.
+% why: icosahedron, can do anisotropy with isotropy + non-linearity + pooling
 The distortions induced by the icosahedral projection in \citep{cohen2019gauge} or the leakage of curvature information in \todo{[Bronstein]} might also be explanations.
 Further research is needed to determine if anisotropic filters are an unnecessary price to pay or if they are needed for some applications.
 % As was recently shown for graph NNs used for graph classification, most general might not be the best, when the ultimate goal is generalization [Andreas paper? + previous by xx]
@@ -810,14 +811,20 @@ The order of the Chebyshev polynomial is 5 for each layer, the number of feature
 
 batch size = 8, 80 epochs, adam optimizer, cross-entropy loss, learning rate $2\cdot10^{-4}\cdot0.999^{\textrm{step}}$
 
-\subsection{climate event detection}
-\subsubsection*{Results}
+\subsection{Climate event segmentation} \label{sec:climate:appendix}
 
+* Jiang rerun with a batch size of 64 instead of 256 due to memory limit.\\
 * DS-jiang is the similar architecture as \cite{jiang2019sphericalcnn}. \\
 * DS-optimal has 2 times the number of feature maps of DS. \\
 * \todo{What is DS and DS-Cohen?} DS has 4 times more feature maps and one more layer than DS-Jiang. DS-optimal has still 2 times more feature maps. DS-Cohen should be mostly gauge (based on paper, no code): 4 times more feature maps, but 2 layers less than DS-Jiang. \\
 * \todo{Is (equi non-weighted) the full resolution?} Yes, but less feature maps and layers. Can run, but not enough GPU memory for an optimal architecture. \\
 * \todo{check column order for DS} \\
+* perf with same arch as Jiang in appendix => not enough channels!\\
+* even more feature maps give us one more point in perf\\
+
+% trade off between AP and accuracy in the case of TC class, it seems.\\
+% (full: we scale (50B pixels, 20TB) $\Rightarrow$ lead to better perf?)
+% full dataset not enough memory to run a correct model
 
 \begin{table}
     \centering
@@ -849,6 +856,7 @@ batch size = 8, 80 epochs, adam optimizer, cross-entropy loss, learning rate $2\
 		Tropical cyclones (TC) and atmospheric rivers (AR) are the two positive classes, against the background (BG).
 		\todo{\citet{mudigonda2017climateevents} is not directly comparable as they don't use the same input feature maps.}
 		Note that a non-weighted cross-entropy loss is not optimal for the accuracy metric.
+		\label{tab:climate:accuracy}
 	}
 \end{table}
 
@@ -879,6 +887,7 @@ batch size = 8, 80 epochs, adam optimizer, cross-entropy loss, learning rate $2\
 		Tropical cyclones (TC) and atmospheric rivers (AR) are the two positive classes.
 		Note that a weighted cross-entropy loss is not optimal for the average precision metric.
 	}
+		\label{tab:climate:map}
 \end{table}
 
 \begin{table}
@@ -903,6 +912,7 @@ batch size = 8, 80 epochs, adam optimizer, cross-entropy loss, learning rate $2\
     \caption{
 		Results on climate event segmentation: size and speed.
 	}
+		\label{tab:climate:speed}
 \end{table}
 
 \subsubsection*{Icosahedron}
