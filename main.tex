@@ -329,7 +329,7 @@ The expected value is obtained by averaging over a finite number of random funct
 \subsection{Finding the optimal set of weights}  \label{sec:optimal}
 % 1) summary the work of Khasanova
 Naturally, \cite{khasanova2017sphericalcnn} designed a Laplacian $\b{L}$ that minimizes \eqref{eq:equivariance error} for specific rotations on the longitude and latitude axis. 
-Working specifically with the equiangular sampling, they consider the set $\mathcal{G}$ of all the possible graphs where each node is connected only to four of its nearest neighbours (North, Sud, West, East).
+Working specifically with the equiangular sampling, they consider the set $\mathcal{G}$ of all the possible graphs where each node is connected only to four of its nearest neighbours (North, South, West, East).
 % and propose a weighting scheme $w_{ij}$ that minimizes \eqref{eq:equivariance error} for specific rotations on the longitude latitude axis.
 Their approach leads to weights $w_{ij}$ inversely proportional to the Euclidean distance between vertices:
 \begin{equation} \label{eqn:weights:khasanova}
@@ -363,18 +363,20 @@ We analyse our proposed weighting scheme both theoretically and empirically.
 
 \paragraph{Theoretical convergence.}
 We extend the work of Belkin and Nyiogi to a sufficiently regular, deterministic sampling scheme.
-Given a sampling scheme $V = \{x_0, \dots, x_{n-1}\}$, define $\sigma_i$ to be the patch of the surface of the sphere corresponding to $x_i$, define $A_i$ to be its corresponding area and $d_i$ to be the radius of the smallest ball in $\R^3$ containing $\sigma_i$. Define $d^{(n)} := \max_{i=0, \dots, n}d_i$ and $A^{(n)}=\max_{i=0, \dots, n}A_i$.
+Given a sampling scheme $\V = \{x_0, \dots, x_{n-1}\}$, define $\sigma_i$ to be the patch of the surface of the sphere corresponding to $x_i$, $A_i$ its corresponding area and $d_i$ the radius of the smallest ball in $\R^3$ containing $\sigma_i$. Define $d^{(n)} := \max_{i=0, \dots, n}d_i$ and $A^{(n)}=\max_{i=0, \dots, n}A_i$.
 \begin{theorem}
-	For a sampling $V = \{x_i\in\S^2\}_{i=0}^{n-1}$ of the sphere that is equi-area and such that $d^{(n)} \leq \frac{C}{\sqrt{n}}$, for all $f: \S^2 \rightarrow \R$ Lipschitz with respect to the Euclidean distance in $\R^3$, for all $y\in\S^2$, there exists a sequence $t_n = n^\beta$ such that the rescaled Heat Kernel Graph Laplacian $\frac{|\S^2|}{4\pi t_n^2}\b {L}^t_n$ converges pointwise to the Laplace Beltrami operator on the sphere $\Delta{\S^2}$  for $n\to\infty$:
+	For a sampling $\V = \{x_i\in\S^2\}_{i=0}^{n-1}$ of the sphere that is equi-area and such that $d^{(n)} \leq \frac{C}{\sqrt{n}}$, for all $f: \S^2 \rightarrow \R$ Lipschitz with respect to the Euclidean distance in $\R^3$, for all $y\in\S^2$, there exists a sequence $t_n = n^\beta$ such that 
+% 	the rescaled Heat Kernel Graph Laplacian $\frac{|\S^2|}{4\pi t_n^2}\b {L}^t_n$ converges pointwise to the Laplace Beltrami operator on the sphere $\Delta{\S^2}$  
 	\begin{equation*}
-	 \lim_{n\to\infty} \frac{|\mathbb{S}^2|}{4\pi t_n^2} \b{L}_n^{t_n} T_V f [i] =  \Delta_{\mathbb{S}^2}f(x_i)\quad \forall i=0, ..., n-1.
+	 \lim_{n\to\infty} \frac{|\mathbb{S}^2|}{4\pi t_n^2} \b{L}_n^{t_n} T_\V f [i] =  \Delta_{\mathbb{S}^2}f(x_i)\quad \forall i=0, ..., n-1.
 	\end{equation*} 
+% 	for $n\to\infty$.
 	\label{theo:pointwise convergence for a regular sampling}
 \end{theorem}
-This theorem implies immediately that $\b{L}$ converges pointwisely toward an operator ($\Delta_{\S^2}$) commuting with rotation and hence is a strong hint for equivariance.
-Importantly, the proof of Theorem \ref{theo:pointwise convergence for a regular sampling} in Appendix \ref{sec: appendix: proof of theorem} inspires us in the construction of our graph Laplacian. It gives us a strong hint how the parameter $t$ needs to be adjusted with respect to the number of points $n$.
+As a direct implication of this theorem, $\b{L}$ converges pointwisely toward the Laplace-Beltrami operator ($\Delta_{\S^2}$). This operator commutes with rotation and hence this convergence is a strong hint for equivariance.
+Importantly, the proof of Theorem \ref{theo:pointwise convergence for a regular sampling} in Appendix \ref{sec: appendix: proof of theorem} inspires us in the construction of our graph Laplacian. It is inspirational for the graph construction and for how the parameter $t$ needs to be adjusted with respect to the number of points $n$.
 
-It is important to keep in mind the limits of Theorem \ref{theo:pointwise convergence for a regular sampling}.
+Nevetheless, it is important to keep in mind the limits of Theorem \ref{theo:pointwise convergence for a regular sampling}.
 First, it is \emph{not} a proof of equivariance of the graph convolution for a specific sampling. To construct such a proof, a stronger convergence result is needed, for example uniform convergence (instead of pointwise).
 \todo{Can we intuitively write what pointwise convergence means, and how it is more limited than spectral or uniform convergence?}
 Unfortunately, the graph laplacian does \emph{not} converges uniformly in general \cite{belkin2007convergence}. This can probably be overcome by considering a specific class of functions, such as bandlimited function.
