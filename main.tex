@@ -384,7 +384,7 @@ We note that in the random sampling case, the graph laplacian does \emph{not} co
 \paragraph{Empirical convergence.}
 
 % 3.0) explain how we obtained the figures
-We calculated numerically the equivariance error \eqref{eq:mean equivariance error} for different parameter sets of DeepSphere and for the graph of Khasanova and Frossard. We approximated equation \eqref{eq:mean equivariance error} by calculating the empirical average of the equivariance errors of $N$ random monochromatic signals on $M$ random rotations for each signal. Results are in figure \ref{fig:equivariance_error}.
+We calculated numerically the equivariance error \eqref{eq:mean equivariance error} for monochromatic signals, for different parameter sets of DeepSphere and for the graph of Khasanova and Frossard. We approximated equation \eqref{eq:mean equivariance error} by calculating the empirical average of the equivariance errors of $N$ random monochromatic signals on $M$ random rotations for each signal. Results are in figure \ref{fig:equivariance_error}.
 The frequencies of the monochromatic signals, on the x axis in figure \ref{fig:equivariance_error}, were chosen in the range $(0,\  3N_{side}-1)$ to allow for an almost perfect synthesis of the sampled signals, and thus an almost perfect implementation (up to numerical errors) of the operator $\b{R}_\V$ in equation \eqref{eq:mean equivariance error} \citep{gorski1999healpixprimer}. In this way all the error measured is due to imperfections in the empirical approximation of the Laplace-Beltrami operator.
 
 % 3.1) explain what the figures tell us
@@ -394,8 +394,10 @@ We observe that by increasing the number of neighbors of the graph from 8 to 40,
 \begin{figure}
 	\begin{minipage}{0.65\linewidth}
 		\centering
-		\includegraphics[width=\linewidth]{all_in_one.pdf}
-		\caption{Equivariance error.}
+		\includegraphics[width=0.9\linewidth]{all_in_one.pdf}
+		\caption{Equivariance error. The number of pixels is $4*s^2$ equiangular = 
+
+Npix for healpix = 12*nside**2}
 		\label{fig:equivariance_error}
 	\end{minipage}
 	\hfill
