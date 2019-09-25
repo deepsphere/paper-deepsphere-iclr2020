@@ -96,6 +96,9 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 	\item put all the code (learning experiments from Frédérick and equivariance experiments from Martino) in a common reproducible git repository to be linked from the paper
 	\item update pygsp and merge sphere branch
 	\item check that NN architectures and hyper-params are correctly reported
+	\item keep NN architecture and hyper-params in the main text? Move the paragraph to appendix if not enough space.
+	\item shall we still site adam and batch norm?
+	\item check results on ModelNet40
 \end{itemize}
 }
 \newpage
@@ -254,7 +257,7 @@ On the other hand, following \citet{defferrard2016graphnn}, graph convolutions c
 \begin{equation} \label{eqn:graph_conv}
 	h(\b{L}) \b{f} = \left(\sum_{i=0}^K \alpha_i \b{L}^i\right) \b{f},
 \end{equation}
-where $K$ is the polynomial order (which corresponds to the filter's size) and $\alpha_i$ are the coefficients to be optimized during training.
+where $K$ is the polynomial order (which corresponds to the filter's size) and $\alpha_i$ are the coefficients to be optimized during training.\footnote{In practice, training with Chebyshev polynomials (instead of monomials) is slightly more stable. We believe it to be due to their orthogonality and uniformity.}
 Those convolutions are used by \citet{khasanova2017sphericalcnn} and \citet{perraudin2019deepspherecosmo} and cost $\bO(n)$ operations through a recursive application of $\b{L}$.\footnote{As long as the graph is sparsified such that the number of edges, i.e., the number of non-zeros in $\b{A}$, is proportional to the number of vertices $n$. This can always be done as most weights are very small.}
 
 \paragraph{Pooling.}
@@ -266,7 +269,7 @@ To unpool (up-sample), the data supported on a pixel is copied to all its sub-pi
 
 \paragraph{Architecture.}
 All our NNs are fully convolutional, and employ a global average pooling (GAP) for rotation invariant tasks.
-Graph convolutional layers are always followed by batch normalization and ReLU activation, except in the last layer.
+Graph convolutional layers are always followed by batch normalization \citep{ioffe2015batchnorm} and ReLU activation, except in the last layer.
 Note that batch normalization and activation act on the elements of $\b{f}$ independently, and hence don't depend on the domain of $f$.
 %We denote graph convolutional layers with $C$ output channels as $GC_C$ and fully connected layers with $C$ output neurons as $FC_C$.
 %Those linear layers are always followed by batch normalization and ReLU activation, except in the last layer.
@@ -318,13 +321,13 @@ More generally for a class of signal $f \in C \subset F_\V$, the \textit{mean eq
 In practice, to analyze the equivariance error frequency,  the set $C$ we used is composed of functions $f$ made of spherical harmonic of a single degree $\ell$.
 The expected value is obtained by averaging over a finite number of random functions and random rotations.
 
-\subsection{Finding the optimal set of weights}
+\subsection{Finding the optimal set of weights}  \label{sec:optimal}
 
 % 1) summary the work of Khasanova
 \cite{khasanova2017sphericalcnn} designed a Laplacian $\b{L}$ explicitly intended to work with the equiangular sampling.
 They consider the set $\mathcal{G}$ of all the possible graphs where each node is connected only to four of its nearest neighbours (North, Sud, West, East) and propose a weighting scheme $w_{ij}$ that minimizes \eqref{eq:equivariance error} for specific rotations on the longitude latitude axis.
 Their approach leads to weights $w_{ij}$ inversely proportional to the Euclidean distance between vertices:
-\begin{equation} \label{eq:frossard weights}
+\begin{equation} \label{eqn:weights:khasanova}
 	w_{ij} = \frac{1}{\norm{x_i-x_j}}
 \end{equation}
 
@@ -341,7 +344,7 @@ Their approach leads to weights $w_{ij}$ inversely proportional to the Euclidean
 We chose a different approach and take inspiration from \cite{belkin2005towards}, which proves that for a random \emph{uniform sampling} scheme the graph Laplacian converges toward the Laplace-Beltrami operator $\Delta_{\mathbb{S}^2}$ as the number of sampling points goes to infinity.
 This convergence result is important as a) $\Delta_{\mathbb{S}^2}$ commutes with rotation ($\Delta_{\mathbb{S}^2}R(g) = R(g)\Delta_{\mathbb{S}^2}$) and b) is diagonalized by the spherical harmonics.
 In this case the weighting scheme is full (every node is connected to every node) and is based on the exponential kernel:
-\begin{equation} \label{eq:belkin_weights}
+\begin{equation} \label{eqn:weights:belkin}
 w_{ij} = e^{-\frac{1}{4t} \norm{x_i-x_j}^2}
 \end{equation}
 In practice most of the weights are very close to $0$ and hence, to optimize for computational efficiency, we limit ourselves to only the $k$ nearest neighbors.
@@ -443,7 +446,14 @@ The $\cos$ and $\sin$ of the surface angle forms two normal maps.
 The same is done for the object's convex hull.\footnote{Albeit we didn't observe much improvement by using the convex hull.}
 The maps are discretized using either an equiangular grid with bandwidth $b = 64$ ($n = 4 b^2 = 16,384$ pixels) or an HEALPix grid with $N_{side} = 32$ ($n = 12 N_{side}^2 = 12,288$ pixels).
 
-\todo{Graph (\#neighbors), network architecture (info in the appendix, set the notation in the method section), loss, hyper-parameters. Or leave in appendix.}
+The equiangular graph is built with \eqnref{weights:khasanova} and $k = 4$ neighbors \citep[following][]{khasanova2017sphericalcnn}.
+\todo{The HEALPix graph is built with \eqnref{weights:belkin}, $k = ?$ and the corresponding optimal kernel width $t = ?$.}
+\todo{Following Esteves or Cohen?}
+The NN is made of $5$ graph convolutional layers, each followed by a \todo{max?} pooling layer down-sampling by $4$.
+A GAP and a fully connected layer with softmax follow.
+The Chebyshev polynomials are all of order $K=4$ and the number of channels per layer is $16, 32, 64, 128, 256$, respectively.
+Following \citet{esteves2018sphericalcnn}, the cross-entropy plus a triplet loss is optimized with Adam \citep{kingma2014adam} for 30 epochs on the dataset augmented by 3 random translations.
+The learning rate is $5 \cdot 10^{-2}$ and the batch size is 32.
 
 \begin{table}
     \centering
@@ -455,8 +465,8 @@ The maps are discretized using either an equiangular grid with bandwidth $b = 64
 		& F1 & mAP & params & \multicolumn{1}{c}{inference} & \multicolumn{1}{c}{training} \\
 		\midrule
 		% $SO(3)$ vs $S^2$ vs graph
-		\citet{cohen2018sphericalcnn} ($b=128$) & 78.9 & 67.6 & 1400\,k & 38.0\,ms & 50\,h \\
-		\citet{cohen2018sphericalcnn} (simplified,\protect\footnotemark $b=64$) & 78.6 & 66.5 & 400\,k & 12.0\,ms & 32\,h \\
+		\citet{cohen2018sphericalcnn} ($b=128$) & - & 67.6 & 1400\,k & 38.0\,ms & 50\,h \\
+		\citet{cohen2018sphericalcnn} (simplified,\protect\footnotemark $b=64$) & 78.9 & 66.5 & 400\,k & 12.0\,ms & 32\,h \\
 		\citet{esteves2018sphericalcnn} ($b=64$) & 79.4 & 68.5 & 500\,k & 9.8\,ms & 3\,h \\
 		DeepSphere (equiangular $b=64$) & 79.4 & 66.5 & 190\,k & 0.9\,ms & 50\,m \\
 		DeepSphere (HEALPix $N_{side}=32$) & 80.7 & 68.6 & 190\,k & 0.9\,ms & 50\,m \\
@@ -488,11 +498,16 @@ Given observations, cosmologists estimate the posterior probability of cosmologi
 Those parameters are typically estimated by likelihood-free inference, which requires a function to predict the parameters from simulations.
 % such as Approximate Bayesian computation (ABC)
 As that is complicated to setup, prediction methods are typically benchmarked on the classification of spherical maps into cosmological model classes \citep{schmelze2017cosmologicalmodel}.
-We used the same task, data, and setup as \citet{perraudin2019deepspherecosmo}: the classification of $720$ partial convergence maps ($1/12 \approx 8\%$ of the sphere) made of $n \approx 10^6$ pixels from two $\Lambda$CDM cosmological models, ($\Omega_m = 0.31$, $\sigma_8 = 0.82)$ and ($\Omega_m = 0.26$, $\sigma_8 = 0.91)$, at a relative noise level of $4$.
+We used the same task, data, and setup as \citet{perraudin2019deepspherecosmo}: the classification of $720$ partial convergence maps made of $n \approx 10^6$ pixels ($1/12 \approx 8\%$ of a sphere at $N_{side} = 1024$) from two $\Lambda$CDM cosmological models, ($\Omega_m = 0.31$, $\sigma_8 = 0.82)$ and ($\Omega_m = 0.26$, $\sigma_8 = 0.91)$, at a relative noise level of $4$.
 % 60 maps * 12 parts = 720 parts
 Convergence maps represent the distribution of over- and under-densities of mass in the universe \citep[see][for a review of gravitational lensing]{bartelman2010gravitationallensing}.
 
-\todo{Graph (\#neighbors), network architecture (info in the appendix, set the notation in the method section), loss, hyper-parameters. Or leave in appendix.}
+Graphs are built with \eqnref{weights:belkin}, $k = 8, 20, 40$ and the corresponding optimal kernel widths $t = ?, ?, ?$.
+Following \citet{perraudin2019deepspherecosmo}, the NN is made of $5$ graph convolutional layers, each followed by a \todo{max?} pooling layer down-sampling by $4$.
+A GAP and a fully connected layer with softmax follow.
+The Chebyshev polynomials are all of order $K=5$ and the number of channels per layer is $16, 32, 64, 64, 64$, respectively.
+The cross-entropy loss is optimized with Adam for 80 epochs.
+The learning rate is $2 \cdot 10^{-4} \cdot 0.999^{\textrm{step}}$ and the batch size is 8.
 
 \begin{table}
     \centering
@@ -539,7 +554,15 @@ We used the pre-processed dataset from \citep{jiang2019sphericalcnn}.\footnote{A
 There is 1,072,805 spherical maps, down-sampled to a level-5 icosahedral grid ($n = 10 \cdot 4^l + 2 = 10,242$ pixels).
 The labels are heavily unbalanced with 0.1\% TC, 2.2\% AR, and 97.7\% background (BG) pixels.
 
-\todo{Graph (\#neighbors), network architecture (info in the appendix, set the notation in the method section), loss, hyper-parameters. Or leave in appendix.}
+The graph is built with \eqnref{weights:belkin}, \todo{$k = ?$} and the \todo{corresponding optimal kernel widths $t = ?, ?, ?$}.
+Following \citet{jiang2019sphericalcnn}, the NN is an encoder-decoder with skip connections.
+Details in \secref{climate:appendix}.
+%The encoder is made of $5$ graph convolutional layers, each followed by a \todo{pick-one?} pooling layer down-sampling by $4$.
+%the number of channels per layer is $16, 32, 64, 64, 64$, respectively.
+%The decoder is made of
+The Chebyshev polynomials are all of \todo{order $K=5$}.
+The cross-entropy loss (weighted or non-weighted) is optimized with Adam for 30 epochs.
+The learning rate is $1 \cdot 10{-3}$ and the batch size is 64.
 
 \begin{table}
 	\centering
@@ -570,7 +593,7 @@ DeepSphere achieves state-of-the-art performance, suggesting again that anisotro
 
 Compared to \citet{cohen2019gauge}'s conclusion, it is surprising that S2R does worse than DeepSphere (which is limited to S2S).
 Potential explanations are (i) that their icosahedral projection introduces harmful distortions, or (ii) that a larger architecture can compensate for the lack of generality. % powerfulness?
-We indeed observed that more feature maps and depth led to higher performance (\ref{sec:climate:appendix}).
+We indeed observed that more feature maps and depth led to higher performance (\secref{climate:appendix}).
 
 \subsection{Uneven sampling} \label{sec:exp:ghcn}
 % Weather prediction? But it's not a real task. Rather a demo.
@@ -581,7 +604,15 @@ For illustration, we devised two artificial tasks.
 A dense regression that consists of predicting the temperature on a given day knowing the temperature on the 5 previous days.
 A global regression that consists of predicting the day (represented as one period of a sine over the year) from temperature or precipitations.
 
-\todo{Graph (\#neighbors), network architecture (info in the appendix, set the notation in the method section), loss, hyper-parameters. Or leave in appendix.}
+The graph is built with \eqnref{weights:khasanova} and \todo{$k = ?$} neighbors.
+The kernel width $t$ is set as the average of the distances.
+The equivariance property of the resulting graph has not been tested, and we don't expect it to be good due to the heavily non-uniform sampling.
+The NN is made of $3$ graph convolutional layers.
+The Chebyshev polynomials are all of order $K=0$ or $4$ and the number of channels per layer is $50, 100, 100$, respectively.
+For the global regression, a GAP and a fully connected layer follow.
+For the dense regression, a graph convolutional layer follows instead.
+The MSE loss is optimized with RMSprop for 250 epochs.
+The learning rate is $1 \cdot 10^{-3}$ and the batch size is 64.
 
 \begin{table}
     \centering
@@ -881,93 +912,64 @@ To conclude, we can see that the result obtained has the same form than the resu
 
 \section{Experimental details}
 
-* Network architecture and training details
+\subsection{3D objects recognition}
 
-\subsection{3D object Recognition}
-\subsubsection*{Detailed results}
-\paragraph*{SHREC17}
+\Tabref{shrec17_retrieval} shows the results obtained from the competition's official evaluation script.
+\Tabref{modelnet40} shows results on ModelNet40.
 
 \begin{table}
     \centering
-    \begin{tabular}{l|c c r r}
-        \multicolumn{1}{l}{} & \multicolumn{2}{c}{performance} & \multicolumn{2}{c}{speed}\\
-        \cmidrule(lr){2-3} \cmidrule(lr){4-5}
-        \multicolumn{1}{l}{Method} & Accuracy & F1-score & inference & training \\ \hline
-        Cohen \emph{s2cnn} & - & - & 38ms & 50h\\
-        % Cohen \emph{s2cnn\_simple} & 78.59 & 78.85 & 400k & 12ms & 32h\\
-        Esteves \emph{sphericalcnn} & 79.18 & 79.36 & 9.8ms & 2h52\\ \hline
-        DeepSphere \emph{Equiangular} & 79.25 & 79.36 & 0.9ms & 47m \\
-        DeepSphere \emph{HEALPix} & 80.42 & 80.65 & 0.9ms & 46m\\
-        % DeepSphere \emph{Improved HEALPix} & 80.76 & & &
+	\scriptsize
+    \begin{tabular}{l cccc cccc}
+    & \multicolumn{4}{c}{micro (label average)} & \multicolumn{4}{c}{macro (instance average)} \\
+	\cmidrule(lr){2-5} \cmidrule(lr){6-9}
+    & P@N & R@N & F1@N & mAP & P@N & R@N & F1@N & mAP \\
+	\toprule
+    \citet{cohen2018sphericalcnn} ($b=128$) & 0.701 & 0.711 & 0.699 & 0.676 & - & - & - & - \\
+    \citet{cohen2018sphericalcnn} (simplified, $b=64$) & 0.704 & 0.701 & 0.696 & 0.665 & 0.430 & 0.480 & 0.429 & 0.385 \\
+    \citet{esteves2018sphericalcnn} ($b=64$) & 0.717 & 0.737 & - & 0.685 & 0.450 & 0.550 & - & 0.444 \\
+    DeepSphere (equiangular $b=64$) & 0.709 & 0.700 & 0.698 & 0.665 & 0.439 & 0.489 & 0.439 & 0.403 \\
+    DeepSphere (HEALPix $N_{side}=32$) & 0.725 & 0.717 & 0.715 & 0.686 & 0.475 & 0.508 & 0.468 & 0.428\\
+	\bottomrule
     \end{tabular}
-    \caption{Performance of different models}
-    \label{tab:SHREC17_class}
+    \caption{Official metrics from the SHREC'17 object retrieval competition.}
+    \label{tab:shrec17_retrieval}
 \end{table}
 
 \begin{table}
     \centering
-    \begin{tabular}{l|c c c c|c c c c}
-     & \multicolumn{4}{c|}{micro (label average)} & \multicolumn{4}{c}{macro (instance average)} \\
-    Method & P@N & R@N & F1@N & mAP & P@N & R@N & F1@N & mAP \\ \hline
-    Cohen \emph{s2cnn} & 0.701 & 0.711 & 0.699 & 0.676 & - & - & - & - \\
-    % Cohen \emph{s2cnn\_simple} & 0.704 & 0.701 & 0.696 & 0.665 & 0.430 & 0.480 & 0.429 & 0.385\\
-    Esteves \emph{sphericalcnn} & 0.717 & 0.737 & - & 0.685 & 0.450 & 0.550 & - & 0.444\\ \hline
-    DeepSphere \emph{Equiangular} & 0.709 & 0.700 & 0.698 & 0.665 & 0.439 & 0.489 & 0.439 & 0.403 \\
-    DeepSphere \emph{HEALPix} & 0.725 & 0.717 & 0.715 & 0.686 & 0.475 & 0.508 & 0.468 & 0.428\\
-    % DeepSphere \emph{Improved HEALPix} & & & & &
+    \begin{tabular}{l cccc}
+	\toprule
+    & no/no & z/z & SO3/SO3 & z/SO3 \\
+	\midrule
+	\citet{cohen2018sphericalcnn} & 85.0 & - & - & - \\
+	\citet{jiang2019sphericalcnn} & 90.5 & - & - & - \\
+	\citet{esteves2018sphericalcnn} & - & 88.9 & 86.9 & 76.7 \\
+	%Esteves \emph{MVCNN} & 94.69 & - & - & - \\
+	DeepSphere & 87.8 & 86.8 & 86.7 & 76.9 \\
+	\bottomrule
     \end{tabular}
-    \caption{Performance of different models over SHREC17 perturbed dataset as a retrieval task, using the official script of the competition.}
-    \label{tab:SHREC17_retriev}
+    \caption{
+		Accuracy results on ModelNet40.
+		``no'' denotes no augmentation, ``z'' is augmented with rotations around the Z-axis, and ``SO3'' with ZYZ rotations.
+		\todo{The first is training time augmentation, the second test time augmentation.}
+	}
+    \label{tab:modelnet40}
 \end{table}
 
-\paragraph*{ModelNet 40}
-
-\begin{table}
-    \centering
-    \begin{tabular}{c|cccc}
-         &  x/x & z/z & SO3/SO3 & z/SO3 \\ \hline
-Cohen & 85.0 & - & - & - \\
-Jiang & 90.5 & - & - & - \\
-Esteves \emph{scnn} & - & 88.9 & 86.9 & 78.6 \\
-%Esteves \emph{MVCNN} & 94.69 & - & - & - \\
-DeepSphere & 87.8 & 86.8 & 86.7 & 76.9
-    \end{tabular}
-    \caption{Accuracy (in percent) on test set, for different models. The x dataset has no augmentation, the z dataset is augmented with rotation around Z-axis, and SO3 with ZYZ rotations.}
-    \label{tab:mn40_results}
-\end{table}
-
-\subsubsection*{HEALPix architecture}
-
-HEALPix sampling, input signal at Nside = 32
-
-CNN having 5 convolutional layers, a global average pooling layer and a fully-connected layer at the end, such as this:
 \begin{dmath}
     [GC_{16}\, +\, BN\, +\, ReLU]_{nside32}\, +\, \textrm{Pool}\, +\, [GC_{32}\, +\, BN\, +\, ReLU]_{nside16}\, +\, \textrm{Pool}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{nside8}\, +\, \textrm{Pool}\, +\, [GC_{128}\, +\, BN\, +\, ReLU]_{nside4}\, +\,\textrm{Pool}\, +\, [GC_{256}\, +\, BN\, +\, ReLU]_{nside2}\, +\, \textrm{Pool}\, +\, GAP\, +\, FCN\, +\, \textrm{softmax}
 \end{dmath}
-Each convolutional layer has a graph convolution using Chebyshev polynomial approximation, batch normalization and ReLU activation. The order of the Chebyshev polynomial is 4 for each layer, the number of feature maps are [16, 32, 64, 128, 256] respectively and down-sampling to the immediate smaller resolution for each layer.
 
-number of parameter: 190k TODO exact number?
-
-batch size 32, adam optimizer, constant learning rate of $5 \cdot 10^{-2}$
-cross-entropy loss, and add triplet loss from ``Esteves et al.''
-
-30 epochs with augmented dataset, 3 random translation perturbation (same as 90 epochs over dataset with 3 possible random rotation)
-\subsubsection*{Equiangular architecture}
-Equiangular sampling with bandwidth of 64 in longitude and latitude.
-The architecture of the Neural Network is exactly the same, with a stride of [2, 2] for each pooling layer
-\subsection{cosmo}
-HEALPix sampling, Nside = 1024, with improved graph
+\subsection{Cosmological model classification}
 
 \begin{dmath}
     [GC_{16}\, +\, BN\, +\, ReLU]_{nside1024}\, +\, \textrm{Pool}\, +\, [GC_{32}\, +\, BN\, +\, ReLU]_{nside512}\, +\, \textrm{Pool}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{nside256}\, +\, \textrm{Pool}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{nside128}\, +\,\textrm{Pool}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{nside64}\, +\, \textrm{Pool}\, +\, [GC_{2}]_{nside32}\, +\, GAP\, +\, \textrm{softmax}
 \end{dmath}
 
-The order of the Chebyshev polynomial is 5 for each layer, the number of feature maps are [16, 32, 64, 64, 64, 3] respectively and down-sampling to the immediate smaller resolution for each layer.
-
-batch size = 8, 80 epochs, adam optimizer, cross-entropy loss, learning rate $2\cdot10^{-4}\cdot0.999^{\textrm{step}}$
-
-
 \subsection{Climate event segmentation} \label{sec:climate:appendix}
+
+\Tabref{climate:accuracy}, \ref{tab:climate:map}, and \ref{tab:climate:speed} show the accuracy, mAP, and efficiency of all the NNs we ran.
 
 * Jiang rerun with a batch size of 64 instead of 256 due to memory limit.\\
 * DS-jiang is the similar architecture as \cite{jiang2019sphericalcnn}. \\
@@ -1123,28 +1125,17 @@ decoder:\\
 \end{dmath}
 
 batch size 1
-\subsection{GHCN}
-non-regular sampling, thus no pooling was used
 
-batch size 64, RMSprop optimizer, constant learning rate of $1 \cdot 10{-3}$, MSE loss, order of 5 for all layers
+\subsection{Uneven sampling}
 
-250 epochs with no augmentation
-
-\subsubsection*{Deatilled results}
-
-
-\subsubsection*{Dense task architecture}
-
+Architecture for dense regression:
 \begin{dmath}
     [GC_{50}\, +\, BN\, +\, ReLU]\, +\, [GC_{100}\, +\, BN\, +\, ReLU]\, +\, [GC_{100}\, +\, BN\, +\, ReLU]\, +\, [GC_{1}]
 \end{dmath}
 
-\subsubsection*{Global task architecture}
-
+Architecture for global regression:
 \begin{dmath}
     [GC_{50}\, +\, BN\, +\, ReLU]\, +\, [GC_{100}\, +\, BN\, +\, ReLU]\, +\, [GC_{100}\, +\, BN\, +\, ReLU]\, +\, GAP\, +\, FCN
 \end{dmath}
-
-
 
 \end{document}
