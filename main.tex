@@ -377,9 +377,7 @@ Importantly, the proof of Theorem \ref{theo:pointwise convergence for a regular 
 Nevetheless, it is important to keep in mind the limits of Theorem \ref{theo:pointwise convergence for a regular sampling}.
 First, it is \emph{not} a proof of equivariance of the graph convolution for a specific sampling. To construct such a proof, a stronger convergence result is needed, for example uniform convergence (instead of pointwise).
 % \todo{Can we intuitively write what pointwise convergence means, and how it is more limited than spectral or uniform convergence?}
-We note that in the random sampling case, the graph laplacian does \emph{not} converges uniformly in general \cite{belkin2007convergence}[Sec 3], but does for a class of Lipschitz functions \cite{belkin2005towards}[Sec 6]. 
-\todo{Update once discussed with Martino}
-Second, while do not have a proof for it, we strongly believe that the HEALPix sampling does satisfy the hypothesis $d^{(n)}\leq \frac{C}{\sqrt{n}}$ of Theorem \ref{theo:pointwise convergence for a regular sampling}. This is discussed in Appendix \ref{sec: appendix: proof of theorem}.
+We note that in the random sampling case, the graph laplacian does \emph{not} converges uniformly in general \cite{belkin2007convergence}[Sec 3], but does for a class of Lipschitz functions \cite{belkin2005towards}[Sec 6].  Second, while do not have a proof for it, we strongly believe that the HEALPix sampling does satisfy the hypothesis $d^{(n)}\leq \frac{C}{\sqrt{n}}$ of Theorem \ref{theo:pointwise convergence for a regular sampling}. The empirical results discussed in the next paragraph also point in this direction. This is further discussed in Appendix \ref{sec: appendix: proof of theorem}.
 
 
 % 3) Show experimental results
@@ -897,13 +895,13 @@ Theorem  \ref{theo:pointwise convergence for a regular sampling}, is then an imm
 	\end{equation*} 
 \end{proof}
 
-% I don't really have time 
+% I don't really have time to think clearly about this sorry
+
 % \nati{@martino, actually we do not need $ d^{(n)}\leq \frac{1}{\sqrt{n}}$, we only need $ d^{(n)}\leq \frac{1}{n^\alpha}$, where $\alpha>0$. As the $\S^2$ is of dimension $2$, $\alpha$ cannot be larger than $\linefrac{1}{2}$. If we put that into the theorem, we obtain that $\frac{5}{2}\beta+\alpha>0 \iff \beta>-\frac{2\alpha}{5}$. I think this is important, because we can still have convergence even if we do not have perfect patches... Please confirm ASAP, so we can update the Proposition and the text bellow. For HealPix sampling, we could say that while we have not proof, it make sense that it statisfies the hypothesis probably with $\alpha=\linefrac{1}{2}$.}
 
-The proof of Proposition \ref{prop:2} is instructive. First, we note that some regularity conditions on the sampling are needed. If the sampling is equal area as HEALPix, meaning that all the patches $\sigma_i$ have the same area, then we need to impose that $ d^{(n)}\leq \frac{1}{\sqrt{n}}$. \\
-In the work of \cite{belkin2005towards} the sampling is drawn form a uniform random distribution on the sphere, and their proof heavily relies on the uniformity properties of the distribution from which the sampling is drawn. In our case the sampling is deterministic, and the fact that for a sphere there doesn't exist a regular sampling with more than 12 points (the vertices of a icosahedron) is indeed a problem that we need to overcome by imposing the regularity conditions above.
+In the work of \cite{belkin2005towards} the sampling is drawn form a uniform random distribution on the sphere, and their proof heavily relies on the uniformity properties of the distribution from which the sampling is drawn. In our case the sampling is deterministic, and this is indeed a problem that we need to overcome by imposing the regularity conditions above.
 
-To conclude, we can see that the result obtained has the same form than the result obtained in \cite{belkin2005towards}. Given the kernel density $t(n)=n^\beta$, if Belkin et al. proved convergence in the random case for $\beta \in (-\frac{1}{4}, 0)$, we proved convergence in the deterministic case for $\beta \in (-\frac{1}{5}, 0)$. This kind of result can be interpreted in the following way. In order to have this pointwise convergence, we need to reduce the kernel width but \emph{not so fast} compared to the resolution of the graph. In other words, the kernel width has to be reduced but is somewhat limited by the resolution of the graph.
+To conclude, we can see that the result obtained has the same form than the result obtained in \cite{belkin2005towards}. Given the kernel density $t(n)=n^\beta$, if Belkin and Nyiogi proved convergence in the random case for $\beta \in (-\frac{1}{4}, 0)$, we proved convergence in the deterministic case for $\beta \in (-\frac{1}{5}, 0)$.
 
 
 \section{Experimental details}
