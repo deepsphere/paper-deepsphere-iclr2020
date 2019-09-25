@@ -92,9 +92,9 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 	\item notation: should we use indices from 1 to n instead of 0 to n-1 for compactness?
 	\item add \citet{bruna2013gnn} in equivariance? They were the first to do a spherical CNN with graphs. Graph is built from a uniform random sampling of the sphere.
 	\item figure placements
-	\item add figure with optimal kernel widths
 	\item do the experiments on the icosahedral grid with the pooling as defined in the paper
 	\item put all the code (learning experiments from Frédérick and equivariance experiments from Martino) in a common reproducible git repository to be linked from the paper
+	\item update pygsp and merge sphere branch
 	\item check that NN architectures and hyper-params are correctly reported
 \end{itemize}
 }
@@ -218,7 +218,7 @@ Experiments on multiple problems of practical interest show the competitiveness 
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.9\linewidth]{figure_architecture_v3}
+	\includegraphics[width=\linewidth]{figure_architecture_v3}
 	\caption{Example architecture from \cite{perraudin2019deepspherecosmo}.
 		Global tasks need a spatial summarization: the FCN variant is rotation invariant (and accepts inputs of varying sizes), while the CNN variant is not.
 		Dense tasks (when the output lives on the sphere, like segmentation) are rotation equivariant.
@@ -319,13 +319,23 @@ In practice, to analyze the equivariance error frequency,  the set $C$ we used i
 The expected value is obtained by averaging over a finite number of random functions and random rotations.
 
 \subsection{Finding the optimal set of weights}
-% !) summary the work of Khasanova -> No! to be put in section 2) Method
+
+% 1) summary the work of Khasanova
 \cite{khasanova2017sphericalcnn} designed a Laplacian $\b{L}$ explicitly intended to work with the equiangular sampling.
 They consider the set $\mathcal{G}$ of all the possible graphs where each node is connected only to four of its nearest neighbours (North, Sud, West, East) and propose a weighting scheme $w_{ij}$ that minimizes \eqref{eq:equivariance error} for specific rotations on the longitude latitude axis.
 Their approach leads to weights $w_{ij}$ inversely proportional to the Euclidean distance between vertices:
 \begin{equation} \label{eq:frossard weights}
 	w_{ij} = \frac{1}{\norm{x_i-x_j}}
 \end{equation}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.4\linewidth]{kernel_widths}
+	\caption{
+		Optimal kernel widths for various resolutions of the HEALPix grid.
+	}
+	\label{fig:kernel_widths}
+\end{figure}
 
 % 2) explain our approach
 We chose a different approach and take inspiration from \cite{belkin2005towards}, which proves that for a random \emph{uniform sampling} scheme the graph Laplacian converges toward the Laplace-Beltrami operator $\Delta_{\mathbb{S}^2}$ as the number of sampling points goes to infinity.
@@ -334,8 +344,9 @@ In this case the weighting scheme is full (every node is connected to every node
 \begin{equation} \label{eq:belkin_weights}
 w_{ij} = e^{-\frac{1}{4t} \norm{x_i-x_j}^2}
 \end{equation}
-In practice most of the weights are very close to $0$ and hence, to optimize for computational efficiency, we limit ourselves to only the $k$ nearest neighbors. Given $k$, we find the optimal $t$, a grid search is performed using \eqref{eq:mean equivariance error}.
-
+In practice most of the weights are very close to $0$ and hence, to optimize for computational efficiency, we limit ourselves to only the $k$ nearest neighbors.
+Given $k$, the optimal $t$ is found by searching for the minimizer of \eqref{eq:mean equivariance error}.
+\Figref{kernel_widths} shows the optimal kernel widths found for various resolutions of the HEALPix grid.
 
 \subsection{Analysis of the proposed weighting scheme}
 We analyse our proposed weighting scheme both theoretically and empirically.
