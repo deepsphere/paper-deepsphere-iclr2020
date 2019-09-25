@@ -79,6 +79,17 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 	\item[overleaf] \url{https://www.overleaf.com/project/5d31d2fbd6859d54cb707212}
 \end{description}
 
+story: there are tradeoffs when designing a spherical CNN -> DS strikes a controllable balance between efficiency / cost and exactitude / equivariance
+% DSv2 has a clear tradeoff between equivariance and computational cost
+
+* method development: tool that solve a need (balance btw the desiderata: equiv vs cost)\\
+* research question: anisotropy (highlight from the start or leave it as a dangling question in the end)\\
+
+contributions:\\
+* theory $\Rightarrow$ convergence (better graph)\\
+* experiments on relevant problems (not spherical MNIST) $\Rightarrow$ check the desiderata\\
+  * surprising: anisotropy doesn't seem useful\\
+
 \todo{
 \begin{itemize}
 	\item shall we really name it? Or simply reference the general idea of a graph-based spherical CNN.
@@ -120,22 +131,7 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 \begin{abstract}
 Selecting the right convolution for a spherical neural network is a delicate tradeoff between its efficiency and its exactictude with respect of equivariance. DeepSphere, as a graph based method strikes as a controllable balance between these two aspects. This contribution 1) studies empirically and theoretically how the construction of its underlying graph affects equivariance, and 2) evaluates its performance on a large set of relevant problems.
 Comparison with previous work on shape classification and climate event detection suggests that anisotropic filters are an unnecessary price to pay.
-
-story: there are tradeoffs when designing a spherical CNN -> DS strikes a controllable balance between efficiency / cost and exactitude / equivariance
-% DSv2 has a clear tradeoff between equivariance and computational cost
-
-* method development: tool that solve a need (balance btw the desiderata: equiv vs cost)\\
-* research question: anisotropy (highlight from the start or leave it as a dangling question in the end)\\
-
-contributions:\\
-* theory $\Rightarrow$ convergence (better graph)\\
-* experiments on relevant problems (not spherical MNIST) $\Rightarrow$ check the desiderata\\
-  * surprising: anisotropy doesn't seem useful\\
-
-Experiments on xxx show
-Comparison with previous work on shape classification and climate event detection suggests that anisotropic filters are an unnecessary price to pay.
 % memory, computations, implementation complexity
-
 \end{abstract}
 
 \section{Introduction}
