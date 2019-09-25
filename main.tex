@@ -384,11 +384,10 @@ The frequencies $\ell$ of the monochromatic signals were chosen in the range $(0
 % 3.1) explain what the figures tell us
 By fixing the number of neighbors to 8, we already observe a first improvement compared to the previous version of DeepSphere, whose graph also was constructed to have at maximum 8 neighbors. By increasing the number of neighbors of the graph the equivariance error decreases by more than one order of magnitude. On the other side, by increasing the graph resolution ($N_{side}$) the equivariance error in the high frequencies decreases. The filtering operation with the graph Laplacian of Khasanova, Frossard is by construction perfectly equivariant to rotations along the vertical axis, and is designed to minimize the filtering error of vertical displacements of the same image. While these characteristics are designed for well analysing omnidirectional images, that are naturally aligned on the north-south axis, if tested on random rotations this construction shows its limits: increasing the graph resolution does not seem to improve its equivariance.
 
-
 \begin{figure}
-	\begin{minipage}{0.65\linewidth}
+	\begin{minipage}{0.60\linewidth}
 		\centering
-		\includegraphics[width=0.9\linewidth]{all_in_one.pdf}
+		\includegraphics[width=\linewidth]{all_in_one.pdf}
 		\caption{Normalized mean equivariance error \eqref{eq:mean equivariance error}. The number of pixels is $4s^2$ for the equiangular sampling and $12s^2$ for the Healpix sampling.}
 		\label{fig:equivariance_error}
 	\end{minipage}
