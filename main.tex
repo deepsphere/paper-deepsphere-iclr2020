@@ -64,6 +64,10 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 \newcommand{\eqnref}[1]{equation~(\ref{eqn:#1})}
 \newcommand{\Eqnref}[1]{Equation~(\ref{eqn:#1})}
 
+\newcommand{\linefrac}[2]{
+    {#1/#2}
+}
+
 %\iclrfinalcopy % Uncomment for camera-ready version, but NOT for submission.
 \begin{document}
 
@@ -785,76 +789,76 @@ for a particular class of sampling and b) apply Proposition \ref{prop:3}.
 % brief introduction:
 % This proof consists in two steps: first, we prove that $L_n^t \rightarrow L^t$, and second, we use proposition \ref{prop:3} to prove \eqref{eq:continuous convergence}. This equation, as already explained in \cite{belkin2007convergence}, directly implies theorem \ref{theo:pointwise convergence for a regular sampling}.
 
-We start by proving the following Proposition:
-\vspace{0.5cm}
+We start by proving that for smooth functions, the sum converges toward an integral as the sampling increase in size.
 \begin{prop}\label{prop:1}
-	For an equal area sampling $\{x_i\in\S^2\}_{i=0}^{n-1}: A_i=A_j \forall i,j$ of the sphere it is true that for all $f: \S^2 \rightarrow \R$ Lipschitz with respect to the Euclidean distance $\|\cdot\|$ with Lipschitz constant $\mathcal L_f$
-	$$
-	\left| \int_{\S^2}f({ x})\text{d}{\mu(x)} - \frac{1}{n}\sum_i f( x_i)\right|\leq \mathcal L_fd^{(n)}.
-	$$
+	For an equal area sampling $\{x_i\in\S^2\}_{i=0}^{n-1}: A_i=A_j \forall i,j$ of the sphere it is true that for all $f: \S^2 \rightarrow \R$ Lipschitz with respect to the Euclidean distance $\|\cdot\|$ with Lipschitz constant $C_f$
+	\begin{equation*}
+	\left| \int_{\S^2}f({ x})\text{d}{\mu(x)} - \frac{1}{n}\sum_i f( x_i)\right|\leq \mathcal L_fd^{(n)}.	    
+	\end{equation*}
 	Furthermore, for all $y\in\S^2$ the Heat Kernel Graph Laplacian operator $L^t_n$ converges pointwise to the functional approximation of the Laplace Beltrami operator $L^t$
-	$$ L_n^tf(y)\xrightarrow{n\to\infty} L^tf(y).$$
+	\begin{equation*}
+	 L_n^tf(y)\xrightarrow{n\to\infty} L^tf(y).
+	\end{equation*}
 \end{prop}
-\vspace{0.5cm}
-
 \begin{proof}
-
-	Let us assume that the function $f:\R^3\rightarrow \R$ is Lipschitz with Lipschitz constant $\mathcal L_f$, we have
-
-	$$\left| \int_{\sigma_{i}}f({ x})\text{d}{\mu(x)} - \frac{1}{n}f( x_i)\right| \leq \mathcal L_fd^{(n)}\frac{1}{n} $$
-
-	So, by triangular inequality and by summing all the contributions of all the $n$ patches
-	$$\left| \int_{\S^2}f({ x})\text{d}{\mu(x)} - \frac{1}{n}\sum_i f( x_i)\right| \leq \sum_i \left| \int_{\sigma_{i}}f({ x})\text{d}{\mu(x)} - \frac{1}{n}f( x_i)\right|\leq n  \mathcal L_fd^{(n)}\frac{1}{n} = \mathcal L_fd^{(n)}$$
-	Thanks to this result, we have the following two pointwise convergences
-
-	$$\forall f \text{ Lipschiz,}\quad \forall y\in\S^2,  \quad\quad \frac{1}{n}\sum_i e^{-\frac{||x_i-y||^2}{4t}}\rightarrow \int e^{-\frac{||x-y||^2}{4t}}d\mu(x)$$
-	$$\forall f \text{ Lipschiz,}\quad \forall y\in\S^2,  \quad\quad \frac{1}{n}\sum_i e^{-\frac{||x_i-y||^2}{4t}}f(x_i)\rightarrow \int e^{-\frac{||x-y||^2}{4t}}f(x)d\mu(x)$$
-
+\nati{@martino, the function should be from $\S^2$ instead of $\R^3$ here right? }
+	Assuming $f:\R^3\rightarrow \R$ is Lipschitz with Lipschitz constant $C_f$, we have
+	\begin{equation*}
+	\left| \int_{\sigma_{i}}f({ x})\text{d}{\mu(x)} - \frac{1}{n}f( x_i)\right| \leq C_fd^{(n)}\frac{1}{n},	    
+	\end{equation*}
+	where $\sigma_i\in \S^2$ is the subset of the sphere corresponding to the patch arround $x_i$. Remember that the sampling is equal area.
+	Hence, using the triangular inequality and summing all the contributions of the $n$ patches, we obtain
+	\begin{equation*}
+	\left| \int_{\S^2}f({ x})\text{d}{\mu(x)} - \frac{1}{n}\sum_i f( x_i)\right| \leq \sum_i \left| \frac{1}{4\pi^2} \int_{\sigma_{i}}f({ x})\text{d}{\mu(x)} - \frac{1}{n}f( x_i)\right|\leq n  C_fd^{(n)}\frac{1}{n} = C_fd^{(n)}
+	\end{equation*}
+	A direct application of this result leads to the following pointwise convergences
+	\begin{equation*}
+	\forall f \text{ Lipschiz,}\quad \forall y\in\S^2,  \quad\quad \frac{1}{n}\sum_i e^{-\frac{\|x_i-y\|^2}{4t}}\rightarrow   \int e^{-\frac{\|x-y\|^2}{4t}}d\mu(x) 
+	\end{equation*}
+    \begin{equation*}
+    \forall f \text{ Lipschiz,}\quad \forall y\in\S^2,  \quad\quad \frac{1}{n}\sum_i e^{-\frac{||x_i-y||^2}{4t}}f(x_i)\rightarrow   \int e^{-\frac{\|x-y\|^2}{4t}}f(x)d\mu(x)        
+    \end{equation*}
 	Definitions \ref{eq:Heat Kernel Graph Laplacian operator} and \ref{eq:Functional approximation to the Laplace-Beltrami operator} end the proof.
 \end{proof}
-\vspace{0.5cm}
 
-Now, we just proved that \textit{keeping t fixed} $L_n^tf(x)\rightarrow L^tf(x)$. Now our goal is to prove that:
-
-\vspace{0.5cm}
+The last proposition show that for a \emph{fixed} $t$, $L_n^tf(x)\rightarrow \linefrac{1}{4\pi^2} L^tf(x)$. To utilize Proposition \ref{prop:3} and complete the proof, we need to find a sequence of $t_n$ for which this holds as $t_n \rightarrow 0$. Furthermore this should hold with a faster decay than $\frac{1}{4\pi t_n^2}$.
 \begin{prop}\label{prop:2}
-	Given a sampling regular enough, i.e., for which we assume $A_i=A_j \ \forall i,j\text{ and }d^{(n)}\leq \frac{C}{\sqrt{n}}$, for a fixed $t>0$, a fixed Lipschitz function $f$ and a fixed point $y\in\S^2$ there exists a sequence $t_n = n^\beta, \beta<0$ such that
-$$
-\forall f \text{ Lipschitz, } \forall x\in\S^2 \quad \left|\frac{1}{4\pi t_n^2}\left(L_n^{t_n}f(x) - L^{t_n}f(x)\right)\right|\xrightarrow{n\to \infty}0.
-$$
+	Given a sampling regular enough, i.e., for which we assume $A_i=A_j \ \forall i,j\text{ and }d^{(n)}\leq \frac{C}{\sqrt{n}}$, a Lipschitz function $f$ and a point $y\in\S^2$ there exists a sequence $t_n = n^\beta, \beta<0$ such that
+\begin{equation*}
+    \forall f \text{ Lipschitz, } \forall x\in\S^2 \quad \left|\frac{1}{4\pi t_n^2}\left(L_n^{t_n}f(x) -  L^{t_n}f(x)\right)\right|\xrightarrow{n\to \infty}0.
+\end{equation*}
 \end{prop}
-\vspace{0.5cm}
-
-\begin{proof}[Proof of Proposition \ref{prop:2}]
-
-We define for simplicity of notation
+\begin{proof}
+% [Proof of Proposition \ref{prop:2}]
+To ease the notation, we define
 \begin{align}
-	\phi^t(x;y) &:= e^{-\frac{||x-y||^2}{4t}}\left(f(y)-f(x)\right)\\
-	K^t(x,y) &:=  e^{-\frac{||x-y||^2}{4t}}
+	K^t(x,y) &:=  e^{-\frac{\|x-y\|^2}{4t}}\\
+	\phi^t(x;y) &:= e^{-\frac{\|x-y\|^2}{4t}}\left(f(y)-f(x)\right).
 \end{align}
-We start by writing the following chain of inequalities
+We start with the following inequality
 \begin{align*}
-	||L_n^tf-L^tf||_\infty &= \max _{y\in \S^2} \left|L_n^tf(y)-L^tf(y)\right|\\
+	\|L_n^tf-L^tf\|_\infty &= \max _{y\in \S^2} \left|L_n^tf(y)-L^tf(y)\right|\\
 	&= \max _{y\in \S^2} \left| \frac{1}{n} \sum_{i=1}^n \phi^t(x_i; y)- \int_{\S^2} \phi^t(x;y)d\mu(x) \right|\\
 	&\leq \max _{y\in \S^2}  \sum_{i=1}^n   \left| \frac{1}{n}  \phi^t(x_i; y)- \int_{\sigma_i} \phi^t(x;y)d\mu(x) \right|\\
-	&\leq  \max _{y\in \S^2} \left[\mathcal L_{\phi^t_y}d^{(n)} \right]\\
+	&\leq  d^{(n)} \max _{y\in \S^2} C_{\phi^t_y} ,\\
 \end{align*}
-where $\mathcal L_{\phi^t_y}$ is the Lipschitz constant of $x \rightarrow \phi^t(x, y)$ and where we used for the last inequality Proposition \ref{prop:1}. If we assume $d^{(n)}\leq \frac{C}{\sqrt{n}}$ we have that
-
-$$||L_n^tf-L^tf||_\infty  \leq  \max _{y\in \S^2} \left[ \mathcal L_{\phi^t_y} \frac{C}{\sqrt{n}} \right]$$
-
-Let's now find the explicit dependence $t\rightarrow \mathcal L_{\phi^t_y}$
+where $C_{\phi^t_y}$ is the Lipschitz constant of $x \rightarrow \phi^t(x, y)$ and the last inequality follows from Proposition \ref{prop:1}. 
+Using the assumption $d^{(n)}\leq \frac{C}{\sqrt{n}}$ we find
+\begin{equation*}
+\|L_n^tf-L^tf\|_\infty  \leq  \frac{C}{\sqrt{n}} \max _{y\in \S^2}  C_{\phi^t_y}  
+\end{equation*}
+We now find the explicit dependence between $t$ and $C_{\phi^t_y}$
 \begin{align*}
-	\mathcal L_{\phi^t_y} &= ||\partial_x\phi^t(\cdot;y)||_\infty\\&
-	= ||\partial_x\left(K^t(\cdot;y)f\right)||_\infty\\&
-	= ||\partial_x K^t(\cdot;y)f + K^t(\cdot;y)\partial_x f||_\infty\\&
-	\leq ||\partial_x K^t(\cdot;y)f||_\infty + ||K^t(\cdot;y)\partial_x f||_\infty\\&
-	\leq  ||\partial_x K^t(\cdot;y)||_\infty||f||_\infty + ||K^t(\cdot;y)||_\infty||\partial_x f||_\infty\\&
-	= ||\partial_x K^t(\cdot;y)||_\infty||f||_\infty + ||\partial_x f||_\infty\\&
-	= \mathcal L_{K^t_y} ||f||_\infty + ||\partial_xf||_\infty\\&
-	= \mathcal L_{K^t_y} ||f||_\infty + \mathcal L_f
+	C_{\phi^t_y} &= \|\partial_x\phi^t(\cdot;y)|\_\infty\\&
+	= \|\partial_x\left(K^t(\cdot;y)f\right)\|_\infty\\&
+	= \|\partial_x K^t(\cdot;y)f + K^t(\cdot;y)\partial_x f||_\infty\\&
+	\leq \|\partial_x K^t(\cdot;y)f\|_\infty + \|K^t(\cdot;y)\partial_x f\|_\infty\\&
+	\leq  \|\partial_x K^t(\cdot;y)\|_\infty\|f\|_\infty + \|K^t(\cdot;y)\|_\infty\|\partial_x f\|_\infty\\&
+	= \|\partial_x K^t(\cdot;y)\|_\infty\|f\|_\infty + \|\partial_x f\|_\infty\\&
+	= C_{K^t_y} \|f\|_\infty + \|\partial_xf\|_\infty\\&
+	= C_{K^t_y} \|f\|_\infty + C_f
 \end{align*}
-where $\mathcal L_{K^t_y}$ is the Lipschitz constant of $x\rightarrow K^t(x;y)$. We can observe that such constant does not depend on $y$:
+where $C_{K^t_y}$ is the Lipschitz constant of $x\rightarrow K^t(x;y)$. We can observe that such constant does not depend on $y$:
 
 $\mathcal L_{K^t_y} = \norm{\partial_x e^{-\frac{x^2}{4t}}}_\infty = \norm{\frac{x}{2t}e^{-\frac{x^2}{4t}}}_\infty = \left. \frac{x}{2t}e^{-\frac{x^2}{4t}}\right|_{x=\sqrt{2t}}=(2et)^{-\frac{1}{2}}\propto t ^ {-\frac{1}{2}}$
 
