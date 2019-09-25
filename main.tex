@@ -380,20 +380,18 @@ We note that in the random sampling case, the graph laplacian does \emph{not} co
 \paragraph{Empirical convergence.}
 
 % 3.0) explain how we obtained the figures
-We calculated numerically the equivariance error \eqref{eq:mean equivariance error} for monochromatic signals, for different parameter sets of DeepSphere and for the graph of Khasanova and Frossard. We approximated equation \eqref{eq:mean equivariance error} by calculating the empirical average of the equivariance errors of $N$ random monochromatic signals on $M$ random rotations for each signal. Results are in figure \ref{fig:equivariance_error}.
-The frequencies of the monochromatic signals, on the x axis in figure \ref{fig:equivariance_error}, were chosen in the range $(0,\  3N_{side}-1)$ to allow for an almost perfect synthesis of the sampled signals, and thus an almost perfect implementation (up to numerical errors) of the operator $\b{R}_\V$ in equation \eqref{eq:mean equivariance error} \citep{gorski1999healpixprimer}. In this way all the error measured is due to imperfections in the empirical approximation of the Laplace-Beltrami operator.
+We calculated numerically the equivariance error $\bar{E}_{\b L,C(\ell)}$ \eqref{eq:mean equivariance error} as a function of the frequency (degree) $\ell$ of monochromatic signals $C(\ell)$, for different parameter sets of DeepSphere and for the graph of Khasanova and Frossard too. Results are in figure \ref{fig:equivariance_error}.
+The frequencies $\ell$ of the monochromatic signals were chosen in the range $(0,\  3N_{side}-1)$ for the Healpix sampling, and in the range $(0, b)$ for the equiangular sampling, to allow for an almost perfect synthesis of the sampled signals, and thus an almost perfect implementation (up to numerical errors) of the operator $\b{R}_\V$ in equation \eqref{eq:mean equivariance error} \citep{gorski1999healpixprimer}. In this way all the error measured is due to imperfections in the empirical approximation of the Laplace-Beltrami operator.
 
 % 3.1) explain what the figures tell us
-We observe that by increasing the number of neighbors of the graph from 8 to 40, the equivariance error decreases by more than one order of magnitude. On the other side, by increasing the graph resolution ($N_{side}$) the equivariance error in the high frequencies decreases. The filtering operation with the graph Laplacian of Khasanova, Frossard is by construction perfectly equivariant to rotations along the vertical axis, and is designed to minimize the filtering error of vertical displacements of the same image. While these characteristics are designed for well analysing omnidirectional images, that are naturally aligned on the north-south axis, if tested on random rotations this construction shows its limits: increasing the graph resolution does not seem to improve its equivariance.
+By fixing the number of neighbors to 8, we already observe a first improvement compared to the previous version of DeepSphere, whose graph also was constructed to have at maximum 8 neighbors. By increasing the number of neighbors of the graph the equivariance error decreases by more than one order of magnitude. On the other side, by increasing the graph resolution ($N_{side}$) the equivariance error in the high frequencies decreases. The filtering operation with the graph Laplacian of Khasanova, Frossard is by construction perfectly equivariant to rotations along the vertical axis, and is designed to minimize the filtering error of vertical displacements of the same image. While these characteristics are designed for well analysing omnidirectional images, that are naturally aligned on the north-south axis, if tested on random rotations this construction shows its limits: increasing the graph resolution does not seem to improve its equivariance.
 
 
 \begin{figure}
 	\begin{minipage}{0.65\linewidth}
 		\centering
 		\includegraphics[width=0.9\linewidth]{all_in_one.pdf}
-		\caption{Equivariance error. The number of pixels is $4*s^2$ equiangular = 
-
-Npix for healpix = 12*nside**2}
+		\caption{Normalized mean equivariance error \eqref{eq:mean equivariance error}. The number of pixels is $4s^2$ for the equiangular sampling and $12s^2$ for the Healpix sampling.}
 		\label{fig:equivariance_error}
 	\end{minipage}
 	\hfill
@@ -443,7 +441,7 @@ The equiangular graph is built with \eqnref{weights:khasanova} and $k = 4$ neigh
 The HEALPix graph is built with \eqnref{weights:belkin}, $k = 8$, and a kernel width $t$ set to the average of the distances \citep[following][]{perraudin2019deepspherecosmo}.
 The NN is made of $5$ graph convolutional layers, each followed by a max pooling layer which down-samples by $4$.
 A GAP and a fully connected layer with softmax follow.
-The polynomials are all of order $K=4$ and the number of channels per layer is $16, 32, 64, 128, 256$, respectively.
+The polynomials are all of order $K=3$ and the number of channels per layer is $16, 32, 64, 128, 256$, respectively.
 Following \citet{esteves2018sphericalcnn}, the cross-entropy plus a triplet loss is optimized with Adam for 30 epochs on the dataset augmented by 3 random translations.
 The learning rate is $5 \cdot 10^{-2}$ and the batch size is 32.
 
@@ -497,7 +495,7 @@ Convergence maps represent the distribution of over- and under-densities of mass
 Graphs are built with \eqnref{weights:belkin}, $k = 8, 20, 40$ neighbors, and the corresponding optimal kernel widths $t$ given in \secref{optimal}.
 Following \citet{perraudin2019deepspherecosmo}, the NN is made of $5$ graph convolutional layers, each followed by a max pooling layer which down-samples by $4$.
 A GAP and a fully connected layer with softmax follow.
-The polynomials are all of order $K=5$ and the number of channels per layer is $16, 32, 64, 64, 64$, respectively.
+The polynomials are all of order $K=4$ and the number of channels per layer is $16, 32, 64, 64, 64$, respectively.
 The cross-entropy loss is optimized with Adam for 80 epochs.
 The learning rate is $2 \cdot 10^{-4} \cdot 0.999^{\textrm{step}}$ and the batch size is 8.
 
@@ -550,7 +548,7 @@ Details in \secref{climate:appendix}.
 %The encoder is made of $5$ graph convolutional layers, each followed by a \todo{pick-one?} pooling layer which down-samples by $4$.
 %the number of channels per layer is $16, 32, 64, 64, 64$, respectively.
 %The decoder is made of
-The polynomials are all of order $K=4$.
+The polynomials are all of order $K=3$.
 The cross-entropy loss (weighted or non-weighted) is optimized with Adam for 30 epochs.
 The learning rate is $1 \cdot 10{-3}$ and the batch size is 64.
 
@@ -624,9 +622,9 @@ The learning rate is $1 \cdot 10^{-3}$ and the batch size is 64.
 		\cmidrule(lr){2-4} \cmidrule(lr){5-7} \cmidrule(lr){8-10}
 		order $K$ & {MSE} & {MAE} & {R2} & {MSE} & {MAE} & {R2} & {MSE} & {MAE} & {R2} \\
 		\midrule
-		$0$ & 10.88 & 2.42 & 0.896 & 0.10 & 0.10 & 0.881 & 0.58 & 0.42 & -0.920 \\
+		$0$ & 10.88 & 2.42 & 0.896 & 0.10 & 0.10 & 0.882 & 0.58 & 0.42 & -0.980 \\
 		%%$1$ &  8.91 & 2.20 & 0.906 & - & - & - & - & - & - \\
-		$4$ &  8.20 & 2.11 & 0.919 & 0.05 & 0.06 & 0.969 & 0.50 & 0.18 &  0.597 \\
+		$4$ &  8.20 & 2.11 & 0.919 & 0.05 & 0.05 & 0.969 & 0.50 & 0.18 &  0.597 \\
 		%$9$ &  8.38 & 2.12 & 0.915 & - & - & - & - & - & - \\
 		\bottomrule
     \end{tabular}
@@ -809,7 +807,7 @@ We start by proving that for smooth functions, for any fixed $t$, the extended g
 
 The last proposition show that for a \emph{fixed} $t$, $L_n^tf(x)\rightarrow \linefrac{1}{4\pi^2} L^tf(x)$. To utilize Proposition \ref{prop:3} and complete the proof, we need to find a sequence of $t_n$ for which this holds as $t_n \rightarrow 0$. Furthermore this should hold with a faster decay than $\frac{1}{4\pi t_n^2}$.
 \begin{prop}\label{prop:2}
-	Given a sampling regular enough, i.e., for which we assume $A_i=A_j \ \forall i,j\text{ and }d^{(n)}\leq \frac{C}{\sqrt{n}}$, a Lipschitz function $f$ and a point $y\in\S^2$ there exists a sequence $t_n = n^\beta, \beta<0$ such that
+	Given a sampling regular enough, i.e., for which we assume $A_i=A_j \ \forall i,j\text{ and }d^{(n)}\leq \frac{C}{n^\alpha}, 0<\alpha\leq\linefrac{1}{2}$, a Lipschitz function $f$ and a point $y\in\S^2$ there exists a sequence $t_n = n^\beta, \beta<0$ such that
 \begin{equation*}
     \forall f \text{ Lipschitz, } \forall x\in\S^2 \quad \left|\frac{1}{4\pi t_n^2}\left(L_n^{t_n}f(x) -  L^{t_n}f(x)\right)\right|\xrightarrow{n\to \infty}0.
 \end{equation*}
@@ -852,27 +850,27 @@ Hence we have
 \begin{align*}
 	\frac{C}{\sqrt{n}}  \max _{y\in \S^2} C_{\phi^t_y} 
 	&\leq  \frac{C}{\sqrt{n}} \left( (2et)^{-\frac{1}{2}} \norm{f}_\infty + C_f \right)\\
-	&\leq \frac{C \norm{f}_\infty}{\sqrt{n}(2et)^{1/2}} +   \frac{C}{\sqrt{n}} C_f.
+	&\leq \frac{C \norm{f}_\infty}{n^\alpha(2et)^{1/2}} +   \frac{C}{n^\alpha} C_f.
 \end{align*}
 Inculding this result in \eqref{eq:prop3-base-ineq} and rescaling by $\linefrac{1}{4\pi t^2}$, we obtain
 \begin{align*}
 	\norm{\frac{1}{4\pi t^2}\left(L_n^tf-L^tf\right)}_\infty&\leq \frac{1}{4\pi t^2}\norm{\left(L_n^tf-L^tf\right)}_\infty \\
-	&\leq \frac{C}{4\pi}\left[\frac{\norm{f}_\infty}{\sqrt{2e}}\frac{1}{\sqrt{n}t^{5/2}} + \frac{C_f}{\sqrt{n}t^2}\right].
+	&\leq \frac{C}{4\pi}\left[\frac{\norm{f}_\infty}{\sqrt{2e}}\frac{1}{n^\alpha t^{5/2}} + \frac{C_f}{n^\alpha t^2}\right].
 \end{align*}
-In order for $ \frac{C}{4\pi}\left[\frac{\norm{f}_\infty}{\sqrt{2e}}\frac{1}{\sqrt{n}t^{5/2}} + \frac{C_f}{\sqrt{n}t^2}\right] \xrightarrow[t\to 0 ]{n\to\infty}0$, 
+In order for $ \frac{C}{4\pi}\left[\frac{\norm{f}_\infty}{\sqrt{2e}}\frac{1}{n^\alpha t^{5/2}} + \frac{C_f}{n^\alpha t^2}\right] \xrightarrow[t\to 0 ]{n\to\infty}0$, 
 we need $\begin{cases}
 % t \rightarrow 0\\
 % n \rightarrow \infty\\
-\sqrt{n}t^{5/2} \rightarrow \infty\\
-\sqrt{n}t^2 \rightarrow \infty
+n^\alpha t^{5/2} \rightarrow \infty\\
+n^\alpha t^2 \rightarrow \infty
 \end{cases}$ \\
 It happens if $\begin{cases}
-t(n) = n^\beta, &\beta\in(-\frac{1}{5}, 0) \\
-t(n) = n^\beta, &\beta\in(-\frac{1}{4}, 0)
-\end{cases} \implies t(n) = n^\beta, \quad \beta\in(-\frac{1}{5}, 0)$.\\
+t(n) = n^\beta, &\beta\in(-\frac{2\alpha}{5}, 0) \\
+t(n) = n^\beta, &\beta\in(-\frac{\alpha}{2}, 0)
+\end{cases} \implies t(n) = n^\beta, \quad \beta\in(-\frac{2\alpha}{5}, 0)$.\\
 Indeed, we have\\
-$\sqrt{n}t^{5/2}=n^{5/2\beta+1/2}\xrightarrow{n \to \infty} \infty$ since $\frac{5}{2}\beta+1/2>0 \iff \beta>-\frac{1}{5}$\\
-and $\sqrt{n}t^2=n^{2\beta+1/2}\xrightarrow {n \to \infty} \infty$ since $2\beta+1/2>0 \iff \beta>-\frac{1}{4}$.\\
+$n^\alpha t^{5/2}=n^{5/2\beta+\alpha}\xrightarrow{n \to \infty} \infty$ since $\frac{5}{2}\beta+\alpha>0 \iff \beta>-\frac{2\alpha}{5}$\\
+and $n^\alpha t^2=n^{2\beta+\alpha}\xrightarrow {n \to \infty} \infty$ since $2\beta+\alpha>0 \iff \beta>-\frac{\alpha}{2}$.\\
 As a result, for $t=n^\beta$ with $\beta\in(-\frac{1}{5}, 0)$ we have
 $\begin{cases}
 (t_n)\xrightarrow{n\to\infty}0\\
@@ -899,7 +897,7 @@ Theorem  \ref{theo:pointwise convergence for a regular sampling}, is then an imm
 
 In the work of \cite{belkin2005towards} the sampling is drawn form a uniform random distribution on the sphere, and their proof heavily relies on the uniformity properties of the distribution from which the sampling is drawn. In our case the sampling is deterministic, and this is indeed a problem that we need to overcome by imposing the regularity conditions above.
 
-To conclude, we can see that the result obtained has the same form than the result obtained in \cite{belkin2005towards}. Given the kernel density $t(n)=n^\beta$, if Belkin and Nyiogi proved convergence in the random case for $\beta \in (-\frac{1}{4}, 0)$, we proved convergence in the deterministic case for $\beta \in (-\frac{1}{5}, 0)$.
+To conclude, we can see that the result obtained has the same form than the result obtained in \cite{belkin2005towards}. Given the kernel density $t(n)=n^\beta$, if Belkin and Nyiogi proved convergence in the random case for $\beta \in (-\frac{1}{4}, 0)$, we proved convergence in the deterministic case for $\beta \in (-\frac{2\alpha}{5}, 0)$, where $\alpha \in (0, \linefrac{1}{2}]$.
 
 
 \section{Experimental details}
