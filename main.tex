@@ -499,9 +499,9 @@ We used the same task, data, and setup as \citet{perraudin2019deepspherecosmo}: 
 Convergence maps represent the distribution of over- and under-densities of mass in the universe \citep[see][for a review of gravitational lensing]{bartelman2010gravitationallensing}.
 
 Graphs are built with \eqnref{weights:belkin}, $k = 8, 20, 40$ neighbors, and the corresponding optimal kernel widths $t$ given in \secref{optimal}.
-Following \citet{perraudin2019deepspherecosmo}, the NN is made of $6$ graph convolutional layers, each followed by a max pooling layer which down-samples by $4$.
-A GAP and softmax follow.
-The polynomials are all of order $K=5$ and the number of channels per layer is $16, 32, 64, 64, 64, 2$, respectively.
+Following \citet{perraudin2019deepspherecosmo}, the NN is made of $5$ graph convolutional layers, each followed by a max pooling layer which down-samples by $4$.
+A GAP and a fully connected layer with softmax follow.
+The polynomials are all of order $K=5$ and the number of channels per layer is $16, 32, 64, 64, 64$, respectively.
 The cross-entropy loss is optimized with Adam for 80 epochs.
 The learning rate is $2 \cdot 10^{-4} \cdot 0.999^{\textrm{step}}$ and the batch size is 8.
 
@@ -741,7 +741,7 @@ The proof is constructed by leveraging 3 different operators:
 
 \end{itemize}
 
-Leveraging these three operators \cite{belkin2005towards, belkin2007convergence} have build proofs of both pointwise and spectral convergence of the extended graph Laplacian towards the Laplace-Beltrami operator in the general setting of any compact, closed and infinitely differentiable maniform $\mathcal M$ where the sampling scheme $\V$ is drawn at random on the manifold. For this reason, their results are all to be interpreted in a probabilistic sense.
+Leveraging these three operators \cite{belkin2005towards, belkin2007convergence} have build proofs of both pointwise and spectral convergence of the extended graph Laplacian towards the Laplace-Beltrami operator in the general setting of any compact, closed and infinitely differentiable maniform $\mathcal M$, where the sampling scheme $\V$ is drawn randomly on the manifold. For this reason, their results are all to be interpreted in a probabilistic sense.
 Their proofs consist in establishing that \eqref{eq:Heat Kernel Graph Laplacian operator} converges in probability towards \eqref{eq:Functional approximation to the Laplace-Beltrami operator} as $n\rightarrow \infty$ and \eqref{eq:Functional approximation to the Laplace-Beltrami operator} converges toward \eqref{eq:laplace-beltrami} as $t\rightarrow 0$. In particular, this second step is given by the following:
 \begin{prop}
 [\cite{belkin2005towards}, Proposition 4.4]
@@ -757,7 +757,7 @@ As the sphere is a compact smooth manifold embedded in $\mathbb{R}^3$, we can re
 \begin{equation}\label{eq:continuous convergence}
  \lim_{n\to\infty}L_n^{t} f(y) =  L^t(y)
 \end{equation}
-for a particular class of sampling and b) apply Proposition \ref{prop:3}.
+for a particular class of \emph{deterministic} sampling schemes and b) apply Proposition \ref{prop:3}.
 
 
 %  \frac{|\mathbb{S}^2|}{4\pi t}
@@ -779,7 +779,7 @@ for a particular class of sampling and b) apply Proposition \ref{prop:3}.
 % brief introduction:
 % This proof consists in two steps: first, we prove that $L_n^t \rightarrow L^t$, and second, we use proposition \ref{prop:3} to prove \eqref{eq:continuous convergence}. This equation, as already explained in \cite{belkin2007convergence}, directly implies theorem \ref{theo:pointwise convergence for a regular sampling}.
 
-We start by proving that for smooth functions, the sum converges toward an integral as the sampling increase in size.
+We start by proving that for smooth functions, for any fixed $t$, the extended graph Laplacian $L^t_n$ converges towards its continuous counterpart $L^t$ as the sampling increases in size.
 \begin{prop}\label{prop:1}
 	For an equal area sampling $\{x_i\in\S^2\}_{i=0}^{n-1}: A_i=A_j \forall i,j$ of the sphere it is true that for all $f: \S^2 \rightarrow \R$ Lipschitz with respect to the Euclidean distance $\|\cdot\|$ with Lipschitz constant $C_f$
 	\begin{equation*}
@@ -897,7 +897,8 @@ Theorem  \ref{theo:pointwise convergence for a regular sampling}, is then an imm
 	\end{equation*} 
 \end{proof}
 
-\nati{@martino, actually we do not need $ d^{(n)}\leq \frac{1}{\sqrt{n}}$, we only need $ d^{(n)}\leq \frac{1}{n^\alpha}$, where $\alpha>0$. As the $\S^2$ is of dimension $2$, $\alpha$ cannot be larger than $\linefrac{1}{2}$. If we put that into the theorem, we obtain that $\frac{5}{2}\beta+\alpha>0 \iff \beta>-\frac{2\alpha}{5}$. I think this is important, because we can still have convergence even if we do not have perfect patches... Please confirm ASAP, so we can update the Proposition and the text bellow. For HealPix sampling, we could say that while we have not proof, it make sense that it statisfies the hypothesis probably with $\alpha=\linefrac{1}{2}$.}
+% I don't really have time 
+% \nati{@martino, actually we do not need $ d^{(n)}\leq \frac{1}{\sqrt{n}}$, we only need $ d^{(n)}\leq \frac{1}{n^\alpha}$, where $\alpha>0$. As the $\S^2$ is of dimension $2$, $\alpha$ cannot be larger than $\linefrac{1}{2}$. If we put that into the theorem, we obtain that $\frac{5}{2}\beta+\alpha>0 \iff \beta>-\frac{2\alpha}{5}$. I think this is important, because we can still have convergence even if we do not have perfect patches... Please confirm ASAP, so we can update the Proposition and the text bellow. For HealPix sampling, we could say that while we have not proof, it make sense that it statisfies the hypothesis probably with $\alpha=\linefrac{1}{2}$.}
 
 The proof of Proposition \ref{prop:2} is instructive. First, we note that some regularity conditions on the sampling are needed. If the sampling is equal area as HEALPix, meaning that all the patches $\sigma_i$ have the same area, then we need to impose that $ d^{(n)}\leq \frac{1}{\sqrt{n}}$. \\
 In the work of \cite{belkin2005towards} the sampling is drawn form a uniform random distribution on the sphere, and their proof heavily relies on the uniformity properties of the distribution from which the sampling is drawn. In our case the sampling is deterministic, and the fact that for a sphere there doesn't exist a regular sampling with more than 12 points (the vertices of a icosahedron) is indeed a problem that we need to overcome by imposing the regularity conditions above.
