@@ -74,63 +74,12 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 %\iclrfinalcopy % Uncomment for camera-ready version, but NOT for submission.
 \begin{document}
 
-\begin{description}
-	\item[git] \url{https://github.com/nperraud/deepsphere_v2_paper}
-	\item[overleaf] \url{https://www.overleaf.com/project/5d31d2fbd6859d54cb707212}
-\end{description}
-
-story: there are tradeoffs when designing a spherical CNN -> DS strikes a controllable balance between efficiency / cost and exactitude / equivariance
-% DSv2 has a clear tradeoff between equivariance and computational cost
-
-* method development: tool that solve a need (balance btw the desiderata: equiv vs cost)\\
-* research question: anisotropy (highlight from the start or leave it as a dangling question in the end)\\
-
-contributions:\\
-* theory $\Rightarrow$ convergence (better graph)\\
-* experiments on relevant problems (not spherical MNIST) $\Rightarrow$ check the desiderata\\
-  * surprising: anisotropy doesn't seem useful\\
-
-\todo{
-\begin{itemize}
-	\item shall we really name it? Or simply reference the general idea of a graph-based spherical CNN.
-	\item adjacency matrix: $A$ instead of $W$?
-	\item anonymize DeepSphere citation
-% 	\item climate spherical figure: inputs with TC and AR labels superimposed [Frédérick]
-	\item citet for inline, citep for parenthesis
-	\item More details on related work? Not sure we have the space. If yes, detailed comparison with related work after method.
-	\item PSD of climate data: how does it compare to cosmo and 3D objects?
-	\item align the spheres in figure 1
-	\item mention that \citep{esteves2018sphericalcnn} and \citep{cohen2018sphericalcnn} computed equivariance error
-	\item check footnotes
-	\item climate data on spectrum plot
-	\item result tables: only what supports the main message in the text, everything we have in the appendix
-	\item Unify vocabulary. Sampling, discretization, or pixelization of the sphere? Signal, maps, functions. Irregular, uneven. Coarsening, down-sampling.
-	\item check English vs American English
-	\item unify enumerations. I like (i), (ii), etc.
-	\item notation: should we use indices from 1 to n instead of 0 to n-1 for compactness?
-	\item add \citet{bruna2013gnn} in equivariance? They were the first to do a spherical CNN with graphs. Graph is built from a uniform random sampling of the sphere.
-	\item figure placements
-	\item do the experiments on the icosahedral grid with the pooling as defined in the paper
-	\item put all the code (learning experiments from Frédérick and equivariance experiments from Martino) in a common reproducible git repository to be linked from the paper
-	\item update pygsp and merge sphere branch
-	\item check that NN architectures and hyper-params are correctly reported
-	\item keep NN architecture and hyper-params in the main text? Move the paragraph to appendix if not enough space.
-	%\item shall we still site adam and batch norm? no, mainstream enough
-	\item check results for ModelNet40 and integrate in text
-	\item Check that HEALPix is introduced in the introduction
-	\item heuristic used to set the kernel width in v1. Add values to \figref{kernel_widths} for comparison.
-	\item check experiments section [Frédérick]: all the results numbers and NN + training details
-	\item compute the invariance error of the whole NNs (before and after training, invariance can be learned)
-	\item add it with equivariance error of the convolution to \tabref{cosmo}
-	\item insert \citet{jiang2019sphericalcnn} in intro: Need a global coordinate system (ok for planets, not projections like cosmo)
-\end{itemize}
-}
-\newpage
 
 \maketitle
 
 \begin{abstract}
-Selecting the right convolution for a spherical neural network is a delicate tradeoff between its efficiency and its exactictude with respect of equivariance. DeepSphere, as a graph based method strikes as a controllable balance between these two aspects. This contribution 1) studies empirically and theoretically how the construction of its underlying graph affects equivariance, and 2) evaluates its performance on a large set of relevant problems.
+Selecting the right convolution for a spherical neural network is a delicate tradeoff between efficiency and  exactitude with respect of equivariance. DeepSphere, as a graph based method strikes as a controllable balance between these two desiderata. 
+This contribution (i) studies empirically and theoretically how the construction of its underlying graph affects equivariance, and (ii) evaluates its performance on a large set of relevant problems.
 Comparison with previous work on shape classification and climate event detection suggests that anisotropic filters are an unnecessary price to pay.
 % memory, computations, implementation complexity
 \end{abstract}
@@ -356,7 +305,7 @@ We analyse our proposed weighting scheme both theoretically and empirically.
 We extend the work of Belkin and Nyiogi to a sufficiently regular, deterministic sampling scheme.
 Given a sampling scheme $\V = \{x_0, \dots, x_{n-1}\}$, define $\sigma_i$ to be the patch of the surface of the sphere corresponding to $x_i$, $A_i$ its corresponding area and $d_i$ the radius of the smallest ball in $\R^3$ containing $\sigma_i$. Define $d^{(n)} := \max_{i=0, \dots, n}d_i$ and $A^{(n)}=\max_{i=0, \dots, n}A_i$.
 \begin{theorem}
-	For a sampling $\V = \{x_i\in\S^2\}_{i=0}^{n-1}$ of the sphere that is equi-area and such that $d^{(n)} \leq \frac{C}{\sqrt{n}}$, for all $f: \S^2 \rightarrow \R$ Lipschitz with respect to the Euclidean distance in $\R^3$, for all $y\in\S^2$, there exists a sequence $t_n = n^\beta$ such that 
+	For a sampling $\V = \{x_i\in\S^2\}_{i=0}^{n-1}$ of the sphere that is equi-area and such that $d^{(n)} \leq \frac{C}{\alpha}, \ \alpha\in (0,\linefrac{1}{2}]$, for all $f: \S^2 \rightarrow \R$ Lipschitz with respect to the Euclidean distance in $\R^3$, for all $y\in\S^2$, there exists a sequence $t_n = n^\beta$ such that 
 % 	the rescaled Heat Kernel Graph Laplacian $\frac{|\S^2|}{4\pi t_n^2}\b {L}^t_n$ converges pointwise to the Laplace Beltrami operator on the sphere $\Delta{\S^2}$  
 	\begin{equation*}
 	 \lim_{n\to\infty} \frac{|\mathbb{S}^2|}{4\pi t_n^2} \b{L}_n^{t_n} T_\V f [i] =  \Delta_{\mathbb{S}^2}f(x_i)\quad \forall i=0, ..., n-1.
@@ -370,24 +319,29 @@ Importantly, the proof of Theorem \ref{theo:pointwise convergence for a regular 
 Nevetheless, it is important to keep in mind the limits of Theorem \ref{theo:pointwise convergence for a regular sampling}.
 First, it is \emph{not} a proof of equivariance of the graph convolution for a specific sampling. To construct such a proof, a stronger convergence result is needed, for example uniform convergence (instead of pointwise).
 % \todo{Can we intuitively write what pointwise convergence means, and how it is more limited than spectral or uniform convergence?}
-We note that in the random sampling case, the graph laplacian does \emph{not} converges uniformly in general \cite{belkin2007convergence}[Sec 3], but does for a class of Lipschitz functions \cite{belkin2005towards}[Sec 6].  Second, while do not have a proof for it, we strongly believe that the HEALPix sampling does satisfy the hypothesis $d^{(n)}\leq \frac{C}{\sqrt{n}}$ of Theorem \ref{theo:pointwise convergence for a regular sampling}. The empirical results discussed in the next paragraph also point in this direction. This is further discussed in Appendix \ref{sec: appendix: proof of theorem}.
+We note that in the random sampling case, the graph laplacian does \emph{not} converges uniformly in general \cite[Sec. 3]{belkin2007convergence}, but does for a class of Lipschitz functions \cite[Sec. 6]{belkin2005towards}.  Second, while do not have a formal proof for it, we strongly believe that the HEALPix sampling does satisfy the hypothesis $d^{(n)}\leq \frac{C}{n^\alpha}, \ \alpha\in (0,\linefrac{1}{2}]$ with $\alpha$ very close or equal to $\linefrac{1}{2}$. The empirical results discussed in the next paragraph also point in this direction. This is further discussed in Appendix \ref{sec: appendix: proof of theorem}.
 
 
 % 3) Show experimental results
 \paragraph{Empirical convergence.}
 
 % 3.0) explain how we obtained the figures
-We calculated numerically the equivariance error $\bar{E}_{\b L,C(\ell)}$ \eqref{eq:mean equivariance error} as a function of the frequency (degree) $\ell$ of monochromatic signals $C(\ell)$, for different parameter sets of DeepSphere and for the graph of Khasanova and Frossard too. Results are in figure \ref{fig:equivariance_error}.
-The frequencies $\ell$ of the monochromatic signals were chosen in the range $(0,\  3N_{side}-1)$ for the Healpix sampling, and in the range $(0, b)$ for the equiangular sampling, to allow for an almost perfect synthesis of the sampled signals, and thus an almost perfect implementation (up to numerical errors) of the operator $\b{R}_\V$ in equation \eqref{eq:mean equivariance error} \citep{gorski1999healpixprimer}. In this way all the error measured is due to imperfections in the empirical approximation of the Laplace-Beltrami operator.
+In \figref{equivariance_error}, we present the equivariance error $\bar{E}_{\b L,C(\ell)}$ \eqref{eq:mean equivariance error} computed numerically as a function of the frequency (degree) $\ell$, for different parameter sets of DeepSphere as well as for graph construction of \cite{khasanova2017sphericalcnn}.
+The error depends of the number of pixels: $12N_{side}^2$ for HEALPix and $4b^2$ for the equiangular sampling. Here $N_{side}$ and $b$ are the sampling parameters determining their precision.
+The frequencies $\ell$ of the monochromatic signals were chosen in the range $(0,\  3N_{side}-1)$ for the Healpix sampling, and in the range $(0, b)$ for the equiangular sampling, to allow for an almost perfect implementation (up to numerical errors) of the operator $\b{R}_\V$ in equation \eqref{eq:mean equivariance error} \citep{gorski1999healpixprimer}. 
+Using these parameters, the error measured is mostly due to imperfections in the empirical approximation of the Laplace-Beltrami operator and not to the sampling.
 
 % 3.1) explain what the figures tell us
-By fixing the number of neighbors to 8, we already observe a first improvement compared to the previous version of DeepSphere, whose graph also was constructed to have at maximum 8 neighbors. By increasing the number of neighbors of the graph the equivariance error decreases by more than one order of magnitude. On the other side, by increasing the graph resolution ($N_{side}$) the equivariance error in the high frequencies decreases. The filtering operation with the graph Laplacian of Khasanova, Frossard is by construction perfectly equivariant to rotations along the vertical axis, and is designed to minimize the filtering error of vertical displacements of the same image. While these characteristics are designed for well analysing omnidirectional images, that are naturally aligned on the north-south axis, if tested on random rotations this construction shows its limits: increasing the graph resolution does not seem to improve its equivariance.
+For 8 neighbors, selecting the optimal value of $t$ already leads to an improvement compared to \cite{perraudin2019deepspherecosmo}, whose graph also was constructed to have at maximum 8 neighbors. 
+With higher the number of neighbors, the equivariance error decreases by more than one order of magnitude. 
+Furthermore, increasing the graph resolution ($N_{side}$) leads to an improvement in the high frequencies as well. 
+Increasing the graph resolution of the graph of \cite{khasanova2017sphericalcnn} does not seem to improve its equivariance. We note that in our numerical test, this graph was perfectly equivariant to rotations along the horizontal and vertical axis as it should be by design. Nevertheless, it is simply not equivariant along the last rotation. Such equivariance properties might be sufficient for analysing omnidirectional images (that are naturally aligned on the north-south axis).
 
 
 \begin{figure}
-	\begin{minipage}{0.65\linewidth}
+	\begin{minipage}{0.6\linewidth}
 		\centering
-		\includegraphics[width=0.9\linewidth]{all_in_one.pdf}
+		\includegraphics[width=1\linewidth]{all_in_one.pdf}
 		\caption{Normalized mean equivariance error \eqref{eq:mean equivariance error}. The number of pixels is $4s^2$ for the equiangular sampling and $12s^2$ for the Healpix sampling.}
 		\label{fig:equivariance_error}
 	\end{minipage}
@@ -408,6 +362,7 @@ By fixing the number of neighbors to 8, we already observe a first improvement c
 		\caption{Power spectral densities.}
 		\label{fig:spectrum}
 	\end{minipage}
+	\vspace{-0.5cm}
 \end{figure}
 
 \section{Experiments}
@@ -804,7 +759,7 @@ We start by proving that for smooth functions, for any fixed $t$, the extended g
 
 The last proposition show that for a \emph{fixed} $t$, $L_n^tf(x)\rightarrow \linefrac{1}{4\pi^2} L^tf(x)$. To utilize Proposition \ref{prop:3} and complete the proof, we need to find a sequence of $t_n$ for which this holds as $t_n \rightarrow 0$. Furthermore this should hold with a faster decay than $\frac{1}{4\pi t_n^2}$.
 \begin{prop}\label{prop:2}
-	Given a sampling regular enough, i.e., for which we assume $A_i=A_j \ \forall i,j\text{ and }d^{(n)}\leq \frac{C}{n^\alpha}, 0<\alpha\leq\linefrac{1}{2}$, a Lipschitz function $f$ and a point $y\in\S^2$ there exists a sequence $t_n = n^\beta, \beta<0$ such that
+	Given a sampling regular enough, i.e., for which we assume $A_i=A_j \ \forall i,j\text{ and }d^{(n)}\leq \frac{C}{n^\alpha}, \ \alpha\in (0,\linefrac{1}{2}]$, a Lipschitz function $f$ and a point $y\in\S^2$ there exists a sequence $t_n = n^\beta, \beta<0$ such that
 \begin{equation*}
     \forall f \text{ Lipschitz, } \forall x\in\S^2 \quad \left|\frac{1}{4\pi t_n^2}\left(L_n^{t_n}f(x) -  L^{t_n}f(x)\right)\right|\xrightarrow{n\to \infty}0.
 \end{equation*}
@@ -894,7 +849,7 @@ Theorem  \ref{theo:pointwise convergence for a regular sampling}, is then an imm
 
 In the work of \cite{belkin2005towards} the sampling is drawn form a uniform random distribution on the sphere, and their proof heavily relies on the uniformity properties of the distribution from which the sampling is drawn. In our case the sampling is deterministic, and this is indeed a problem that we need to overcome by imposing the regularity conditions above.
 
-To conclude, we can see that the result obtained has the same form than the result obtained in \cite{belkin2005towards}. Given the kernel density $t(n)=n^\beta$, if Belkin and Nyiogi proved convergence in the random case for $\beta \in (-\frac{1}{4}, 0)$, we proved convergence in the deterministic case for $\beta \in (-\frac{2\alpha}{5}, 0)$, where $\alpha \in (0, \linefrac{1}{2}]$.
+To conclude, we see that the result obtained is of similar form than the result obtained in \cite{belkin2005towards}. Given the kernel density $t(n)=n^\beta$, \cite{belkin2005towards} proved convergence in the random case for $\beta \in (-\frac{1}{4}, 0)$ and we proved convergence in the deterministic case for $\beta \in (-\frac{2\alpha}{5}, 0)$, where $\alpha \in (0, \linefrac{1}{2}]$ (for the spherical Manifold).
 
 
 \section{Experimental details}
@@ -958,14 +913,19 @@ To conclude, we can see that the result obtained has the same form than the resu
 
 \Tabref{climate:accuracy}, \ref{tab:climate:map}, and \ref{tab:climate:speed} show the accuracy, mAP, and efficiency of all the NNs we ran.
 
-* Jiang rerun with a batch size of 64 instead of 256 due to memory limit.\\
-* DS-jiang is the similar architecture as \cite{jiang2019sphericalcnn}. \\
-* DS-optimal has 2 times the number of feature maps of DS. \\
-* \todo{What is DS and DS-Cohen?} DS has 4 times more feature maps and one more layer than DS-Jiang. DS-optimal has still 2 times more feature maps. DS-Cohen should be mostly gauge (based on paper, no code): 4 times more feature maps, but 2 layers less than DS-Jiang. \\
-* \todo{Is (equi non-weighted) the full resolution?} Yes, but less feature maps and layers. Can run, but not enough GPU memory for an optimal architecture. \\
-* \todo{check column order for DS} \\
-* perf with same arch as Jiang in appendix => not enough channels!\\
-* even more feature maps give us one more point in perf\\
+The experiment with the model from \cite{jiang2019sphericalcnn} was rerun in order to obtain the AP metrics, but with a batch size of 64 instead of 256 due to GPU memory limit.
+
+Several experiments were run with different architectures for DeepSphere (DS). Jiang architecture use a similar one as \cite{jiang2019sphericalcnn}, with only the convolutional operators replaced. DeepSphere only is the original architecture giving the best results, deeper and with four times more feature maps than Jiang architecture. And DeepSphere with a wider architecture is the same with two times the number of feature maps.
+
+Regarding the weighted loss, the weights are chosen with \texttt{scikit-learn} function \texttt{compute\_class\_weight} on the training set.
+
+% * Jiang rerun with a batch size of 64 instead of 256 due to memory limit.\\
+% * DS-jiang is the similar architecture as \cite{jiang2019sphericalcnn}. \\
+% * DS-optimal has 2 times the number of feature maps of DS. \\
+% * \todo{What is DS and DS-Cohen?} DS has 4 times more feature maps and one more layer than DS-Jiang. DS-optimal has still 2 times more feature maps. DS-Cohen should be mostly gauge (based on paper, no code): 4 times more feature maps, but 2 layers less than DS-Jiang. \\
+% * \todo{Is (equi non-weighted) the full resolution?} Yes, but less feature maps and layers. Can run, but not enough GPU memory for an optimal architecture. \\
+% * perf with same arch as Jiang in appendix => not enough channels!\\
+% * even more feature maps give us one more point in perf\\
 
 % trade off between AP and accuracy in the case of TC class, it seems.\\
 % (full: we scale (50B pixels, 20TB) $\Rightarrow$ lead to better perf?)
@@ -990,10 +950,10 @@ To conclude, we can see that the result obtained has the same form than the resu
         DS (Jiang architecture, non-weighted loss) & 33.6 & 93.6 & 99.3 & 75.5 \\
         DS (non-weighted loss) & $69.2\pm 3.7$ & $94.5\pm 2.9$ & $99.7\pm 0.1$ & $87.8\pm 0.5$ \\
         DS (wider architecture, non-weighted loss) & 73.4 & 92.7 & 99.8 & 88.7 \\
-		\midrule
-		\todo{DS (Cohen architecture, weighted loss)} & 95.5 & 96.9 & 93.9 & 95.4 \\
-		\todo{DS (Cohen architecture, non-weighted loss)} & 56.4 & 90.0 & 98.9 & 81.8 \\
-		\todo{DS (full dataset, non-weighted loss)} & 31.3 & 75.2 & 99.9 & 68.80 \\
+% 		\midrule
+% 		\todo{DS (Cohen architecture, weighted loss)} & 95.5 & 96.9 & 93.9 & 95.4 \\
+% 		\todo{DS (Cohen architecture, non-weighted loss)} & 56.4 & 90.0 & 98.9 & 81.8 \\
+% 		\todo{DS (full dataset, non-weighted loss)} & 31.3 & 75.2 & 99.9 & 68.80 \\
 		\bottomrule
     \end{tabular}
     \caption{
@@ -1022,10 +982,10 @@ To conclude, we can see that the result obtained has the same form than the resu
         DS (Jiang architecture, weighted loss) & 49.7 & 89.2 & 69.5 \\
         DS (weighted loss) & $58.88\pm 3.17$ & $95.41\pm 1.51$ & $77.15\pm 1.94$ \\
         DS (wider architecture, weighted loss) & 52.80 & 94.78 & 73.79 \\
-		\midrule
-		\todo{DS (Cohen architecture, weighted loss)} & 13.1 & 80.3 & 46.7 \\
-		\todo{DS (Cohen architecture, non-weighted loss)} & 59.8 & 85.0 & 72.4 \\
-		\todo{DS (full dataset, non-weighted loss)} & 55.53 & 94.85 & 75.19 \\
+% 		\midrule
+% 		\todo{DS (Cohen architecture, weighted loss)} & 13.1 & 80.3 & 46.7 \\
+% 		\todo{DS (Cohen architecture, non-weighted loss)} & 59.8 & 85.0 & 72.4 \\
+% 		\todo{DS (full dataset, non-weighted loss)} & 55.53 & 94.85 & 75.19 \\
 		\bottomrule
     \end{tabular}
     \caption{
@@ -1051,8 +1011,8 @@ To conclude, we can see that the result obtained has the same form than the resu
 		DeepSphere (Jiang architecture) & 590\,k & 5\,ms & 3\,h \\ % 590k
         DeepSphere & 13\,M & 33\,ms & 13\,h \\ % 12'926'432
 		DeepSphere (wider architecture) & 52\,M & 50\,ms & 20\,h \\
-		\todo{DS (Cohen architecture)} & 2\,M & 11\,ms & 4\,h \\
-		\todo{DS (full dataset)} & - & 567\,ms & 48\,h \\
+% 		\todo{DS (Cohen architecture)} & 2\,M & 11\,ms & 4\,h \\
+% 		\todo{DS (full dataset)} & - & 567\,ms & 48\,h \\
 		\bottomrule
     \end{tabular}
     \caption{
@@ -1061,11 +1021,9 @@ To conclude, we can see that the result obtained has the same form than the resu
 		\label{tab:climate:speed}
 \end{table}
 
-\subsubsection*{DS Icosahedron architecture}
+% \subsubsection*{DS Icosahedron architecture}
 
-icosahedron sampling, level-5 resolution
-
-CNN with encoder decoder architecture
+Original DeepSphere architecture with encoder decoder\\
 encoder:\\
 \begin{dmath}
     [GC_{32}\, +\, BN\, +\, ReLU]_{L5}\,+\, [GC_{64}\, +\, BN\, +\, ReLU]_{L5}\, +\, \textrm{Pool}\, +\, [GC_{128}\, +\, BN\, +\, ReLU]_{L4}\, +\, \textrm{Pool}\, +\, [GC_{256}\, +\, BN\, +\, ReLU]_{L3}\, +\,\textrm{Pool}\, +\, [GC_{512}\, +\, BN\, +\, ReLU]_{L2} +\,\textrm{Pool}\, +\, [GC_{512}\, +\, BN\, +\, ReLU]_{L1} +\,\textrm{Pool}\, +\, [GC_{512}]_{L0}
@@ -1076,14 +1034,17 @@ decoder:\\
 \end{dmath}
 % number of parameters: 2,2M
 
-concat the results of the corresponding encoder layer before the graph convolution. Not similar to Jiang and 4 times the feature maps.
+concat is the operation that concatenate the results of the corresponding encoder layer.
+% Not similar to Jiang and 4 times the feature maps.
 
-batch size 64, adam optimizer, constant learning rate of $1 \cdot 10{-3}$, cross-entropy loss, both weighted and non weighted. Weight chosen with scikit-learn "compute\_class\_weight" on the training set
+% batch size 64, adam optimizer, constant learning rate of $1 \cdot 10{-3}$, cross-entropy loss, both weighted and non weighted. 
 
-30 epochs
+% 30 epochs
 
-wider architecture is the same, but with 2 time the feature maps.
-\subsubsection*{DS (Jiang architecture)}
+% DeepSphere with a wider architecture is exactly the same, but with 2 times the number of feature maps.
+% \subsubsection*{DS (Jiang architecture)}
+
+DeepSphere with Jiang architecture\\
 encoder:\\
 \begin{dmath}
     [GC_{8}\, +\, BN\, +\, ReLU]_{L5}\,+\,\textrm{Pool}\,+\, [GC_{16}\, +\, BN\, +\, ReLU]_{L4}\, +\, \textrm{Pool}\, +\, [GC_{32}\, +\, BN\, +\, ReLU]_{L3}\, +\, \textrm{Pool}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{L2}\, +\,\textrm{Pool}\, +\, [GC_{128}\, +\, BN\, +\, ReLU]_{L1}\, +\, \textrm{Pool}\,  +\, [GC_{128}\, +\, BN\, +\, ReLU]_{L0}
@@ -1094,24 +1055,24 @@ decoder:\\
 \end{dmath}
 % number of parameters: 590'976  % more feat is 16 times more
 
-concat the results of the corresponding encoder layer after the graph convolution. Similar to ``Jiang et al.''
-\subsubsection*{Full dataset - Equiangular architecture}
-Equiangular sampling, with a latitude bandwidth 384 and longitude bandwidth 576.
+% concat the results of the corresponding encoder layer after the graph convolution. Similar to ``Jiang et al.''
+% \subsubsection*{Full dataset - Equiangular architecture}
+% Equiangular sampling, with a latitude bandwidth 384 and longitude bandwidth 576.
 
-Due to memory problem, could not use the same architecture
+% Due to memory problem, could not use the same architecture
 
-8 epochs
+% 8 epochs
 
-encoder:\\
-\begin{dmath}
-    [GC_{16}\, +\, BN\, +\, ReLU]_{bw}\,+\, [GC_{16}\, +\, BN\, +\, ReLU]_{bw}\, +\, \textrm{Pool}\, +\, [GC_{32}\, +\, BN\, +\, ReLU]_{bw/16}\, +\, \textrm{Pool}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{bw/64}\, +\, [GC_{128}\, +\, BN\, +\, ReLU]_{bw/64}
-\end{dmath}
-decoder:\\
-\begin{dmath}
-    \textrm{Unpool}\, +\,[GC_{128}\, +\, BN\, +\, ReLU]_{bw/64}\, +\, \textrm{concat}\, +\, [GC_{128}\, +\, BN\, +\, ReLU]_{bw/64}\, +\, \textrm{Unpool}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{bw/64}\, +\, \textrm{concat}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{bw/64}\, +\, \textrm{Unpool}\, +\, [GC_{32}\, +\, BN\, +\, ReLU]_{bw/16}\, +\, \textrm{concat}\, +\, [GC_{32}\, +\, BN\, +\, ReLU]_{bw/16}\, +\,\textrm{Unpool}\, +\, [GC_{16}\, +\, BN\, +\, ReLU]_{bw}\,+\, \textrm{concat}\, +\, [GC_{16}\, +\, BN\, +\, ReLU]_{bw}\, +\,\textrm{Unpool}\,  +\, [GC_{16}\, +\, BN\, +\, ReLU]_{bw}\,+\,[GC_3]_{bw}
-\end{dmath}
+% encoder:\\
+% \begin{dmath}
+%     [GC_{16}\, +\, BN\, +\, ReLU]_{bw}\,+\, [GC_{16}\, +\, BN\, +\, ReLU]_{bw}\, +\, \textrm{Pool}\, +\, [GC_{32}\, +\, BN\, +\, ReLU]_{bw/16}\, +\, \textrm{Pool}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{bw/64}\, +\, [GC_{128}\, +\, BN\, +\, ReLU]_{bw/64}
+% \end{dmath}
+% decoder:\\
+% \begin{dmath}
+%     \textrm{Unpool}\, +\,[GC_{128}\, +\, BN\, +\, ReLU]_{bw/64}\, +\, \textrm{concat}\, +\, [GC_{128}\, +\, BN\, +\, ReLU]_{bw/64}\, +\, \textrm{Unpool}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{bw/64}\, +\, \textrm{concat}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{bw/64}\, +\, \textrm{Unpool}\, +\, [GC_{32}\, +\, BN\, +\, ReLU]_{bw/16}\, +\, \textrm{concat}\, +\, [GC_{32}\, +\, BN\, +\, ReLU]_{bw/16}\, +\,\textrm{Unpool}\, +\, [GC_{16}\, +\, BN\, +\, ReLU]_{bw}\,+\, \textrm{concat}\, +\, [GC_{16}\, +\, BN\, +\, ReLU]_{bw}\, +\,\textrm{Unpool}\,  +\, [GC_{16}\, +\, BN\, +\, ReLU]_{bw}\,+\,[GC_3]_{bw}
+% \end{dmath}
 
-batch size 1
+% batch size 1
 
 \subsection{Uneven sampling}
 
@@ -1124,5 +1085,60 @@ Architecture for global regression:
 \begin{dmath}
     [GC_{50}\, +\, BN\, +\, ReLU]\, +\, [GC_{100}\, +\, BN\, +\, ReLU]\, +\, [GC_{100}\, +\, BN\, +\, ReLU]\, +\, GAP\, +\, FCN
 \end{dmath}
+
+\clearpage
+\newpage
+
+\begin{description}
+	\item[git] \url{https://github.com/nperraud/deepsphere_v2_paper}
+	\item[overleaf] \url{https://www.overleaf.com/project/5d31d2fbd6859d54cb707212}
+\end{description}
+
+story: there are tradeoffs when designing a spherical CNN -> DS strikes a controllable balance between efficiency / cost and exactitude / equivariance
+% DSv2 has a clear tradeoff between equivariance and computational cost
+
+* method development: tool that solve a need (balance btw the desiderata: equiv vs cost)\\
+* research question: anisotropy (highlight from the start or leave it as a dangling question in the end)\\
+
+contributions:\\
+* theory $\Rightarrow$ convergence (better graph)\\
+* experiments on relevant problems (not spherical MNIST) $\Rightarrow$ check the desiderata\\
+  * surprising: anisotropy doesn't seem useful\\
+
+\todo{
+\begin{itemize}
+% 	\item shall we really name it? Or simply reference the general idea of a graph-based spherical CNN. [Yes]
+% 	\item adjacency matrix: $A$ instead of $W$? nath: I am for W
+% 	\item anonymize DeepSphere citation - Not doing that
+% 	\item climate spherical figure: inputs with TC and AR labels superimposed [Frédérick]
+	\item citet for inline, citep for parenthesis
+	\item More details on related work? Not sure we have the space. If yes, detailed comparison with related work after method.
+	\item PSD of climate data: how does it compare to cosmo and 3D objects?
+	\item align the spheres in figure 1
+	\item mention that \citep{esteves2018sphericalcnn} and \citep{cohen2018sphericalcnn} computed equivariance error
+	\item check footnotes
+	\item climate data on spectrum plot
+	\item result tables: only what supports the main message in the text, everything we have in the appendix
+	\item Unify vocabulary. Sampling, discretization, or pixelization of the sphere? Signal, maps, functions. Irregular, uneven. Coarsening, down-sampling.
+	\item check English vs American English
+	\item unify enumerations. I like (i), (ii), etc.
+	\item notation: should we use indices from 1 to n instead of 0 to n-1 for compactness?
+	\item add \citet{bruna2013gnn} in equivariance? They were the first to do a spherical CNN with graphs. Graph is built from a uniform random sampling of the sphere.
+	\item figure placements
+	\item do the experiments on the icosahedral grid with the pooling as defined in the paper
+	\item put all the code (learning experiments from Frédérick and equivariance experiments from Martino) in a common reproducible git repository to be linked from the paper
+	\item update pygsp and merge sphere branch
+	\item check that NN architectures and hyper-params are correctly reported
+	\item keep NN architecture and hyper-params in the main text? Move the paragraph to appendix if not enough space.
+	%\item shall we still site adam and batch norm? no, mainstream enough
+	\item check results for ModelNet40 and integrate in text
+	\item Check that HEALPix is introduced in the introduction
+	\item heuristic used to set the kernel width in v1. Add values to \figref{kernel_widths} for comparison.
+% 	\item check experiments section [Frédérick]: all the results numbers and NN + training details
+	\item compute the invariance error of the whole NNs (before and after training, invariance can be learned)
+	\item add it with equivariance error of the convolution to \tabref{cosmo}
+	\item insert \citet{jiang2019sphericalcnn} in intro: Need a global coordinate system (ok for planets, not projections like cosmo)
+\end{itemize}
+}
 
 \end{document}
