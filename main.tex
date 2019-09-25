@@ -128,7 +128,7 @@ Comparison with previous work on shape classification and climate event detectio
 
 \end{abstract}
 
-\section{Introduction [2 pages]}
+\section{Introduction}
 
 Spherical data is found in many applications.
 % spherical data f: S^2 -> R, projection from R^3
@@ -223,19 +223,19 @@ Experiments on multiple problems of practical interest show the competitiveness 
 
 \section{Method [1 pages]}
 
-\begin{figure}
-	\centering
-	\includegraphics[width=\linewidth]{figure_architecture_v3}
-	\caption{Example architecture from \cite{perraudin2019deepspherecosmo}.
-		Global tasks need a spatial summarization: the FCN variant is rotation invariant (and accepts inputs of varying sizes), while the CNN variant is not.
-		Dense tasks (when the output lives on the sphere, like segmentation) are rotation equivariant.
-		\todo{Shall we keep this figure? It's very nice, but we could save space. ML people probably have this in mind.}
-	}
-	\label{fig:architecture}
-\end{figure}
+% \begin{figure}
+% 	\centering
+% 	\includegraphics[width=\linewidth]{figure_architecture_v3}
+% 	\caption{Example architecture from \cite{perraudin2019deepspherecosmo}.
+% 		Global tasks need a spatial summarization: the FCN variant is rotation invariant (and accepts inputs of varying sizes), while the CNN variant is not.
+% 		Dense tasks (when the output lives on the sphere, like segmentation) are rotation equivariant.
+% 		\todo{Shall we keep this figure? It's very nice, but we could save space. ML people probably have this in mind.}
+% 	}
+% 	\label{fig:architecture}
+% \end{figure}
 
 DeepSphere leverages graph convolutions to achieve the following properties: (i) computational efficiency, (ii) sampling flexibility, and (iii) rotation equivariance (\secref{equivariance}).
-An example architecture is shown in \figref{architecture}.
+% An example architecture is shown in \figref{architecture}.
 The main idea is to model the discretized sphere as a graph of connected pixels: the length of the shortest path between two pixels is an approximation of the geodesic distance between them.
 We use the graph CNN formulation introduced in \citep{defferrard2016graphnn}, and a pooling strategy that exploits hierarchical pixelizations of the sphere.
 
