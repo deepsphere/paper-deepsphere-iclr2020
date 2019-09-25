@@ -363,7 +363,9 @@ We extend the work of Belkin and Nyiogi to a sufficiently regular, deterministic
 Given a sampling scheme $V = \{x_0, \dots, x_{n-1}\}$, define $\sigma_i$ to be the patch of the surface of the sphere corresponding to $x_i$, define $A_i$ to be its corresponding area and $d_i$ to be the radius of the smallest ball in $\R^3$ containing $\sigma_i$. Define $d^{(n)} := \max_{i=0, \dots, n}d_i$ and $A^{(n)}=\max_{i=0, \dots, n}A_i$.
 \begin{theorem}
 	For a sampling $V = \{x_i\in\S^2\}_{i=0}^{n-1}$ of the sphere that is equi-area and such that $d^{(n)} \leq \frac{C}{\sqrt{n}}$, for all $f: \S^2 \rightarrow \R$ Lipschitz with respect to the Euclidean distance in $\R^3$, for all $y\in\S^2$, there exists a sequence $t_n = n^\beta$ such that the rescaled Heat Kernel Graph Laplacian $\frac{|\S^2|}{4\pi t_n^2}\b {L}^t_n$ converges pointwise to the Laplace Beltrami operator on the sphere $\Delta{\S^2}$  for $n\to\infty$:
-	$$ \lim_{n\to\infty} \frac{|\mathbb{S}^2|}{4\pi t_n^2} \b{L}_n^{t_n} f(x_i) =  \Delta_{\mathbb{S}^2}f(x_i)\quad \forall i=0, ..., n-1.$$
+	\begin{equation*}
+	 \lim_{n\to\infty} \frac{|\mathbb{S}^2|}{4\pi t_n^2} \b{L}_n^{t_n} f(x_i) =  \Delta_{\mathbb{S}^2}f(x_i)\quad \forall i=0, ..., n-1.
+	\end{equation*}
 	\label{theo:pointwise convergence for a regular sampling}
 \end{theorem}
 This theorem implies immediately that $\b{L}$ converges pointwisely toward an operator ($\Delta_{\S^2}$) commuting with rotation and hence is a strong hint for equivariance.
@@ -836,12 +838,12 @@ To ease the notation, we define
 	\phi^t(x;y) &:= e^{-\frac{\|x-y\|^2}{4t}}\left(f(y)-f(x)\right).
 \end{align}
 We start with the following inequality
-\begin{align*}
-	\|L_n^tf-L^tf\|_\infty &= \max _{y\in \S^2} \left|L_n^tf(y)-L^tf(y)\right|\\
-	&= \max _{y\in \S^2} \left| \frac{1}{n} \sum_{i=1}^n \phi^t(x_i; y)- \int_{\S^2} \phi^t(x;y)d\mu(x) \right|\\
-	&\leq \max _{y\in \S^2}  \sum_{i=1}^n   \left| \frac{1}{n}  \phi^t(x_i; y)- \int_{\sigma_i} \phi^t(x;y)d\mu(x) \right|\\
-	&\leq  d^{(n)} \max _{y\in \S^2} C_{\phi^t_y} ,\\
-\end{align*}
+\begin{align}
+	\|L_n^tf-L^tf\|_\infty &= \max _{y\in \S^2} \left|L_n^tf(y)-L^tf(y)\right| \nonumber\\
+	&= \max _{y\in \S^2} \left| \frac{1}{n} \sum_{i=1}^n \phi^t(x_i; y)- \int_{\S^2} \phi^t(x;y)d\mu(x) \right| \nonumber\\
+	&\leq \max _{y\in \S^2}  \sum_{i=1}^n   \left| \frac{1}{n}  \phi^t(x_i; y)- \int_{\sigma_i} \phi^t(x;y)d\mu(x) \right| \nonumber\\
+	&\leq  d^{(n)} \max _{y\in \S^2} C_{\phi^t_y} , \label{eq:prop3-base-ineq}
+\end{align}
 where $C_{\phi^t_y}$ is the Lipschitz constant of $x \rightarrow \phi^t(x, y)$ and the last inequality follows from Proposition \ref{prop:1}. 
 Using the assumption $d^{(n)}\leq \frac{C}{\sqrt{n}}$ we find
 \begin{equation*}
@@ -858,54 +860,53 @@ We now find the explicit dependence between $t$ and $C_{\phi^t_y}$
 	= C_{K^t_y} \|f\|_\infty + \|\partial_xf\|_\infty\\&
 	= C_{K^t_y} \|f\|_\infty + C_f
 \end{align*}
-where $C_{K^t_y}$ is the Lipschitz constant of $x\rightarrow K^t(x;y)$. We can observe that such constant does not depend on $y$:
-
-$\mathcal L_{K^t_y} = \norm{\partial_x e^{-\frac{x^2}{4t}}}_\infty = \norm{\frac{x}{2t}e^{-\frac{x^2}{4t}}}_\infty = \left. \frac{x}{2t}e^{-\frac{x^2}{4t}}\right|_{x=\sqrt{2t}}=(2et)^{-\frac{1}{2}}\propto t ^ {-\frac{1}{2}}$
-
-So we can continue
-$$\begin{aligned}
-	\max _{y\in \S^2} \left[  \mathcal L_{\phi^t_y} \frac{C}{\sqrt{n}} \right]
-	&\leq  \frac{C}{\sqrt{n}} \left( (2et)^{-\frac{1}{2}} \norm{f}_\infty + \mathcal L_f \right)\\
-	&\leq \frac{C\norm{f}_\infty}{\sqrt{n}(2et)^{1/2}} +   \frac{C}{\sqrt{n}}\mathcal L_f\\
-\end{aligned}$$
-So we have that, rescaling by a factor $\frac{1}{4\pi t^2}$
+where $C_{K^t_y}$ is the Lipschitz constant of the function $x\rightarrow K^t(x;y)$. We note that this constant does not depend on $y$:
+\begin{equation*}
+C_{K^t_y} = \norm{\partial_x e^{-\frac{x^2}{4t}}}_\infty = \norm{\frac{x}{2t}e^{-\frac{x^2}{4t}}}_\infty = \left. \frac{x}{2t}e^{-\frac{x^2}{4t}}\right|_{x=\sqrt{2t}}=(2et)^{-\frac{1}{2}}\propto t ^ {-\frac{1}{2}}.
+\end{equation*}
+Hence we have
+\begin{align*}
+	\frac{C}{\sqrt{n}}  \max _{y\in \S^2} C_{\phi^t_y} 
+	&\leq  \frac{C}{\sqrt{n}} \left( (2et)^{-\frac{1}{2}} \norm{f}_\infty + C_f \right)\\
+	&\leq \frac{C \norm{f}_\infty}{\sqrt{n}(2et)^{1/2}} +   \frac{C}{\sqrt{n}} C_f.
+\end{align*}
+Inculding this result in \eqref{eq:prop3-base-ineq} and rescaling by $\linefrac{1}{4\pi t^2}$, we obtain
 \begin{align*}
 	\norm{\frac{1}{4\pi t^2}\left(L_n^tf-L^tf\right)}_\infty&\leq \frac{1}{4\pi t^2}\norm{\left(L_n^tf-L^tf\right)}_\infty \\
-	&\leq \frac{C}{4\pi}\left[\frac{\norm{f}_\infty}{\sqrt{2e}}\frac{1}{\sqrt{n}t^{5/2}} + \frac{\mathcal L_f}{\sqrt{n}t^2}\right]
+	&\leq \frac{C}{4\pi}\left[\frac{\norm{f}_\infty}{\sqrt{2e}}\frac{1}{\sqrt{n}t^{5/2}} + \frac{C_f}{\sqrt{n}t^2}\right].
 \end{align*}
-
-we want $\begin{cases}
-t \rightarrow 0\\
-n \rightarrow \infty\\
+In order for $ \frac{C}{4\pi}\left[\frac{\norm{f}_\infty}{\sqrt{2e}}\frac{1}{\sqrt{n}t^{5/2}} + \frac{C_f}{\sqrt{n}t^2}\right] \xrightarrow[t\to 0 ]{n\to\infty}0$, 
+we need $\begin{cases}
+% t \rightarrow 0\\
+% n \rightarrow \infty\\
 \sqrt{n}t^{5/2} \rightarrow \infty\\
 \sqrt{n}t^2 \rightarrow \infty
-\end{cases}$ in order for $ \frac{C}{4\pi}\left[\frac{\norm{f}_\infty}{\sqrt{2e}}\frac{1}{\sqrt{n}t^{5/2}} + \frac{\mathcal L_f}{\sqrt{n}t^2}\right] \xrightarrow[t\to 0 ]{n\to\infty}0$
-
-This is true if $\begin{cases}
+\end{cases}$ \\
+It happens if $\begin{cases}
 t(n) = n^\beta, &\beta\in(-\frac{1}{5}, 0) \\
 t(n) = n^\beta, &\beta\in(-\frac{1}{4}, 0)
-\end{cases} \implies t(n) = n^\beta, \quad \beta\in(-\frac{1}{5}, 0)$
-
-Indeed
-
-$\sqrt{n}t^{5/2}=n^{5/2\beta+1/2}\xrightarrow{n \to \infty} \infty$ since $\frac{5}{2}\beta+1/2>0 \iff \beta>-\frac{1}{5}$
-
-$\sqrt{n}t^2=n^{2\beta+1/2}\xrightarrow {N \to \infty} \infty$ since $2\beta+1/2>0 \iff \beta>-\frac{1}{4}$
-
-So, for $t=n^\beta$ with $\beta\in(-\frac{1}{5}, 0)$ we have that
-
-$$\begin{cases}
+\end{cases} \implies t(n) = n^\beta, \quad \beta\in(-\frac{1}{5}, 0)$.\\
+Indeed, we have\\
+$\sqrt{n}t^{5/2}=n^{5/2\beta+1/2}\xrightarrow{n \to \infty} \infty$ since $\frac{5}{2}\beta+1/2>0 \iff \beta>-\frac{1}{5}$\\
+and $\sqrt{n}t^2=n^{2\beta+1/2}\xrightarrow {N \to \infty} \infty$ since $2\beta+1/2>0 \iff \beta>-\frac{1}{4}$.\\
+As a result, for $t=n^\beta$ with $\beta\in(-\frac{1}{5}, 0)$ we have
+$\begin{cases}
 (t_n)\xrightarrow{n\to\infty}0\\
-\norm{\frac{1}{4\pi t_n^2}L_n^{t_n}f-\frac{1}{4\pi t_n^2}L^{t_n}f}_\infty  \xrightarrow{n\to\infty}0
-\end{cases}$$
-
+\norm{\frac{1}{4\pi t_n^2}L_n^{t_n}f-\frac{1}{4\pi t_n^2}L^{t_n}f}_\infty  \xrightarrow{n\to\infty}0,
+\end{cases}$\\
+which concludes the proof.
 \end{proof}
-
 
 Theorem  \ref{theo:pointwise convergence for a regular sampling}, is then an immediate consequence of Proposition \ref{prop:2} and Proposition \ref{prop:3}.
 \begin{proof}[Proof of Theorem \ref{theo:pointwise convergence for a regular sampling}]
 	Thanks to Proposition \ref{prop:2} and Proposition \ref{prop:3}	we conclude that $\forall y\in\S^2 $
-	$$\lim_{n\to\infty}\frac{1}{4\pi t_n^2} L_n^{t_n}f(y) =  \lim_{n\to\infty}\frac{1}{4\pi t_n^2} L^{t_n}f(y) = \frac{1}{|\S^2|}\triangle_{\S^2}f(y) $$
+	\begin{equation*}
+	\lim_{n\to\infty}\frac{1}{4\pi t_n^2} L_n^{t_n}f(y) =  \lim_{n\to\infty}\frac{1}{4\pi t_n^2} L^{t_n}f(y) = \frac{1}{|\S^2|}\triangle_{\S^2}f(y)
+	\end{equation*}
+	Eventually selecting $y$ as a point of the sampling, we obtain
+	\begin{equation*}
+	 \lim_{n\to\infty} \frac{|\mathbb{S}^2|}{4\pi t_n^2} \b{L}_n^{t_n} f(x_i) =  \Delta_{\mathbb{S}^2}f(x_i)\quad \forall i=0, ..., n-1.
+	\end{equation*} 
 \end{proof}
 
 The proof of this result is instructive since it shows that we need to impose some regularity conditions on the sampling. If the sampling is equal area as HEALPix, meaning that all the patches $\sigma_i$ have the same area, then we need to impose that $ d^{(n)}\leq \frac{1}{\sqrt{n}}$. \\
