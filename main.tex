@@ -157,7 +157,8 @@ While equivariant to rotations, those convolutions are expensive (\secref{method
 
 % On the one side, we have Cohen which is computationally very expensive but perfectly equivariant most general, on the other we have cube sphere which computationl very good but not equivariant at all. Other methods are tradedoff between these two. What is a good tradeoff? We think that DeepSphere is.
 
-As a lack of equivariance can penalize performance (\secref{exp:cosmo}) and expensive convolutions prohibit their application to some real-world problems, methods standing between those two extremes are desired.
+As a lack of equivariance can penalize performance (\secref{exp:cosmo}) and expensive convolutions prohibit their application to some real-world problems, methods standing between these two extremes are desired.
+%Such high resolutions are not necessary to represent the depth maps of 3D objects, but are required to faithfully represent cosmological and climate data.
 \citet{cohen2019gauge} proposed to reduce costs by limiting the size of the representation of the symmetry group by projecting the data from the sphere to the icosahedron.
 The distortions introduced by this projection might however hinder performance (\secref{exp:climate}).
 % (from the continuous rotation group SO(3) to a discrete rotation group)
@@ -168,7 +169,7 @@ The distortions introduced by this projection might however hinder performance (
 
 Another approach is to represent the discretized sphere as a graph connecting pixels according to the distance between them \citep{bruna2013gnn, khasanova2017sphericalcnn, perraudin2019deepspherecosmo}.
 While Laplacian-based graph convolutions are more efficient than spherical convolutions, they are not exactly equivariant \citep{defferrard2019deepsphereequiv}.
-In this work, we argue that graph-based spherical CNNs strike an interesting balance, with a controllable tradeoff between cost and performance (linked to equivariance).
+In this work, we argue that graph-based spherical CNNs strike an interesting balance, with a controllable tradeoff between cost and equivariance (which is linked to performance).
 Experiments on multiple problems of practical interest show the competitiveness and flexibility of this approach.
 % Furthermore, experiments show that, perhaps surprisingly and contrarily to previously published results \citep{cohen2019gauge} \todo{[Bronstein?]}, anisotropic filters might be an unnecessary price to pay.
 % This paper focuses on improving the rotation equivariance of \citet{perraudin2019deepspherecosmo}, a scalable graph-based method designed for cosmological applications.
@@ -337,11 +338,12 @@ With higher the number of neighbors, the equivariance error decreases by more th
 Furthermore, increasing the graph resolution ($N_{side}$) leads to an improvement in the high frequencies as well. 
 Increasing the graph resolution of the graph of \cite{khasanova2017sphericalcnn} does not seem to improve its equivariance. We note that in our numerical test, this graph was perfectly equivariant to rotations along the horizontal and vertical axis as it should be by design. Nevertheless, it is simply not equivariant along the last rotation. Such equivariance properties might be sufficient for analysing omnidirectional images (that are naturally aligned on the north-south axis).
 
-
 \begin{figure}
+
 	\begin{minipage}{0.6\linewidth}
 		\centering
 		\includegraphics[width=1\linewidth]{all_in_one.pdf}
+
 		\caption{Normalized mean equivariance error \eqref{eq:mean equivariance error}. The number of pixels is $4s^2$ for the equiangular sampling and $12s^2$ for the Healpix sampling.}
 		\label{fig:equivariance_error}
 	\end{minipage}
@@ -372,7 +374,7 @@ Increasing the graph resolution of the graph of \cite{khasanova2017sphericalcnn}
 % * DeepSphere V1 and V2 are equivalent in practice: better equivariance doesn't translate to better performance
 % * anisotropy doesn't help
 
-\subsection{3D objects recognition} \label{sec:exp:objects}
+\subsection{3D objects recognition} \label{sec:exp:shrec}
 
 The recognition of 3D shapes is a rotation invariant task: rotating an object doesn't change its nature.
 While 3D shapes are usually represented as meshes or point clouds, representing them as spherical maps (\figref{depthmap}) naturally allows a rotation invariant treatment.
@@ -597,39 +599,36 @@ Results show that using the structure induced by the spherical geometry always y
 
 \section{Conclusion}
 
-This work showed that DeepSphere strikes an interesting balance between desiderata for a spherical CNN.
-A single parameter, the number of neighbors a pixel is connected to in the graph, controls the tradeoff between \todo{performance and efficiency}.
+This work showed that DeepSphere strikes an interesting, and we think currently optimal, balance between desiderata for a spherical CNN.
+A single parameter, the number of neighbors $k$ a pixel is connected to in the graph, controls the tradeoff between cost and equivariance (which is linked to performance).
 % vague words
-As computational cost and memory consumption scales linearly with the number of pixels, DeepSphere easily deals with spherical maps made of millions of pixels.
-Such high resolutions are not necessary to represent the depth maps of 3D objects, but are required to faithfully represent cosmological and climate data.
-% That has to do with the frequency content of the signals (see fig xx)
 % cannot do better
-Also relevant in scientific applications is the flexibility offered by a graph representation to deal with partial coverage and non-uniform samplings.
+As computational cost and memory consumption scales linearly with the number of pixels, DeepSphere scales to spherical maps made of millions of pixels, a required resolution to faithfully represent cosmological and climate data.
+Also relevant in scientific applications is the flexibility offered by a graph representation (for partial coverage, missing data, and non-uniform samplings).
 % partial coverage / missing data
-Finally, the implementation of Laplacian-based graph convolutions is straightforward.
-The ubiquity of graph neural networks, pushing for a first-class support in Deep Learning frameworks, will make implementations even easier and more efficient.
+Finally, the implementation of the graph convolution is straightforward, and the ubiquity of graph neural networks --- pushing for their first-class support in DL frameworks --- will make implementations even easier and more efficient.
 
-A potential drawback of graph Laplacian-based approaches is that graph filters are isotropic, reducing the expressive power of the NN.
+A potential drawback of graph Laplacian-based approaches is the isotropy of graph filters, reducing in principle the expressive power of the NN.
 % in principle -> may in fact not
 % Our experiments showed that DeepSphere nonetheless achieved state-of-the-art performance, on par with methods featuring anisotropic filters.
 % didn't hurt perf in any experiment
 % expressive power / generality / powerful / function approximator
 %Why anisotropic filters?
-Experiments from \citet{cohen2019gauge} suggest that more general convolutions achieve better performance.
-Our climate experiments (\secref{exp:climate}) however show that DeepSphere achieves similar performance than their most general convolution.
+Experiments from \citet{cohen2019gauge} and \citet{boscaini2016anisotropicgraphnn} indeed suggest that more general convolutions achieve better performance.
+Our experiments on 3D shapes (\secref{exp:shrec}) and climate (\secref{exp:climate}) however show that DeepSphere's isotropic filters do not hinder performance.
 % the SHREC'17 experiment too shows that isotropic filters are sufficient
-Works on shape alignment indicates that anisotropic filters achieve better performance \todo{[Bronstein]}.
+%Works on shape alignment indicates that anisotropic filters achieve better performance \todo{[Bronstein]}.
 Possible explanations for this discrepancy are that NNs somehow compensate for the lack of anisotropic filters, or that some tasks can be solved with isotropic filters.
 % why: icosahedron, can do anisotropy with isotropy + non-linearity + pooling
-The distortions induced by the icosahedral projection in \citep{cohen2019gauge} or the leakage of curvature information in \todo{[Bronstein]} might also be explanations.
-Further research is needed to determine if anisotropic filters are an unnecessary price to pay or if they are needed for some applications.
+The distortions induced by the icosahedral projection in \citet{cohen2019gauge} or the leakage of curvature information in \citet{boscaini2016anisotropicgraphnn} might also alter performance.
+%Further research is needed to determine if anisotropic filters are an unnecessary price to pay or if they are needed in some applications.
 % As was recently shown for graph NNs used for graph classification, most general might not be the best, when the ultimate goal is generalization [Andreas paper? + previous by xx]
 
-Developing graph convolutions on irregular samplings that still respect the geometry of the sphere is another research direction of importance.
+Developing graph convolutions on irregular samplings that respect the geometry of the sphere is another research direction of importance.
 % known underlying manifold
 Practitioners currently interpolate their measurements (coming from arbitrarily positioned weather stations, satellites or telescopes) to regular samplings.
 This practice either results in a waste of precision or computational and storage resources.
-Our ultimate goal is for practitioners to be able to work directly on their measurement, however distributed.
+Our ultimate goal is for practitioners to be able to work directly on their measurements, however distributed.
 
 % beyond the sphere => any manifold
 % what are other manifolds of interest?
@@ -915,7 +914,7 @@ To conclude, we see that the result obtained is of similar form than the result 
 
 The experiment with the model from \cite{jiang2019sphericalcnn} was rerun in order to obtain the AP metrics, but with a batch size of 64 instead of 256 due to GPU memory limit.
 
-Several experiments were run with different architectures for DeepSphere (DS). Jiang architecture use a similar one as \cite{jiang2019sphericalcnn}, with only the convolutional operators replaced. DeepSphere only is the original architecture giving the best results, deeper and with four times more feature maps than Jiang architecture. And DeepSphere with a wider architecture is the same with two times the number of feature maps.
+Several experiments were run with different architectures for DeepSphere (DS). Jiang architecture use a similar one as \cite{jiang2019sphericalcnn}, with only the convolutional operators replaced. DeepSphere only is the original architecture giving the best results, deeper and with four times more feature maps than Jiang architecture. And the wider architecture is the same as the previous one with two times the number of feature maps.
 
 Regarding the weighted loss, the weights are chosen with \texttt{scikit-learn} function \texttt{compute\_class\_weight} on the training set.
 
