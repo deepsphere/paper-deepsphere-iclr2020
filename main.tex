@@ -364,8 +364,8 @@ Given a sampling scheme $V = \{x_0, \dots, x_{n-1}\}$, define $\sigma_i$ to be t
 \begin{theorem}
 	For a sampling $V = \{x_i\in\S^2\}_{i=0}^{n-1}$ of the sphere that is equi-area and such that $d^{(n)} \leq \frac{C}{\sqrt{n}}$, for all $f: \S^2 \rightarrow \R$ Lipschitz with respect to the Euclidean distance in $\R^3$, for all $y\in\S^2$, there exists a sequence $t_n = n^\beta$ such that the rescaled Heat Kernel Graph Laplacian $\frac{|\S^2|}{4\pi t_n^2}\b {L}^t_n$ converges pointwise to the Laplace Beltrami operator on the sphere $\Delta{\S^2}$  for $n\to\infty$:
 	\begin{equation*}
-	 \lim_{n\to\infty} \frac{|\mathbb{S}^2|}{4\pi t_n^2} \b{L}_n^{t_n} f(x_i) =  \Delta_{\mathbb{S}^2}f(x_i)\quad \forall i=0, ..., n-1.
-	\end{equation*}
+	 \lim_{n\to\infty} \frac{|\mathbb{S}^2|}{4\pi t_n^2} \b{L}_n^{t_n} T_V f [i] =  \Delta_{\mathbb{S}^2}f(x_i)\quad \forall i=0, ..., n-1.
+	\end{equation*} 
 	\label{theo:pointwise convergence for a regular sampling}
 \end{theorem}
 This theorem implies immediately that $\b{L}$ converges pointwisely toward an operator ($\Delta_{\S^2}$) commuting with rotation and hence is a strong hint for equivariance.
@@ -888,7 +888,7 @@ t(n) = n^\beta, &\beta\in(-\frac{1}{4}, 0)
 \end{cases} \implies t(n) = n^\beta, \quad \beta\in(-\frac{1}{5}, 0)$.\\
 Indeed, we have\\
 $\sqrt{n}t^{5/2}=n^{5/2\beta+1/2}\xrightarrow{n \to \infty} \infty$ since $\frac{5}{2}\beta+1/2>0 \iff \beta>-\frac{1}{5}$\\
-and $\sqrt{n}t^2=n^{2\beta+1/2}\xrightarrow {N \to \infty} \infty$ since $2\beta+1/2>0 \iff \beta>-\frac{1}{4}$.\\
+and $\sqrt{n}t^2=n^{2\beta+1/2}\xrightarrow {n \to \infty} \infty$ since $2\beta+1/2>0 \iff \beta>-\frac{1}{4}$.\\
 As a result, for $t=n^\beta$ with $\beta\in(-\frac{1}{5}, 0)$ we have
 $\begin{cases}
 (t_n)\xrightarrow{n\to\infty}0\\
@@ -897,7 +897,7 @@ $\begin{cases}
 which concludes the proof.
 \end{proof}
 
-Theorem  \ref{theo:pointwise convergence for a regular sampling}, is then an immediate consequence of Proposition \ref{prop:2} and Proposition \ref{prop:3}.
+Theorem  \ref{theo:pointwise convergence for a regular sampling}, is then an immediate consequence of Proposition \ref{prop:2} and \ref{prop:3}.
 \begin{proof}[Proof of Theorem \ref{theo:pointwise convergence for a regular sampling}]
 	Thanks to Proposition \ref{prop:2} and Proposition \ref{prop:3}	we conclude that $\forall y\in\S^2 $
 	\begin{equation*}
@@ -905,11 +905,13 @@ Theorem  \ref{theo:pointwise convergence for a regular sampling}, is then an imm
 	\end{equation*}
 	Eventually selecting $y$ as a point of the sampling, we obtain
 	\begin{equation*}
-	 \lim_{n\to\infty} \frac{|\mathbb{S}^2|}{4\pi t_n^2} \b{L}_n^{t_n} f(x_i) =  \Delta_{\mathbb{S}^2}f(x_i)\quad \forall i=0, ..., n-1.
+	 \lim_{n\to\infty} \frac{|\mathbb{S}^2|}{4\pi t_n^2} \b{L}_n^{t_n} T_V f [i] =  \Delta_{\mathbb{S}^2}f(x_i)\quad \forall i=0, ..., n-1.
 	\end{equation*} 
 \end{proof}
 
-The proof of this result is instructive since it shows that we need to impose some regularity conditions on the sampling. If the sampling is equal area as HEALPix, meaning that all the patches $\sigma_i$ have the same area, then we need to impose that $ d^{(n)}\leq \frac{1}{\sqrt{n}}$. \\
+\nati{@martino, actually we do not need $ d^{(n)}\leq \frac{1}{\sqrt{n}}$, we only need $ d^{(n)}\leq \frac{1}{n^\alpha}$, where $\alpha>0$. As the $\S^2$ is of dimension $2$, $\alpha$ cannot be larger than $\linefrac{1}{2}$. If we put that into the theorem, we obtain that $\frac{5}{2}\beta+\alpha>0 \iff \beta>-\frac{2\alpha}{5}$. I think this is important, because we can still have convergence even if we do not have perfect patches... Please confirm ASAP, so we can update the Proposition and the text bellow. For HealPix sampling, we could say that while we have not proof, it make sense that it statisfies the hypothesis probably with $\alpha=\linefrac{1}{2}$.}
+
+The proof of Proposition \ref{prop:2} is instructive. First, we note that some regularity conditions on the sampling are needed. If the sampling is equal area as HEALPix, meaning that all the patches $\sigma_i$ have the same area, then we need to impose that $ d^{(n)}\leq \frac{1}{\sqrt{n}}$. \\
 In the work of \cite{belkin2005towards} the sampling is drawn form a uniform random distribution on the sphere, and their proof heavily relies on the uniformity properties of the distribution from which the sampling is drawn. In our case the sampling is deterministic, and the fact that for a sphere there doesn't exist a regular sampling with more than 12 points (the vertices of a icosahedron) is indeed a problem that we need to overcome by imposing the regularity conditions above.
 
 To conclude, we can see that the result obtained has the same form than the result obtained in \cite{belkin2005towards}. Given the kernel density $t(n)=n^\beta$, if Belkin et al. proved convergence in the random case for $\beta \in (-\frac{1}{4}, 0)$, we proved convergence in the deterministic case for $\beta \in (-\frac{1}{5}, 0)$. This kind of result can be interpreted in the following way. In order to have this pointwise convergence, we need to reduce the kernel width but \emph{not so fast} compared to the resolution of the graph. In other words, the kernel width has to be reduced but is somewhat limited by the resolution of the graph.
