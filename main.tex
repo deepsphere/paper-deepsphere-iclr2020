@@ -344,16 +344,6 @@ Their approach leads to weights $w_{ij}$ inversely proportional to the Euclidean
 	w_{ij} = \frac{1}{\norm{x_i-x_j}}
 \end{equation}
 
-
-\begin{wrapfigure}{r}{5.5cm}
-	\centering
-	\vspace{-0.3cm}
-	\includegraphics[width=5cm]{kernel_widths}
-	\caption{
-		Optimal kernel widths for various resolutions of the HEALPix grid and numbers of neighbors.
-	}
-	\label{fig:kernel_widths}
-\end{wrapfigure}
 % 2) explain our approach
 We chose a different approach and take inspiration from \cite{belkin2005towards}, which proves that for a random \emph{uniform sampling} scheme the graph Laplacian converges toward the Laplace-Beltrami operator $\Delta_{\mathbb{S}^2}$ as the number of sampling points goes to infinity.
 This convergence result is important as a) $\Delta_{\mathbb{S}^2}$ commutes with rotation ($\Delta_{\mathbb{S}^2}R(g) = R(g)\Delta_{\mathbb{S}^2}$) and b) is diagonalized by the spherical harmonics.
@@ -401,16 +391,34 @@ The frequencies of the monochromatic signals, on the x axis in figure \ref{fig:e
 
 % 3.1) explain what the figures tell us
 We observe that by increasing the number of neighbors of the graph from 8 to 40, we are able to decrease the equivariance error by more than one order of magnitude. The filtering operation with the graph Laplacian of Khasanova, Frossard is by construction perfectly equivariant to rotations along the vertical axis, and is designed to minimize the filtering error of vertical displacements of the same image. While these characteristics are perfect for analysing omnidirectional images that are naturally aligned on the north-south axis, it doesn't perform well on random rotations. 
+
 \begin{figure}
-	\centering
-	\includegraphics[width=0.5\linewidth]{all_in_one.pdf}
-	\caption{Equivariance Error}
-	\label{fig:equivariance_error}
+	\begin{minipage}{0.65\linewidth}
+		\centering
+		\includegraphics[width=\linewidth]{all_in_one.pdf}
+		\caption{Equivariance error.}
+		\label{fig:equivariance_error}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.35\linewidth}
+		\centering
+		\includegraphics[width=\linewidth]{kernel_widths}
+		\caption{Optimal kernel widths.}
+		\label{fig:kernel_widths}
+		\vspace{1em}
+		\includegraphics[height=4.5em]{lamp_000018}
+		\hfill
+		\includegraphics[height=4.5em]{lamp_000018_sphere_nobar}
+		\caption{3D object represented as a spherical depth map.}
+		\label{fig:depthmap}
+		\vspace{1em}
+		\includegraphics[width=\linewidth]{spectrum}
+		\caption{Power spectral densities.}
+		\label{fig:spectrum}
+	\end{minipage}
 \end{figure}
 
-
-
-\section{Experiments [2 pages]}
+\section{Experiments}
 
 % Show:
 % * meet the desiderata: scale
@@ -418,28 +426,6 @@ We observe that by increasing the number of neighbors of the graph from 8 to 40,
 % * anisotropy doesn't help
 
 \subsection{3D objects recognition} \label{sec:exp:objects}
-
-\begin{figure}
-%\begin{floatingfigure}[r]{0.5\linewidth}
-%\begin{wrapfigure}{r}{0.5\linewidth}
-	\begin{minipage}[t]{0.57\linewidth}
-		\centering
-		\includegraphics[height=7em]{lamp_000018}
-		\hfill
-		\includegraphics[height=7em]{lamp_000018_sphere_nobar}
-		\caption{Example of a 3D object from SHREC'17 represented as a spherical depth map.}
-		\label{fig:depthmap}
-	\end{minipage}
-	\hfill
-	\begin{minipage}[t]{0.35\linewidth}
-		\centering
-		\includegraphics[height=7em]{spectrum}
-		\caption{Power spectral densities.}
-		\label{fig:spectrum}
-	\end{minipage}
-%\end{wrapfigure}
-%\end{floatingfigure}
-\end{figure}
 
 The recognition of 3D shapes is a rotation invariant task: rotating an object doesn't change its nature.
 While 3D shapes are usually represented as meshes or point clouds, representing them as spherical maps (\figref{depthmap}) naturally allows a rotation invariant treatment.
@@ -662,7 +648,7 @@ Results show that using the structure induced by the spherical geometry always y
 % * The NN indeed predicts the correct temperature at day T, and not day T-1 (baseline) even though there is small difference. \\
 % * \todo{performance of baseline} \\
 
-\section{Conclusion [0.5 pages]}
+\section{Conclusion}
 
 This work showed that DeepSphere strikes an interesting balance between desiderata for a spherical CNN.
 A single parameter, the number of neighbors a pixel is connected to in the graph, controls the tradeoff between \todo{performance and efficiency}.
