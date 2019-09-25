@@ -795,7 +795,7 @@ We start by proving that for smooth functions, the sum converges toward an integ
 \begin{prop}\label{prop:1}
 	For an equal area sampling $\{x_i\in\S^2\}_{i=0}^{n-1}: A_i=A_j \forall i,j$ of the sphere it is true that for all $f: \S^2 \rightarrow \R$ Lipschitz with respect to the Euclidean distance $\|\cdot\|$ with Lipschitz constant $C_f$
 	\begin{equation*}
-	\left| \int_{\S^2}f({ x})\text{d}{\mu(x)} - \frac{1}{n}\sum_i f( x_i)\right|\leq \mathcal L_fd^{(n)}.	    
+	\left| \int_{\S^2}f({ x})\text{d}{\mu(x)} - \frac{1}{n}\sum_i f( x_i)\right|\leq C_f d^{(n)}.	    
 	\end{equation*}
 	Furthermore, for all $y\in\S^2$ the Heat Kernel Graph Laplacian operator $L^t_n$ converges pointwise to the functional approximation of the Laplace Beltrami operator $L^t$
 	\begin{equation*}
@@ -803,12 +803,12 @@ We start by proving that for smooth functions, the sum converges toward an integ
 	\end{equation*}
 \end{prop}
 \begin{proof}
-\nati{@martino, the function should be from $\S^2$ instead of $\R^3$ here right? }
-	Assuming $f:\R^3\rightarrow \R$ is Lipschitz with Lipschitz constant $C_f$, we have
+
+	Assuming $f:\mathbb S^2 \rightarrow \R$ is Lipschitz with Lipschitz constant $C_f$, we have
 	\begin{equation*}
 	\left| \int_{\sigma_{i}}f({ x})\text{d}{\mu(x)} - \frac{1}{n}f( x_i)\right| \leq C_fd^{(n)}\frac{1}{n},	    
 	\end{equation*}
-	where $\sigma_i\in \S^2$ is the subset of the sphere corresponding to the patch arround $x_i$. Remember that the sampling is equal area.
+	where $\sigma_i\subset \S^2$ is the subset of the sphere corresponding to the patch arround $x_i$. Remember that the sampling is equal area.
 	Hence, using the triangular inequality and summing all the contributions of the $n$ patches, we obtain
 	\begin{equation*}
 	\left| \int_{\S^2}f({ x})\text{d}{\mu(x)} - \frac{1}{n}\sum_i f( x_i)\right| \leq \sum_i \left| \frac{1}{4\pi^2} \int_{\sigma_{i}}f({ x})\text{d}{\mu(x)} - \frac{1}{n}f( x_i)\right|\leq n  C_fd^{(n)}\frac{1}{n} = C_fd^{(n)}
