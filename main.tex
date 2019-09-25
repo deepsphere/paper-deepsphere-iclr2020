@@ -118,9 +118,8 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 \maketitle
 
 \begin{abstract}
-Selecting the right convolution for a spherical neural network is a delicate trade-off between its efficiency and its exactictude with respect of equivariance. DeepSphere, as a graph based method strikes as a controllable balance between these two aspects. This contribution 1) studies empirically and theoretically how the construction of its underlying graph affects equivariance, and 2) evaluates its performance on a large set of relevant problems.
+Selecting the right convolution for a spherical neural network is a delicate tradeoff between its efficiency and its exactictude with respect of equivariance. DeepSphere, as a graph based method strikes as a controllable balance between these two aspects. This contribution 1) studies empirically and theoretically how the construction of its underlying graph affects equivariance, and 2) evaluates its performance on a large set of relevant problems.
 Comparison with previous work on shape classification and climate event detection suggests that anisotropic filters are an unnecessary price to pay.
-
 
 story: there are tradeoffs when designing a spherical CNN -> DS strikes a controllable balance between efficiency / cost and exactitude / equivariance
 % DSv2 has a clear tradeoff between equivariance and computational cost
@@ -248,7 +247,7 @@ Experiments on multiple problems of practical interest show the competitiveness 
 DeepSphere leverages graph convolutions to achieve the following properties: (i) computational efficiency, (ii) sampling flexibility, and (iii) rotation equivariance (\secref{equivariance}).
 % An example architecture is shown in \figref{architecture}.
 The main idea is to model the discretized sphere as a graph of connected pixels: the length of the shortest path between two pixels is an approximation of the geodesic distance between them.
-We use the graph CNN formulation introduced in \citep{defferrard2016graphnn}, and a pooling strategy that exploits hierarchical pixelizations of the sphere.
+We use the graph CNN formulation introduced in \citep{defferrard2016graphnn} and a pooling strategy that exploits hierarchical pixelizations of the sphere.
 
 \paragraph{Sampling.}
 Given a sampling scheme $\V = \{x_i \in \S^2\}_{i=1}^n$, a function $f : \S^2 \supset F_\V \to \R$ is sampled as $T_\V(f) = \b{f}$ by the sampling operator $T_\V: L^2(\S^2) \supset F_\V \to \R^n$ defined as $\b{f}: f_i=f(x_i)$, where $F_\V$ will be specified in \secref{equivariance}.
@@ -259,7 +258,7 @@ In this work, depending on the considered application, we will use the equiangul
 From $\V$, we construct a weighted undirected graph $\G = (\V, w)$, where the elements of $\V$ are the vertices and the weight $w_{ij} = w_{ji}$ is a similarity measure between vertices $x_i$ and $x_j$.
 The combinatorial graph Laplacian $\b{L} \in \R^{n \times n}$ is defined as $\b{L} = \b{D} - \b{A}$, where $\b{A} = (w_{ij})$ is the weighted adjacency matrix, $\b{D} = (d_{ii})$ is the diagonal degree matrix, and $d_{ii} = \sum_j w_{ij}$ is the weighted degree of vertex $x_i$.
 %$\b{D} = \diag(\b{A} \b{1})$
-Given a sampling scheme $\V$, usually fixed by the application or the available measurements, the only freedom in constructing $\G$ is in setting $w$.
+Given a sampling scheme $\V$, usually fixed by the application or the available measurements, the freedom in constructing $\G$ is in setting $w$.
 \Secref{equivariance} shows how to set $w$ to minimize the equivariance error.
 %building a good graph amounts to set a good $w$.
 
