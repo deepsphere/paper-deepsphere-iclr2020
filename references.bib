@@ -1,7 +1,7 @@
 %% Spherical CNNs
 
 
-@article{defferrard2019deepsphereequiv,
+@inproceedings{defferrard2019deepsphereequiv,
   title = {DeepSphere: towards an equivariant graph-based spherical CNN},
   author = {Defferrard, Micha\"el and Perraudin, Nathana\"el and Kacprzak, Tomasz and Sgier, Raphael},
   booktitle = {ICLR Workshop on Representation Learning on Graphs and Manifolds},
@@ -15,14 +15,6 @@
   journal = {Astronomy and Computing},
   year = {2019},
   url = {https://arxiv.org/abs/1810.12186},
-}
-
-@article{bruna2013gnn,
-  title = {Spectral Networks and Locally Connected Networks on Graphs},
-  author = {Joan Bruna and Wojciech Zaremba and Arthur Szlam and Yann LeCun},
-  journal = {arXiv:1312.6203},
-  year = {2013},
-  url = {https://arxiv.org/abs/1312.6203},
 }
 
 @inproceedings{khasanova2017sphericalcnn,
@@ -102,8 +94,56 @@
 }
 
 
-%% Convergence and equivariance
+%% Graph NNs
 
+
+@article{bruna2013gnn,
+  title = {Spectral Networks and Locally Connected Networks on Graphs},
+  author = {Joan Bruna and Wojciech Zaremba and Arthur Szlam and Yann LeCun},
+  journal = {arXiv:1312.6203},
+  year = {2013},
+  url = {https://arxiv.org/abs/1312.6203},
+}
+
+@inproceedings{defferrard2016graphnn,
+  title = {Convolutional neural networks on graphs with fast localized spectral filtering},
+  author = {Defferrard, Micha{\"e}l and Bresson, Xavier and Vandergheynst, Pierre},
+  booktitle = {Advances in Neural Information Processing Systems},
+  year = {2016},
+  url = {https://arxiv.org/abs/1606.09375},
+}
+
+@article{bronstein2017review,
+  title = {Geometric deep learning: going beyond euclidean data},
+  author = {Bronstein, Michael M and Bruna, Joan and LeCun, Yann and Szlam, Arthur and Vandergheynst, Pierre},
+  journal = {IEEE Signal Processing Magazine},
+  year = {2017},
+}
+
+
+%% Spherical sampling schemes
+
+
+@article{gorski2005healpix,
+  title = {HEALPix: a framework for high-resolution discretization and fast analysis of data distributed on the sphere},
+  author = {Gorski, Krzysztof M and Hivon, Eric and Banday, AJ and Wandelt, Benjamin D and Hansen, Frode K and Reinecke, Mstvos and Bartelmann, Matthia},
+  journal = {The Astrophysical Journal},
+  year = {2005},
+}
+
+@article{gorski1999healpixprimer,
+  title = {The healpix primer},
+  author = {Gorski, Krzysztof M and Wandelt, Benjamin D and Hansen, Frode K and Hivon, Eric and Banday, Anthony J},
+  journal = {arXiv preprint astro-ph/9905275},
+  year = {1999},
+}
+
+@article{baumgardner1985icosahedral,
+  title = {Icosahedral discretization of the two-sphere},
+  author = {Baumgardner, John R and Frederickson, Paul O},
+  journal = {SIAM Journal on Numerical Analysis},
+  year = {1985},
+}
 
 @article{driscoll1994fouriersphere,
   title = {Computing Fourier Transforms and Convolutions on the 2-Sphere},
@@ -113,6 +153,10 @@
   url = {http://dx.doi.org/10.1006/aama.1994.1008},
 }
 
+
+%% Convergence and equivariance
+
+
 @inproceedings{belkin2007convergence,
   title = {Convergence of Laplacian eigenmaps},
   author = {Belkin, Mikhail and Niyogi, Partha},
@@ -121,28 +165,10 @@
 }
 
 @article{belkin2005towards,
-  title={Towards a theoretical foundation for Laplacian-based manifold methods},
-  author={Belkin, Mikhail and Niyogi, Partha},
-  journal={Journal of Computer and System Sciences},
-  volume={74},
-  number={8},
-  pages={1289--1308},
-  year={2008},
-  publisher={Elsevier}
-}
-
-
-@article{healpix,
-  title={HEALPix: A framework for high-resolution discretization and fast analysis of data distributed on the sphere},
-  author={Gorski, Krzysztof M and Hivon, Eric and Banday, Anthony J and Wandelt, Benjamin D and Hansen, Frode K and Reinecke, Mstvos and Bartelmann, Matthia},
-  year={2005},
-}
-
-@article{healpix_primer,
-  author = {Gorski, Krzysztof and Wandelt, Benjamin and Hansen, Frode and Hivon, Eric and Banday, Anthony},
-  year = {1999},
-  pages = {},
-  title = {The HEALPix Primer}
+  title = {Towards a theoretical foundation for Laplacian-based manifold methods},
+  author = {Belkin, Mikhail and Niyogi, Partha},
+  journal = {Journal of Computer and System Sciences},
+  year = {2008},
 }
 
 

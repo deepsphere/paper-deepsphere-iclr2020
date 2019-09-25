@@ -39,10 +39,14 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 \newtheorem{prop}{Proposition}
 \newtheorem*{remark}{Remark}
 \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
-\renewcommand{\b}[1]{{\bm{#1}}}   % bold symbol
+\renewcommand{\b}[1]{{\bm{#1}}}  % bold symbol
 \newcommand{\bO}{\mathcal{O}}
 \newcommand{\R}{\mathbb{R}}
 \renewcommand{\S}{\mathbb{S}}
+\newcommand{\G}{\mathcal{G}}  % graph
+\newcommand{\V}{\mathcal{V}}  % vertex set
+\newcommand{\E}{\mathcal{E}}  % edge set
+\DeclareMathOperator*{\diag}{diag}
 
 \newcommand{\fix}{\marginpar{FIX}}
 \newcommand{\new}{\marginpar{NEW}}
@@ -82,10 +86,16 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 	\item check footnotes
 	\item climate data on spectrum plot
 	\item result tables: only what supports the main message in the text, everything we have in the appendix
-	\item Unify vocabulary. Sampling, discretization, or pixelization of the sphere? Signal, maps, functions.
+	\item Unify vocabulary. Sampling, discretization, or pixelization of the sphere? Signal, maps, functions. Irregular, uneven. Coarsening, down-sampling.
+	\item check English vs American English
 	\item unify enumerations. I like (i), (ii), etc.
 	\item notation: should we use indices from 1 to n instead of 0 to n-1 for compactness?
 	\item add \citet{bruna2013gnn} in equivariance? They were the first to do a spherical CNN with graphs. Graph is built from a uniform random sampling of the sphere.
+	\item figure placements
+	\item add figure with optimal kernel widths
+	\item do the experiments on the icosahedral grid with the pooling as defined in the paper
+	\item put all the code (learning experiments from Frédérick and equivariance experiments from Martino) in a common reproducible git repository to be linked from the paper
+	\item check that NN architectures and hyper-params are correctly reported
 \end{itemize}
 }
 \newpage
@@ -206,69 +216,101 @@ Experiments on multiple problems of practical interest show the competitiveness 
 
 \section{Method [1 pages]}
 
-The gist of the method is to define the spherical convolution using a graph, and the down-sampling operation using a hierarchical pixelisation of the sphere.
-
-\todo{
-	* discuss discretizations (equiangular, HEALPix, icosahedral sphere) -> more uniform is better \\
-	* no uniform sampling: tradeoffs have to be made \\
-	* CNN vs FCN discussion (GAP for invariance) \\
-}
-
-* HEALPix: improvement from DeepSphere v1 \cite{perraudin2019deepspherecosmo} \\
-* equiangular: Renata \& Pascal \\
-
-% \cite{khasanova2017sphericalcnn} designed a discrete Laplacian that is explicitly intended to work on the sphere with the equiangular sampling. They consider the set $\mathcal G$ of all the possible graphs where each node is connected only to four of its nearest neighbours (North, Sud, West, East) and propose a weighting scheme $w_{ij}$ that minimizes the difference in the response to the polynomial spectral filter $\mathcal F = \mathbf L$ evaluated on images of the same object seen at different latitudes. In other words, they solve the minimization problem
-% \begin{equation} \label{eq:minimization frossard}
-% 	\min_{W\in\mathcal G} \left|\mathcal{F}\left(\mathbf{y}\left(v_{ e}\right)\right)-\mathcal{F}\left(\mathbf{y}\left(v_{ i}\right)\right)\right|
-% \end{equation}
-% for the adjacency matrix $W$, where $\mathbf y(v_i)$ is the image of the object on the sphere centered on the vertex $v_i$, and $\mathcal F (\mathbf y(v_e))$ is the response of the filter at the vertex $v_e$ that lies at the same longitude of the vertex $v_i$ but on the equator. In their work they prove that the optimal weights solving the minimization problem (\ref{eq:minimization frossard}) are given by weights $w_{ij}$ inversely proportional to the Euclidean distance between vertices:
-% \begin{equation} \label{eq:frossard weights}
-% 	w_{ij} = \frac{1}{\norm{x_i-x_j}}
-% \end{equation}
-
 \begin{figure}
 	\centering
 	\includegraphics[width=0.9\linewidth]{figure_architecture_v3}
 	\caption{Example architecture from \cite{perraudin2019deepspherecosmo}.
 		Global tasks need a spatial summarization: the FCN variant is rotation invariant (and accepts inputs of varying sizes), while the CNN variant is not.
 		Dense tasks (when the output lives on the sphere, like segmentation) are rotation equivariant.
+		\todo{Shall we keep this figure? It's very nice, but we could save space. ML people probably have this in mind.}
 	}
 	\label{fig:architecture}
 \end{figure}
+
+DeepSphere leverages graph convolutions to achieve the following properties: (i) computational efficiency, (ii) sampling flexibility, and (iii) rotation equivariance (\secref{equivariance}).
+An example architecture is shown in \figref{architecture}.
+The main idea is to model the discretized sphere as a graph of connected pixels: the length of the shortest path between two pixels is an approximation of the geodesic distance between them.
+We use the graph CNN formulation introduced in \citep{defferrard2016graphnn}, and a pooling strategy that exploits hierarchical pixelizations of the sphere.
+
+\paragraph{Sampling.}
+Given a sampling scheme $\V = \{x_i \in \S^2\}_{i=1}^n$, a function $f : \S^2 \supset F_\V \to \R$ is sampled as $T_\V(f) = \b{f}$ by the sampling operator $T_\V: L^2(\S^2) \supset F_\V \to \R^n$ defined as $\b{f}: f_i=f(x_i)$, where $F_\V$ will be specified in \secref{equivariance}.
+As there is no analogue of uniform sampling on the sphere, many schemes have been proposed with different tradeoffs.
+In this work, depending on the considered application, we will use the equiangular \citep{driscoll1994Fouriersphere}, HEALPix \citep{gorski2005healpix}, and icosahedral \citep{baumgardner1985icosahedral} grids.
+
+\paragraph{Graph.}
+From $\V$, we construct a weighted undirected graph $\G = (\V, w)$, where the elements of $\V$ are the vertices and the weight $w_{ij} = w_{ji}$ is a similarity measure between vertices $x_i$ and $x_j$.
+The combinatorial graph Laplacian $\b{L} \in \R^{n \times n}$ is defined as $\b{L} = \b{D} - \b{A}$, where $\b{A} = (w_{ij})$ is the weighted adjacency matrix, $\b{D} = (d_{ii})$ is the diagonal degree matrix, and $d_{ii} = \sum_j w_{ij}$ is the weighted degree of vertex $x_i$.
+%$\b{D} = \diag(\b{A} \b{1})$
+Given a sampling scheme $\V$, usually fixed by the application or the available measurements, the only freedom in constructing $\G$ is in setting $w$.
+\Secref{equivariance} shows how to set $w$ to minimize the equivariance error.
+%building a good graph amounts to set a good $w$.
+
+\paragraph{Convolution.}
+On Euclidean domains, convolutions are efficiently implemented by sliding a window in the signal domain.
+On the sphere however, there is no straightforward way to implement a convolution in the signal domain due to non-uniform samplings.
+Convolutions are most often performed in the spectral domain through a spherical harmonic transform (SHT).
+That is the approach taken by \citet{cohen2018sphericalcnn} and \citet{esteves2018sphericalcnn}, which has a computational cost of $\bO(n^{3/2})$ on isolatitude pixelizations (such as the HEALPix and equiangular grids) and $\bO(n^2)$ in general.
+On the other hand, following \citet{defferrard2016graphnn}, graph convolutions can be defined as
+\begin{equation} \label{eqn:graph_conv}
+	h(\b{L}) \b{f} = \left(\sum_{i=0}^K \alpha_i \b{L}^i\right) \b{f},
+\end{equation}
+where $K$ is the polynomial order (which corresponds to the filter's size) and $\alpha_i$ are the coefficients to be optimized during training.
+Those convolutions are used by \citet{khasanova2017sphericalcnn} and \citet{perraudin2019deepspherecosmo} and cost $\bO(n)$ operations through a recursive application of $\b{L}$.\footnote{As long as the graph is sparsified such that the number of edges, i.e., the number of non-zeros in $\b{A}$, is proportional to the number of vertices $n$. This can always be done as most weights are very small.}
+
+\paragraph{Pooling.}
+Down- and up-sampling is natural for hierarchical pixelizations,\footnote{The equiangular, HEALPix, and icosahedral schemes are of this kind.} where each subdivision divides a pixel in (an equal number of) child sub-pixels.
+To pool (down-sample), the data supported on the sub-pixels is summarized by a permutation invariant function such as the maximum or the average.
+To unpool (up-sample), the data supported on a pixel is copied to all its sub-pixels.
+% Frédérick: Dans le cas de l'icosahedron, le pooling n'est pas invariant à la permutation (on prend la valeur du 1er pixel, sans regarder les autres)
+% Frédérick: Et le unpooling est correct uniquement dans le cas de l'average pooling (mais on fait pas de max pooling dans ce cas). Encore une fois, l'icosahedron est inspiré de Jiang, où 1 seul sub-pixel prend la valeur du pixel, le reste est rempli avec des '1'
+
+\paragraph{Architecture.}
+All our NNs are fully convolutional, and employ a global average pooling (GAP) for rotation invariant tasks.
+Graph convolutional layers are always followed by batch normalization and ReLU activation, except in the last layer.
+Note that batch normalization and activation act on the elements of $\b{f}$ independently, and hence don't depend on the domain of $f$.
+%We denote graph convolutional layers with $C$ output channels as $GC_C$ and fully connected layers with $C$ output neurons as $FC_C$.
+%Those linear layers are always followed by batch normalization and ReLU activation, except in the last layer.
+%softmax normalization as $SM$
+%Pooling and unpooling by a factor $F$ are denoted as $P_F$ and $P^{-1}_F$, global average pooling as $GAP$.
 
 % \section{Notation}
 % Throughout this contribution, we denote with bold font all vectors and matrices such as $\b{L}$ the graph Laplacian and $\b{f}$ the vector of the sampled function $f$.
 % \nati{Right now, it is not True}
 % % , a weighted undirected graph $G(V, E, \mathbf W)$,
 % \nati{I do not think we should have a notation section, but should somehow write this somewhere...}
+% mdeff: I think this convention is clear enough when reading.
 
 \section{Graph convolution and equivariance [2 pages]} \label{sec:equivariance}
 %\section{Is graph convolution equivariant to rotation? [2 pages]} \label{sec:equivariance}
 
+While the graph framework offers great flexibility, its ability to faithfully represent the underlying sphere --- for graph convolutions to be rotation equivariant --- highly depends on the sampling locations and the graph construction.
+
 \subsection{Problem formulation}
-% The plan for this section
 % 0.1 Explain the sampling problem
-As the graph convolution acts on a sampled version of the function $\b{f}$ and the rotation on its continuous counterpart $f$, a sampling operator is needed.
-Given a sampling scheme $V=\{x_i\in\S^2, i=0, \dots, n\}$ of the sphere and a function $f : \S^2 \supset F_V \to \R$, the sampling operator $T_V: L^2(\S^2) \supset F\to \R^n,\  T_V(f) = \b{f}$ is defined as $\b{f}:\ f_i=f(x_i)$, where $F_V$ suitable subspace of $L^2(\S^2)$ such that $T_V$ is invertible, i.e., we can unambiguously reconstruct the function $f\in F_V$ from its sampled values $\b{f}$.
-The existence of such subspace depends on the sampling scheme $V$, and its characterization is a common problem in signal processing (\cite{driscoll1994Fouriersphere}).
-For most sampling schemes, it is not known if $F_V$ exist and hence if $T_V$ is invertible. A special case is the \textit{equiangular sampling} scheme where a sampling theorem holds, and thus we have a closed form of $T_V^{-1}$ is known. % \cite{driscoll1994Fouriersphere}
-For sampling schemes where no such sampling formula is available, we leverage the discrete SHT to reconstruct $f$ from $\bf{f}$, thus approximating $T_V^{-1}$.
-For all theoretical consideration, we assume that $F_V$ exists and $f \in F_V$.
+%As the graph convolution acts on a sampled version of the function $\b{f}$ and the rotation on its continuous counterpart $f$, a sampling operator is needed.
+
+We require $F_\V$ to be a suitable subspace of $L^2(\S^2)$ such that $T_\V$ is invertible, i.e., the function $f \in F_\V$ can be unambiguously reconstructed from its sampled values $\b{f}$.
+The existence of such a subspace depends on the sampling scheme $\V$, and its characterization is a common problem in signal processing \citep{driscoll1994Fouriersphere}.
+For most sampling schemes, it is not known if $F_\V$ exists and hence if $T_\V$ is invertible.
+A special case is the equiangular sampling scheme where a sampling theorem holds, and thus a closed form of $T_\V^{-1}$ is known. % \cite{driscoll1994Fouriersphere}
+For sampling schemes where no such sampling formula is available, we leverage the discrete SHT to reconstruct $f$ from $\b{f}$, thus approximating $T_\V^{-1}$.
+For all theoretical considerations, we assume that $F_\V$ exists and $f \in F_\V$.
 
 % 0.2 Explain why the Laplacian is so important...
 By definition, our (spherical) graph convolution is rotation equivariant, if and only if, it commutes with the rotation operator defined as $R(g), g\in SO(3)$: $R(g) f(x) = f\left(g^{-1} x \right)$.
-In the context of this work, graph convolution is performed by recursive applications of the graph Laplacian, i.e: $h(\b{L}) \b{f} = \left(\sum_{i=0}^K \alpha_i \b{L}^i\right) \b{f}$\nati{Put this equation somewhere else?}.  Hence, if $\b{L}$ commutes with the rotation operator, then, by recursion, it will also commute with the convolution $h(\b{L})$.
+In the context of this work, graph convolution is performed by recursive applications of the graph Laplacian (\eqnref{graph_conv}).
+Hence, if $\b{L}$ commutes with the rotation operator, then, by recursion, it will also commute with the convolution $h(\b{L})$.
 As a result, to simplify our analysis, we concentrate on the graph Laplacian and $h(\b{L})$ is rotational invariant if and only if
 % 0.3 Formulate the problem
 \mart{Correct formula for equivariance error and the corresponding plots as soon as you changed it!}
 \begin{equation} \label{eq:equivariance}
-	\b{R}_V(g) \b{L} \b{f} = \b{L} \b{R}_V(g) \b{f} \hspace{1cm} \forall f\in F_V \text{ and } \forall g\in SO(3),
+	\b{R}_\V(g) \b{L} \b{f} = \b{L} \b{R}_\V(g) \b{f} \hspace{1cm} \forall f\in F_\V \text{ and } \forall g\in SO(3),
 \end{equation}
-where $\b{R}_V(g) = T_V R(g) T_V^{-1}$. For practical a evaluation of the equivariance, we define the \textit{normalized equivariance error} for a signal $\b{f}$, and a  rotation $g$ as:
+where $\b{R}_\V(g) = T_\V R(g) T_\V^{-1}$. For practical a evaluation of the equivariance, we define the \textit{normalized equivariance error} for a signal $\b{f}$, and a  rotation $g$ as:
 \begin{equation} \label{eq:equivariance error}
-	E_{\b{L}}(\b{f}, g) = \left(\frac{ \norm {\b{R}_V(g) \b{L} \b{f} - \b{L} \b{R}_V(g) \b{f}} }{\norm {\b{L} \b{f}}}\right)^2,
+	E_{\b{L}}(\b{f}, g) = \left(\frac{ \norm {\b{R}_\V(g) \b{L} \b{f} - \b{L} \b{R}_\V(g) \b{f}} }{\norm {\b{L} \b{f}}}\right)^2,
 \end{equation}
-More generally for a class of signal $f \in C \subset F_V$, the \textit{mean equivariance error}
+More generally for a class of signal $f \in C \subset F_\V$, the \textit{mean equivariance error}
 \begin{equation} \label{eq:mean equivariance error}
 	\overline E_{\b{L}, C} = \mathbb E_{\b{f}\in C, g\in SO(3)} \ E_{\b{L}}(\b{f}, g).
 \end{equation}
@@ -320,7 +362,7 @@ Second, while do not have a proof for it, we strongly believe that the HEALPix s
 \paragraph{Empirical convergence.}
 
 % 3.0) explain how we obtained the figures
-We calculated numerically the equivariance error (\ref{eq:mean equivariance error}) by generating $N$ monochromatic signals and $M$ random rotations for each signal. The colors that were used were chosen in the range $(0,\  3N_{side}-1)$ to allow for an almost perfect synthesis of the rotated signals, and thus an almost perfect implementation (up to numerical errors) of the operator $\b{R}_V$ \citep{healpix_primer}.
+We calculated numerically the equivariance error (\ref{eq:mean equivariance error}) by generating $N$ monochromatic signals and $M$ random rotations for each signal. The colors that were used were chosen in the range $(0,\  3N_{side}-1)$ to allow for an almost perfect synthesis of the rotated signals, and thus an almost perfect implementation (up to numerical errors) of the operator $\b{R}_\V$ \citep{gorski1999healpixprimer}.
 
 % 3.1) explain what the figures tell us
 From 20\% error on V1, we got to less than 2\% error on V2. The number of neighbors used for V2 is $50$. More neighbors implies naturally more precision, plus a better kernel width obtained by "minimizing" the equivariance error. \mart{How to explain how we found the kernel width? Micha\"el I need your help here!!} Literally, minimizing the kernel width would lead to a completely disconnected graph. What we did was finding a heuristic law (fix neighbors, set the kernel width $\hat t$ by imposing the minimum weight to be equal to $0.1$) and then minimizing the equivariance error in the range $(\hat t / 10, \hat t\cdot 10) $. We got better that Khasanova-Frossard \mart{(check the code)} that however uses only 4 neighbors. However, it is built to explicitely minimize the equivariance error, so we expect it to be a good benchmark against which to test our construction.
@@ -363,7 +405,7 @@ From 20\% error on V1, we got to less than 2\% error on V2. The number of neighb
 		\includegraphics[height=7em]{lamp_000018}
 		\hfill
 		\includegraphics[height=7em]{lamp_000018_sphere_nobar}
-		\caption{Example of a 3D object represented as a spherical depth map.}
+		\caption{Example of a 3D object from SHREC'17 represented as a spherical depth map.}
 		\label{fig:depthmap}
 	\end{minipage}
 	\hfill
@@ -388,7 +430,7 @@ At each pixel, a ray is traced towards the center of the sphere.
 The distance from the sphere to the object forms a depth map.
 The $\cos$ and $\sin$ of the surface angle forms two normal maps.
 The same is done for the object's convex hull.\footnote{Albeit we didn't observe much improvement by using the convex hull.}
-The maps are discretized using either an equiangular grid \citep{driscoll1994Fouriersphere} with bandwidth $b = 64$ ($n = 4 b^2 = 16,384$ pixels), or an HEALPix \citep{healpix} grid with $N_{side} = 32$ ($n = 12 N_{side}^2 = 12,288$ pixels).
+The maps are discretized using either an equiangular grid with bandwidth $b = 64$ ($n = 4 b^2 = 16,384$ pixels) or an HEALPix grid with $N_{side} = 32$ ($n = 12 N_{side}^2 = 12,288$ pixels).
 
 \todo{Graph (\#neighbors), network architecture (info in the appendix, set the notation in the method section), loss, hyper-parameters. Or leave in appendix.}
 
@@ -513,7 +555,7 @@ Results are shown in \tabref{climate} (details in tables~\ref{tab:climate:accura
 The mean and standard deviation are computed over 5 runs.
 Note that while \citet{jiang2019sphericalcnn} and \citet{cohen2019gauge} use a weighted cross-entropy loss, it is not ideal for the mAP metric.
 Results from \citet{mudigonda2017climateevents} cannot be directly compared as they don't use the same input channels.
-DeepSphere achieves state-of-the-art performance, suggesting again that anisotropic filters are not necessary.
+DeepSphere achieves state-of-the-art performance, suggesting again that anisotropic filters are unnecessary.
 
 Compared to \citet{cohen2019gauge}'s conclusion, it is surprising that S2R does worse than DeepSphere (which is limited to S2S).
 Potential explanations are (i) that their icosahedral projection introduces harmful distortions, or (ii) that a larger architecture can compensate for the lack of generality. % powerfulness?
@@ -638,7 +680,7 @@ Left blank for anonymity reason.
 
 \paragraph{Preliminaries.}
 The proof of theorem \ref{theo:pointwise convergence for a regular sampling} is inspired from the work of \cite{belkin2005towards}. As a result, we start by restating some of their results.
-Given a sampling $V = \{x_i\in\mathcal M\}_{i=0}^{n-1}$ of a closed, compact and infinitely differentiable manifold $\mathcal{M}$, a smooth ($\in\mathcal{C}_\infty(\mathcal{M)}$) function  $f:\mathcal{M} \rightarrow \mathbb{R}$, and defined the vector $\b{f}$ of samples of $f$ as follows: $T_Vf=\b{f} \in \mathbb{R}^n,\ \b{f}_i = f(x_i)$.
+Given a sampling $V = \{x_i\in\mathcal M\}_{i=0}^{n-1}$ of a closed, compact and infinitely differentiable manifold $\mathcal{M}$, a smooth ($\in\mathcal{C}_\infty(\mathcal{M)}$) function  $f:\mathcal{M} \rightarrow \mathbb{R}$, and defined the vector $\b{f}$ of samples of $f$ as follows: $T_\V f = \b{f} \in \mathbb{R}^n,\ \b{f}_i = f(x_i)$.
 The proof is constructed by leveraging 3 different operators:
 \begin{itemize}
     \item The extended graph Laplacian operator is a functional $L_n^t: L^{2}(\mathcal{M}) \rightarrow L^{2}(\mathcal{M})$  is defined given a sampling $\{x_i\in\mathcal M\}_{i=0}^{n-1}$ and $y\in \mathcal{M}$  as
@@ -646,7 +688,7 @@ The proof is constructed by leveraging 3 different operators:
 	\label{eq:Heat Kernel Graph Laplacian operator}
 	 L_n^tf(y) := \frac{1}{n}\sum_{i=0}^{n-1} e^{ -\frac{\|x_i-y\|^2}{4t}} \left(f(y)-f(x_i)\right).
 	\end{equation}
-	Note that we have the following relation $\b{L}_n^t \b{f} = T_V L_n^t f$.
+	Note that we have the following relation $\b{L}_n^t \b{f} = T_\V L_n^t f$.
 	\item The functional approximation to the Laplace-Beltrami operator is a functional $L^t: L^{2}(\mathcal{M}) \rightarrow L^{2}(\mathcal{M})$ defined  as
 	\begin{equation}
     \label{eq:Functional approximation to the Laplace-Beltrami operator}
@@ -883,7 +925,7 @@ DeepSphere & 87.8 & 86.8 & 86.7 & 76.9
     \label{tab:mn40_results}
 \end{table}
 
-\subsubsection*{HEALPix architecure}
+\subsubsection*{HEALPix architecture}
 
 HEALPix sampling, input signal at Nside = 32
 
@@ -1083,7 +1125,7 @@ batch size 64, RMSprop optimizer, constant learning rate of $1 \cdot 10{-3}$, MS
 \subsubsection*{Dense task architecture}
 
 \begin{dmath}
-    [GC_{50}\, +\, BN\, +\, ReLU]\, +\, [GC_{100}\, +\, BN\, +\, ReLU]\, +\, [GC_{100}\, +\, BN\, +\, ReLU]\, +\, [GC_{1}\, +\, BN\, +\, ReLU]
+    [GC_{50}\, +\, BN\, +\, ReLU]\, +\, [GC_{100}\, +\, BN\, +\, ReLU]\, +\, [GC_{100}\, +\, BN\, +\, ReLU]\, +\, [GC_{1}]
 \end{dmath}
 
 \subsubsection*{Global task architecture}
