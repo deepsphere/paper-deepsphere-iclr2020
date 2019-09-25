@@ -78,11 +78,17 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 \maketitle
 
 \begin{abstract}
-Selecting the right convolution for a spherical neural network is a delicate tradeoff between efficiency and  exactitude with respect to equivariance. DeepSphere, as a graph based method strikes as a controllable balance between these two desiderata. 
+% We have to submit soon... The last sentence is a bit disconnected. Yep
+Designing a convolution for a spherical neural network requires a delicate tradeoff between efficiency and rotation equivariance. % exactitude with respect to equivariance.
+DeepSphere, a method based on a graph representation of the discretized sphere, strikes a controllable balance between these two desiderata.
 % Say something here about isotropy?
-This contribution (i) studies empirically and theoretically how the construction of its underlying graph affects equivariance, and (ii) evaluates its performance on a large set of relevant problems.
-
-Comparison with previous work on shape classification and climate event detection suggests that anisotropic filters are an unnecessary price to pay.
+This contribution is twofold.
+First, we study both theoretically and empirically how equivariance is affected by the underlying graph with respect to the number of pixels and neighbors.
+% 
+Second, we evaluate DeepSphere on relevant problems.
+Experiments show state-of-the-art performance and demonstrates the efficiency and flexibility of this formulation.
+In particular, comparison with previous work on shape classification and climate event detection suggests that anisotropic filters are an unnecessary price to pay. 
+%Say something about speed here... Not sure what?
 % memory, computations, implementation complexity
 \end{abstract}
 
@@ -858,7 +864,7 @@ To conclude, we see that the result obtained is of similar form than the result 
 \subsection{3D objects recognition}
 
 \Tabref{shrec17_retrieval} shows the results obtained from the competition's official evaluation script.
-\Tabref{modelnet40} shows results on ModelNet40.
+% \Tabref{modelnet40} shows results on ModelNet40.
 
 \begin{table}
     \centering
@@ -879,26 +885,26 @@ To conclude, we see that the result obtained is of similar form than the result 
     \label{tab:shrec17_retrieval}
 \end{table}
 
-\begin{table}
-    \centering
-    \begin{tabular}{l cccc}
-	\toprule
-    & no/no & z/z & SO3/SO3 & z/SO3 \\
-	\midrule
-	\citet{cohen2018sphericalcnn} & 85.0 & - & - & - \\
-	\citet{jiang2019sphericalcnn} & 90.5 & - & - & - \\
-	\citet{esteves2018sphericalcnn} & - & 88.9 & 86.9 & 76.7 \\
-	%Esteves \emph{MVCNN} & 94.69 & - & - & - \\
-	DeepSphere & 87.8 & 86.8 & 86.7 & 76.9 \\
-	\bottomrule
-    \end{tabular}
-    \caption{
-		Accuracy results on ModelNet40.
-		``no'' denotes no augmentation, ``z'' is augmented with rotations around the Z-axis, and ``SO3'' with ZYZ rotations.
-		\todo{The first is training time augmentation, the second test time augmentation.}
-	}
-    \label{tab:modelnet40}
-\end{table}
+% \begin{table}
+%     \centering
+%     \begin{tabular}{l cccc}
+% 	\toprule
+%     & no/no & z/z & SO3/SO3 & z/SO3 \\
+% 	\midrule
+% 	\citet{cohen2018sphericalcnn} & 85.0 & - & - & - \\
+% 	\citet{jiang2019sphericalcnn} & 90.5 & - & - & - \\
+% 	\citet{esteves2018sphericalcnn} & - & 88.9 & 86.9 & 76.7 \\
+% 	%Esteves \emph{MVCNN} & 94.69 & - & - & - \\
+% 	DeepSphere & 87.8 & 86.8 & 86.7 & 76.9 \\
+% 	\bottomrule
+%     \end{tabular}
+%     \caption{
+% 		Accuracy results on ModelNet40.
+% 		``no'' denotes no augmentation, ``z'' is augmented with rotations around the Z-axis, and ``SO3'' with ZYZ rotations.
+% 		\todo{The first is training time augmentation, the second test time augmentation.}
+% 	}
+%     \label{tab:modelnet40}
+% \end{table}
 
 \begin{dmath}
     [GC_{16}\, +\, BN\, +\, ReLU]_{nside32}\, +\, \textrm{Pool}\, +\, [GC_{32}\, +\, BN\, +\, ReLU]_{nside16}\, +\, \textrm{Pool}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{nside8}\, +\, \textrm{Pool}\, +\, [GC_{128}\, +\, BN\, +\, ReLU]_{nside4}\, +\,\textrm{Pool}\, +\, [GC_{256}\, +\, BN\, +\, ReLU]_{nside2}\, +\, \textrm{Pool}\, +\, GAP\, +\, FCN\, +\, \textrm{softmax}
@@ -960,7 +966,7 @@ Regarding the weighted loss, the weights are chosen with \texttt{scikit-learn} f
     \caption{
 		Results on climate event segmentation: accuracy.
 		Tropical cyclones (TC) and atmospheric rivers (AR) are the two positive classes, against the background (BG).
-		\todo{\citet{mudigonda2017climateevents} is not directly comparable as they don't use the same input feature maps.}
+		\citet{mudigonda2017climateevents} is not directly comparable as they don't use the same input feature maps.
 		Note that a non-weighted cross-entropy loss is not optimal for the accuracy metric.
 		\label{tab:climate:accuracy}
 	}
@@ -1021,6 +1027,21 @@ Regarding the weighted loss, the weights are chosen with \texttt{scikit-learn} f
 	}
 		\label{tab:climate:speed}
 \end{table}
+\pagebreak
+% \subsubsection*{DS (Jiang architecture)}
+
+DeepSphere with Jiang architecture\\
+encoder:\\
+\begin{dmath}
+    [GC_{8}\, +\, BN\, +\, ReLU]_{L5}\,+\,\textrm{Pool}\,+\, [GC_{16}\, +\, BN\, +\, ReLU]_{L4}\, +\, \textrm{Pool}\, +\, [GC_{32}\, +\, BN\, +\, ReLU]_{L3}\, +\, \textrm{Pool}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{L2}\, +\,\textrm{Pool}\, +\, [GC_{128}\, +\, BN\, +\, ReLU]_{L1}\, +\, \textrm{Pool}\,  +\, [GC_{128}\, +\, BN\, +\, ReLU]_{L0}
+\end{dmath}
+decoder:\\
+\begin{dmath}
+    \textrm{Unpool}\, +\,[GC_{128}\, +\, BN\, +\, ReLU]_{L1}\, +\, \textrm{concat}\, +\, [GC_{128}\, +\, BN\, +\, ReLU]_{L1}\, +\, \textrm{Unpool}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{L2}\, +\, \textrm{concat}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{L2}\, +\, \textrm{Unpool}\, +\, [GC_{32}\, +\, BN\, +\, ReLU]_{L3}\, +\, \textrm{concat}\, +\, [GC_{32}\, +\, BN\, +\, ReLU]_{L3}\, +\,\textrm{Unpool}\, +\, [GC_{16}\, +\, BN\, +\, ReLU]_{L4}\,+\, \textrm{concat}\, +\, [GC_{16}\, +\, BN\, +\, ReLU]_{L4}\, +\,\textrm{Unpool}\,  +\, [GC_{8}\, +\, BN\, +\, ReLU]_{L5}\,+\,\textrm{concat}\, +\, [GC_{8}\, +\, BN\, +\, ReLU]_{L5}\, + \,[GC_3]_{L5}
+\end{dmath}
+% number of parameters: 590'976  % more feat is 16 times more
+Concat is the operation that concatenate the results of the corresponding encoder layer.
+% concat the results of the corresponding encoder layer after the graph convolution. Similar to ``Jiang et al.''
 
 % \subsubsection*{DS Icosahedron architecture}
 
@@ -1035,7 +1056,7 @@ decoder:\\
 \end{dmath}
 % number of parameters: 2,2M
 
-concat is the operation that concatenate the results of the corresponding encoder layer.
+
 % Not similar to Jiang and 4 times the feature maps.
 
 % batch size 64, adam optimizer, constant learning rate of $1 \cdot 10{-3}$, cross-entropy loss, both weighted and non weighted. 
@@ -1043,20 +1064,7 @@ concat is the operation that concatenate the results of the corresponding encode
 % 30 epochs
 
 % DeepSphere with a wider architecture is exactly the same, but with 2 times the number of feature maps.
-% \subsubsection*{DS (Jiang architecture)}
 
-DeepSphere with Jiang architecture\\
-encoder:\\
-\begin{dmath}
-    [GC_{8}\, +\, BN\, +\, ReLU]_{L5}\,+\,\textrm{Pool}\,+\, [GC_{16}\, +\, BN\, +\, ReLU]_{L4}\, +\, \textrm{Pool}\, +\, [GC_{32}\, +\, BN\, +\, ReLU]_{L3}\, +\, \textrm{Pool}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{L2}\, +\,\textrm{Pool}\, +\, [GC_{128}\, +\, BN\, +\, ReLU]_{L1}\, +\, \textrm{Pool}\,  +\, [GC_{128}\, +\, BN\, +\, ReLU]_{L0}
-\end{dmath}
-decoder:\\
-\begin{dmath}
-    \textrm{Unpool}\, +\,[GC_{128}\, +\, BN\, +\, ReLU]_{L1}\, +\, \textrm{concat}\, +\, [GC_{128}\, +\, BN\, +\, ReLU]_{L1}\, +\, \textrm{Unpool}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{L2}\, +\, \textrm{concat}\, +\, [GC_{64}\, +\, BN\, +\, ReLU]_{L2}\, +\, \textrm{Unpool}\, +\, [GC_{32}\, +\, BN\, +\, ReLU]_{L3}\, +\, \textrm{concat}\, +\, [GC_{32}\, +\, BN\, +\, ReLU]_{L3}\, +\,\textrm{Unpool}\, +\, [GC_{16}\, +\, BN\, +\, ReLU]_{L4}\,+\, \textrm{concat}\, +\, [GC_{16}\, +\, BN\, +\, ReLU]_{L4}\, +\,\textrm{Unpool}\,  +\, [GC_{8}\, +\, BN\, +\, ReLU]_{L5}\,+\,\textrm{concat}\, +\, [GC_{8}\, +\, BN\, +\, ReLU]_{L5}\, + \,[GC_3]_{L5}
-\end{dmath}
-% number of parameters: 590'976  % more feat is 16 times more
-
-% concat the results of the corresponding encoder layer after the graph convolution. Similar to ``Jiang et al.''
 % \subsubsection*{Full dataset - Equiangular architecture}
 % Equiangular sampling, with a latitude bandwidth 384 and longitude bandwidth 576.
 
@@ -1087,59 +1095,59 @@ Architecture for global regression:
     [GC_{50}\, +\, BN\, +\, ReLU]\, +\, [GC_{100}\, +\, BN\, +\, ReLU]\, +\, [GC_{100}\, +\, BN\, +\, ReLU]\, +\, GAP\, +\, FCN
 \end{dmath}
 
-\clearpage
-\newpage
-
-\begin{description}
-	\item[git] \url{https://github.com/nperraud/deepsphere_v2_paper}
-	\item[overleaf] \url{https://www.overleaf.com/project/5d31d2fbd6859d54cb707212}
-\end{description}
-
-story: there are tradeoffs when designing a spherical CNN -> DS strikes a controllable balance between efficiency / cost and exactitude / equivariance
-% DSv2 has a clear tradeoff between equivariance and computational cost
-
-* method development: tool that solve a need (balance btw the desiderata: equiv vs cost)\\
-* research question: anisotropy (highlight from the start or leave it as a dangling question in the end)\\
-
-contributions:\\
-* theory $\Rightarrow$ convergence (better graph)\\
-* experiments on relevant problems (not spherical MNIST) $\Rightarrow$ check the desiderata\\
-  * surprising: anisotropy doesn't seem useful\\
-
-\todo{
-\begin{itemize}
-% 	\item shall we really name it? Or simply reference the general idea of a graph-based spherical CNN. [Yes]
-% 	\item adjacency matrix: $A$ instead of $W$? nath: I am for W
-% 	\item anonymize DeepSphere citation - Not doing that
-% 	\item climate spherical figure: inputs with TC and AR labels superimposed [Frédérick]
-	\item citet for inline, citep for parenthesis
-	\item More details on related work? Not sure we have the space. If yes, detailed comparison with related work after method.
-	\item PSD of climate data: how does it compare to cosmo and 3D objects?
-	\item align the spheres in figure 1
-	\item mention that \citep{esteves2018sphericalcnn} and \citep{cohen2018sphericalcnn} computed equivariance error
-	\item check footnotes
-	\item climate data on spectrum plot
-	\item result tables: only what supports the main message in the text, everything we have in the appendix
-	\item Unify vocabulary. Sampling, discretization, or pixelization of the sphere? Signal, maps, functions. Irregular, uneven. Coarsening, down-sampling.
-	\item check English vs American English
-	\item unify enumerations. I like (i), (ii), etc.
-	\item notation: should we use indices from 1 to n instead of 0 to n-1 for compactness?
-	\item add \citet{bruna2013gnn} in equivariance? They were the first to do a spherical CNN with graphs. Graph is built from a uniform random sampling of the sphere.
-	\item figure placements
-	\item do the experiments on the icosahedral grid with the pooling as defined in the paper
-	\item put all the code (learning experiments from Frédérick and equivariance experiments from Martino) in a common reproducible git repository to be linked from the paper
-	\item update pygsp and merge sphere branch
-	\item check that NN architectures and hyper-params are correctly reported
-	\item keep NN architecture and hyper-params in the main text? Move the paragraph to appendix if not enough space.
-	%\item shall we still site adam and batch norm? no, mainstream enough
-	\item check results for ModelNet40 and integrate in text
-	\item Check that HEALPix is introduced in the introduction
-	\item heuristic used to set the kernel width in v1. Add values to \figref{kernel_widths} for comparison.
-% 	\item check experiments section [Frédérick]: all the results numbers and NN + training details
-	\item compute the invariance error of the whole NNs (before and after training, invariance can be learned)
-	\item add it with equivariance error of the convolution to \tabref{cosmo}
-	\item insert \citet{jiang2019sphericalcnn} in intro: Need a global coordinate system (ok for planets, not projections like cosmo)
-\end{itemize}
-}
-
+%\clearpage
+%\newpage
+%
+%\begin{description}
+%	\item[git] \url{https://github.com/nperraud/deepsphere_v2_paper}
+%	\item[overleaf] \url{https://www.overleaf.com/project/5d31d2fbd6859d54cb707212}
+%\end{description}
+%
+%story: there are tradeoffs when designing a spherical CNN -> DS strikes a controllable balance between efficiency / cost and exactitude / equivariance
+%% DSv2 has a clear tradeoff between equivariance and computational cost
+%
+%* method development: tool that solve a need (balance btw the desiderata: equiv vs cost)\\
+%* research question: anisotropy (highlight from the start or leave it as a dangling question in the end)\\
+%
+%contributions:\\
+%* theory $\Rightarrow$ convergence (better graph)\\
+%* experiments on relevant problems (not spherical MNIST) $\Rightarrow$ check the desiderata\\
+%  * surprising: anisotropy doesn't seem useful\\
+%
+%\todo{
+%\begin{itemize}
+%% 	\item shall we really name it? Or simply reference the general idea of a graph-based spherical CNN. [Yes]
+%% 	\item adjacency matrix: $A$ instead of $W$? nath: I am for W
+%% 	\item anonymize DeepSphere citation - Not doing that
+%% 	\item climate spherical figure: inputs with TC and AR labels superimposed [Frédérick]
+%	\item citet for inline, citep for parenthesis
+%	\item More details on related work? Not sure we have the space. If yes, detailed comparison with related work after method.
+%	\item PSD of climate data: how does it compare to cosmo and 3D objects?
+%	\item align the spheres in figure 1
+%	\item mention that \citep{esteves2018sphericalcnn} and \citep{cohen2018sphericalcnn} computed equivariance error
+%	\item check footnotes
+%	\item climate data on spectrum plot
+%	\item result tables: only what supports the main message in the text, everything we have in the appendix
+%	\item Unify vocabulary. Sampling, discretization, or pixelization of the sphere? Signal, maps, functions. Irregular, uneven. Coarsening, down-sampling.
+%	\item check English vs American English
+%	\item unify enumerations. I like (i), (ii), etc.
+%	\item notation: should we use indices from 1 to n instead of 0 to n-1 for compactness?
+%	\item add \citet{bruna2013gnn} in equivariance? They were the first to do a spherical CNN with graphs. Graph is built from a uniform random sampling of the sphere.
+%	\item figure placements
+%	\item do the experiments on the icosahedral grid with the pooling as defined in the paper
+%	\item put all the code (learning experiments from Frédérick and equivariance experiments from Martino) in a common reproducible git repository to be linked from the paper
+%	\item update pygsp and merge sphere branch
+%	\item check that NN architectures and hyper-params are correctly reported
+%	\item keep NN architecture and hyper-params in the main text? Move the paragraph to appendix if not enough space.
+%	%\item shall we still site adam and batch norm? no, mainstream enough
+%	\item check results for ModelNet40 and integrate in text
+%	\item Check that HEALPix is introduced in the introduction
+%	\item heuristic used to set the kernel width in v1. Add values to \figref{kernel_widths} for comparison.
+%% 	\item check experiments section [Frédérick]: all the results numbers and NN + training details
+%	\item compute the invariance error of the whole NNs (before and after training, invariance can be learned)
+%	\item add it with equivariance error of the convolution to \tabref{cosmo}
+%	\item insert \citet{jiang2019sphericalcnn} in intro: Need a global coordinate system (ok for planets, not projections like cosmo)
+%\end{itemize}
+%}
+%
 \end{document}
