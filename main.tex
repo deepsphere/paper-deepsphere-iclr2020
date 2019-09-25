@@ -114,6 +114,8 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 \maketitle
 
 \begin{abstract}
+Selecting the right convolution for a spherical neural network is a delicate trade-off between its efficiency and its exactictude with respect of equivariance. DeepSphere, as a graph based method strikes as a controllable balance between these two aspect. This contribution study how the construction of its underlying graph both theoretically and empirically.
+
 
 story: there are tradeoffs when designing a spherical CNN -> DS strikes a controllable balance between efficiency / cost and exactitude / equivariance
 % DSv2 has a clear tradeoff between equivariance and computational cost
@@ -380,8 +382,9 @@ Importantly, the proof of Theorem \ref{theo:pointwise convergence for a regular 
 
 Nevetheless, it is important to keep in mind the limits of Theorem \ref{theo:pointwise convergence for a regular sampling}.
 First, it is \emph{not} a proof of equivariance of the graph convolution for a specific sampling. To construct such a proof, a stronger convergence result is needed, for example uniform convergence (instead of pointwise).
-\todo{Can we intuitively write what pointwise convergence means, and how it is more limited than spectral or uniform convergence?}
-Unfortunately, the graph laplacian does \emph{not} converges uniformly in general \cite{belkin2007convergence}. This can probably be overcome by considering a specific class of functions, such as bandlimited function.
+% \todo{Can we intuitively write what pointwise convergence means, and how it is more limited than spectral or uniform convergence?}
+We note that in the random sampling case, the graph laplacian does \emph{not} converges uniformly in general \cite{belkin2007convergence}[Sec 3], but does for a class of Lipschitz functions \cite{belkin2005towards}[Sec 6]. 
+\todo{Update once discussed with Martino}
 Second, while do not have a proof for it, we strongly believe that the HEALPix sampling does satisfy the hypothesis $d^{(n)}\leq \frac{C}{\sqrt{n}}$ of Theorem \ref{theo:pointwise convergence for a regular sampling}. This is discussed in Appendix \ref{sec: appendix: proof of theorem}.
 
 
@@ -389,7 +392,8 @@ Second, while do not have a proof for it, we strongly believe that the HEALPix s
 \paragraph{Empirical convergence.}
 
 % 3.0) explain how we obtained the figures
-We calculated numerically the equivariance error (\ref{eq:mean equivariance error}) by generating $N$ monochromatic signals and $M$ random rotations for each signal. The colors that were used were chosen in the range $(0,\  3N_{side}-1)$ to allow for an almost perfect synthesis of the rotated signals, and thus an almost perfect implementation (up to numerical errors) of the operator $\b{R}_\V$ \citep{gorski1999healpixprimer}.
+We calculated numerically the equivariance error \eqref{eq:mean equivariance error} by generating $N$ monochromatic signals and $M$ random rotations for each signal. 
+The colors that were used were chosen in the range $(0,\  3N_{side}-1)$ to allow for an almost perfect synthesis of the rotated signals, and thus an almost perfect implementation (up to numerical errors) of the operator $\b{R}_\V$ \citep{gorski1999healpixprimer}.
 
 % 3.1) explain what the figures tell us
 From 20\% error on V1, we got to less than 2\% error on V2. The number of neighbors used for V2 is $50$. More neighbors implies naturally more precision, plus a better kernel width obtained by "minimizing" the equivariance error. \mart{How to explain how we found the kernel width? Micha\"el I need your help here!!} Literally, minimizing the kernel width would lead to a completely disconnected graph. What we did was finding a heuristic law (fix neighbors, set the kernel width $\hat t$ by imposing the minimum weight to be equal to $0.1$) and then minimizing the equivariance error in the range $(\hat t / 10, \hat t\cdot 10) $. We got better that Khasanova-Frossard \mart{(check the code)} that however uses only 4 neighbors. However, it is built to explicitely minimize the equivariance error, so we expect it to be a good benchmark against which to test our construction.
@@ -521,16 +525,16 @@ The learning rate is $2 \cdot 10^{-4} \cdot 0.999^{\textrm{step}}$ and the batch
 
 \begin{table}
     \centering
-    \begin{tabular}{l c c c}
+    \begin{tabular}{l c c c c}
 		\toprule
-		& accuracy & conv. equiv. error & NN inv. error \\
+		& accuracy & conv. equiv. error & inference \\ % & training time & NN inv. error
 		\midrule
-		2D CNN baseline \citep{perraudin2019deepspherecosmo} & \todo{??} & \todo{can we?} \\
-		8 neighbors, $\hat{t} = ??$, CNN variant, \citep{perraudin2019deepspherecosmo} & \todo{??} & \todo{??} \\
-		8 neighbors, $\hat{t} = ??$, FCN variant, \citep{perraudin2019deepspherecosmo} & 83.8 & \todo{??} \\
-		8 neighbors, optimal kernel width $\hat{t} = ??$ & 87.1 & \todo{??} \\
-		20 neighbors, optimal kernel width $\hat{t} = ??$ & 91.25 & \todo{??} \\
-		40 neighbors, optimal kernel width $\hat{t} = ??$ & \todo{??} & \todo{??} \\
+		2D CNN baseline \citep{perraudin2019deepspherecosmo} & \todo{??} &  \\ % &  & \todo{can we?}
+		8 neighbors, CNN variant, \citep{perraudin2019deepspherecosmo} & \todo{??} & \todo{??} &  \\
+		8 neighbors, FCN variant, \citep{perraudin2019deepspherecosmo} & 83.8 & \todo{??} & 187\,ms \\ % & 1\,h\,45\,m
+		8 neighbors, optimal kernel width & 87.1 & \todo{??} & 185\,ms \\ % & 1\,h\,45\,m
+		20 neighbors, optimal kernel width & 91.3 & \todo{??} & 250\,ms \\ % & 2\,h\,30\,m
+		40 neighbors, optimal kernel width & 92.5 & \todo{??} & 363\,ms\\ % & 3\,h\,45\,m
 		\bottomrule
     \end{tabular}
 	\caption{
