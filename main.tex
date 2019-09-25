@@ -114,7 +114,8 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 \maketitle
 
 \begin{abstract}
-Selecting the right convolution for a spherical neural network is a delicate trade-off between its efficiency and its exactictude with respect of equivariance. DeepSphere, as a graph based method strikes as a controllable balance between these two aspect. This contribution study how the construction of its underlying graph both theoretically and empirically.
+Selecting the right convolution for a spherical neural network is a delicate trade-off between its efficiency and its exactictude with respect of equivariance. DeepSphere, as a graph based method strikes as a controllable balance between these two aspects. This contribution 1) studies empirically and theoretically how the construction of its underlying graph affects equivariance, and 2) evaluates its performance on a large set of relevant problems.
+Comparison with previous work on shape classification and climate event detection suggests that anisotropic filters are an unnecessary price to pay.
 
 
 story: there are tradeoffs when designing a spherical CNN -> DS strikes a controllable balance between efficiency / cost and exactitude / equivariance
@@ -392,23 +393,16 @@ Second, while do not have a proof for it, we strongly believe that the HEALPix s
 \paragraph{Empirical convergence.}
 
 % 3.0) explain how we obtained the figures
-We calculated numerically the equivariance error \eqref{eq:mean equivariance error} by generating $N$ monochromatic signals and $M$ random rotations for each signal. 
-The colors that were used were chosen in the range $(0,\  3N_{side}-1)$ to allow for an almost perfect synthesis of the rotated signals, and thus an almost perfect implementation (up to numerical errors) of the operator $\b{R}_\V$ \citep{gorski1999healpixprimer}.
+We calculated numerically the equivariance error \eqref{eq:mean equivariance error} by doing an empirical average on $N$ random monochromatic signals, and $M$ random rotations for each signal, for different parameter sets of DeepSphere and for the graph of Khasanova, Frossard. Results are in figure \ref{fig:equivariance_error}.
+The frequencies of the monochromatic signals, on the x axis in figure \ref{fig:equivariance_error}, were chosen in the range $(0,\  3N_{side}-1)$ to allow for an almost perfect synthesis of the sampled signals, and thus an almost perfect implementation (up to numerical errors) of the operator $\b{R}_\V$ in equation \eqref{eq:mean equivariance error} \citep{gorski1999healpixprimer}. In this way all the error measured is due to imperfections in the empirical approximation of the Laplace-Beltrami operator.
 
 % 3.1) explain what the figures tell us
-From 20\% error on V1, we got to less than 2\% error on V2. The number of neighbors used for V2 is $50$. More neighbors implies naturally more precision, plus a better kernel width obtained by "minimizing" the equivariance error. \mart{How to explain how we found the kernel width? Micha\"el I need your help here!!} Literally, minimizing the kernel width would lead to a completely disconnected graph. What we did was finding a heuristic law (fix neighbors, set the kernel width $\hat t$ by imposing the minimum weight to be equal to $0.1$) and then minimizing the equivariance error in the range $(\hat t / 10, \hat t\cdot 10) $. We got better that Khasanova-Frossard \mart{(check the code)} that however uses only 4 neighbors. However, it is built to explicitely minimize the equivariance error, so we expect it to be a good benchmark against which to test our construction.
+We observe that by increasing the number of neighbors of the graph from 8 to 40, we are able to decrease the equivariance error by more than one order of magnitude. The filtering operation with the graph Laplacian of Khasanova, Frossard is by construction perfectly equivariant to rotations along the vertical axis, and is designed to minimize the filtering error of vertical displacements of the same image. While these characteristics are perfect for analysing omnidirectional images that are naturally aligned on the north-south axis, it doesn't perform well on random rotations. 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.9\linewidth]{V1.pdf}
-	\caption{V1}
-	\label{fig:deepsphereV1}
-\end{figure}
-
-\begin{figure}
-	\centering
-	\includegraphics[width=0.9\linewidth]{V2.pdf}
-	\caption{V2, 20 neighbors}
-	\label{fig:deepsphereV2}
+	\includegraphics[width=0.5\linewidth]{all_in_one.pdf}
+	\caption{Equivariance Error}
+	\label{fig:equivariance_error}
 \end{figure}
 
 
