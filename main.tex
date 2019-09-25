@@ -386,11 +386,12 @@ Second, while do not have a proof for it, we strongly believe that the HEALPix s
 \paragraph{Empirical convergence.}
 
 % 3.0) explain how we obtained the figures
-We calculated numerically the equivariance error \eqref{eq:mean equivariance error} by doing an empirical average on $N$ random monochromatic signals, and $M$ random rotations for each signal, for different parameter sets of DeepSphere and for the graph of Khasanova, Frossard. Results are in figure \ref{fig:equivariance_error}.
+We calculated numerically the equivariance error \eqref{eq:mean equivariance error} for different parameter sets of DeepSphere and for the graph of Khasanova and Frossard. We approximated equation \eqref{eq:mean equivariance error} by calculating the empirical average of the equivariance errors of $N$ random monochromatic signals on $M$ random rotations for each signal. Results are in figure \ref{fig:equivariance_error}.
 The frequencies of the monochromatic signals, on the x axis in figure \ref{fig:equivariance_error}, were chosen in the range $(0,\  3N_{side}-1)$ to allow for an almost perfect synthesis of the sampled signals, and thus an almost perfect implementation (up to numerical errors) of the operator $\b{R}_\V$ in equation \eqref{eq:mean equivariance error} \citep{gorski1999healpixprimer}. In this way all the error measured is due to imperfections in the empirical approximation of the Laplace-Beltrami operator.
 
 % 3.1) explain what the figures tell us
-We observe that by increasing the number of neighbors of the graph from 8 to 40, we are able to decrease the equivariance error by more than one order of magnitude. The filtering operation with the graph Laplacian of Khasanova, Frossard is by construction perfectly equivariant to rotations along the vertical axis, and is designed to minimize the filtering error of vertical displacements of the same image. While these characteristics are perfect for analysing omnidirectional images that are naturally aligned on the north-south axis, it doesn't perform well on random rotations. 
+We observe that by increasing the number of neighbors of the graph from 8 to 40, the equivariance error decreases by more than one order of magnitude. On the other side, by increasing the graph resolution ($N_{side}$) the equivariance error in the high frequencies decreases. The filtering operation with the graph Laplacian of Khasanova, Frossard is by construction perfectly equivariant to rotations along the vertical axis, and is designed to minimize the filtering error of vertical displacements of the same image. While these characteristics are designed for well analysing omnidirectional images, that are naturally aligned on the north-south axis, if tested on random rotations this construction shows its limits: increasing the graph resolution does not seem to improve its equivariance.
+
 
 \begin{figure}
 	\begin{minipage}{0.65\linewidth}
@@ -498,9 +499,9 @@ We used the same task, data, and setup as \citet{perraudin2019deepspherecosmo}: 
 Convergence maps represent the distribution of over- and under-densities of mass in the universe \citep[see][for a review of gravitational lensing]{bartelman2010gravitationallensing}.
 
 Graphs are built with \eqnref{weights:belkin}, $k = 8, 20, 40$ neighbors, and the corresponding optimal kernel widths $t$ given in \secref{optimal}.
-Following \citet{perraudin2019deepspherecosmo}, the NN is made of $5$ graph convolutional layers, each followed by a max pooling layer which down-samples by $4$.
-A GAP and a fully connected layer with softmax follow.
-The polynomials are all of order $K=5$ and the number of channels per layer is $16, 32, 64, 64, 64$, respectively.
+Following \citet{perraudin2019deepspherecosmo}, the NN is made of $6$ graph convolutional layers, each followed by a max pooling layer which down-samples by $4$.
+A GAP and softmax follow.
+The polynomials are all of order $K=5$ and the number of channels per layer is $16, 32, 64, 64, 64, 2$, respectively.
 The cross-entropy loss is optimized with Adam for 80 epochs.
 The learning rate is $2 \cdot 10^{-4} \cdot 0.999^{\textrm{step}}$ and the batch size is 8.
 
@@ -511,9 +512,9 @@ The learning rate is $2 \cdot 10^{-4} \cdot 0.999^{\textrm{step}}$ and the batch
 		\toprule
 		& accuracy & time \\ % & training time & NN inv. error
 		\midrule
-		\citet{perraudin2019deepspherecosmo}, 2D CNN baseline & \todo{??} & \todo{??} \\
-		\citet{perraudin2019deepspherecosmo}, CNN variant, $k=8$ & \todo{??} & \todo{??} \\
-		\citet{perraudin2019deepspherecosmo}, FCN variant, $k=8$ & 83.8 & 187\,ms \\ % & 1\,h\,45
+		\citet{perraudin2019deepspherecosmo}, 2D CNN baseline & 54.2 & 104\,ms \\
+		\citet{perraudin2019deepspherecosmo}, CNN variant, $k=8$ & 62.1 & 185\,ms \\ % & 1\,h\,45
+		\citet{perraudin2019deepspherecosmo}, FCN variant, $k=8$ & 83.8 & 185\,ms \\ % & 1\,h\,45
 		$k=8$  neighbors, $t$ from \secref{optimal} & 87.1 & 185\,ms \\ % & 1\,h\,45
 		$k=20$ neighbors, $t$ from \secref{optimal} & 91.3 & 250\,ms \\ % & 2\,h\,30
 		$k=40$ neighbors, $t$ from \secref{optimal} & 92.5 & 363\,ms \\ % & 3\,h\,45
@@ -715,10 +716,10 @@ Left blank for anonymity reason.
 
 \paragraph{Preliminaries.}
 The proof of theorem \ref{theo:pointwise convergence for a regular sampling} is inspired from the work of \cite{belkin2005towards}. As a result, we start by restating some of their results.
-Given a sampling $V = \{x_i\in\mathcal M\}_{i=0}^{n-1}$ of a closed, compact and infinitely differentiable manifold $\mathcal{M}$, a smooth ($\in\mathcal{C}_\infty(\mathcal{M)}$) function  $f:\mathcal{M} \rightarrow \mathbb{R}$, and defined the vector $\b{f}$ of samples of $f$ as follows: $T_\V f = \b{f} \in \mathbb{R}^n,\ \b{f}_i = f(x_i)$.
+Given a sampling $\V = \{x_i\in\mathcal M\}_{i=0}^{n-1}$ of a closed, compact and infinitely differentiable manifold $\mathcal{M}$, a smooth ($\in\mathcal{C}_\infty(\mathcal{M)}$) function  $f:\mathcal{M} \rightarrow \mathbb{R}$, and defined the vector $\b{f}$ of samples of $f$ as follows: $T_\V f = \b{f} \in \mathbb{R}^n,\ \b{f}_i = f(x_i)$.
 The proof is constructed by leveraging 3 different operators:
 \begin{itemize}
-    \item The extended graph Laplacian operator is a linear operator $L_n^t: L^{2}(\mathcal{M}) \rightarrow L^{2}(\mathcal{M})$  is defined given a sampling $\{x_i\in\mathcal M\}_{i=0}^{n-1}$ and $y\in \mathcal{M}$  as
+    \item The extended graph Laplacian operator is a linear operator $L_n^t: L^{2}(\mathcal{M}) \rightarrow L^{2}(\mathcal{M})$  is defined as
 	\begin{equation}
 	\label{eq:Heat Kernel Graph Laplacian operator}
 	 L_n^tf(y) := \frac{1}{n}\sum_{i=0}^{n-1} e^{ -\frac{\|x_i-y\|^2}{4t}} \left(f(y)-f(x_i)\right).
@@ -729,7 +730,7 @@ The proof is constructed by leveraging 3 different operators:
     \label{eq:Functional approximation to the Laplace-Beltrami operator}
 	L^tf(y) = \int_{\mathcal{M}} e^{-\frac{\|x-y\|^2}{4t}}\left(f(y)-f(x)\right)d\mu(x),
 	\end{equation}
-	where given $\mu$ be the uniform probability measure on the manifold $\mathcal{M}$, and let $\text{vol}(\mathcal{M})$ be the volume of $\mathcal{M}$.
+	where $\mu$ is the uniform probability measure on the manifold $\mathcal{M}$, and $\text{vol}(\mathcal{M})$ is the volume of $\mathcal{M}$.
 	\item
 	The Laplace-Beltrami operator $\Delta_{\mathcal{M}}$ is defined as the divergence of the gradient
 	\begin{equation}
@@ -740,8 +741,8 @@ The proof is constructed by leveraging 3 different operators:
 
 \end{itemize}
 
-Leveraging these three operators \cite{belkin2005towards, belkin2007convergence} have build proofs of both pointwise and spectral convergence of the extended graph Laplacian toward the Laplace-Beltrami operator.
-The proofs consists in establishing that \eqref{eq:Heat Kernel Graph Laplacian operator} converges toward \eqref{eq:Functional approximation to the Laplace-Beltrami operator} as $n\rightarrow \infty$ and \eqref{eq:Functional approximation to the Laplace-Beltrami operator} converges toward \eqref{eq:laplace-beltrami} as $t\rightarrow 0$. In particular, this second step is given by the following:
+Leveraging these three operators \cite{belkin2005towards, belkin2007convergence} have build proofs of both pointwise and spectral convergence of the extended graph Laplacian towards the Laplace-Beltrami operator in the general setting of any compact, closed and infinitely differentiable maniform $\mathcal M$ where the sampling scheme $\V$ is drawn at random on the manifold. For this reason, their results are all to be interpreted in a probabilistic sense.
+Their proofs consist in establishing that \eqref{eq:Heat Kernel Graph Laplacian operator} converges in probability towards \eqref{eq:Functional approximation to the Laplace-Beltrami operator} as $n\rightarrow \infty$ and \eqref{eq:Functional approximation to the Laplace-Beltrami operator} converges toward \eqref{eq:laplace-beltrami} as $t\rightarrow 0$. In particular, this second step is given by the following:
 \begin{prop}
 [\cite{belkin2005towards}, Proposition 4.4]
 Let $\mathcal{M}$ be a $k$-dimensional compact smooth manifold embedded in some Euclidean space $\mathbb{R}^N$, and fix $y\in\mathcal{M}$. Let $f\in\mathcal{C}_\infty(\mathcal{M)}$. Then
@@ -892,7 +893,7 @@ Theorem  \ref{theo:pointwise convergence for a regular sampling}, is then an imm
 	\end{equation*}
 	Eventually selecting $y$ as a point of the sampling, we obtain
 	\begin{equation*}
-	 \lim_{n\to\infty} \frac{|\mathbb{S}^2|}{4\pi t_n^2} \b{L}_n^{t_n} T_V f [i] =  \Delta_{\mathbb{S}^2}f(x_i)\quad \forall i=0, ..., n-1.
+	 \lim_{n\to\infty} \frac{|\mathbb{S}^2|}{4\pi t_n^2} \b{L}_n^{t_n} T_\V f [i] =  \Delta_{\mathbb{S}^2}f(x_i)\quad \forall i=0, ..., n-1.
 	\end{equation*} 
 \end{proof}
 
