@@ -122,6 +122,7 @@ contributions:\\
 	\item check experiments section [Frédérick]: all the results numbers and NN + training details
 	\item compute the invariance error of the whole NNs (before and after training, invariance can be learned)
 	\item add it with equivariance error of the convolution to \tabref{cosmo}
+	\item insert \citet{jiang2019sphericalcnn} in intro: Need a global coordinate system (ok for planets, not projections like cosmo)
 \end{itemize}
 }
 \newpage
@@ -136,12 +137,11 @@ Comparison with previous work on shape classification and climate event detectio
 
 \section{Introduction}
 
-Spherical data is found in many applications.
+Spherical data is found in many applications (\figref{examples}).
 % spherical data f: S^2 -> R, projection from R^3
 Planetary data (such as meteorological or geological measurements) and brain activity are example of intrinsically spherical data.
 The observation of the universe, LIDAR scans, and the digitalization of 3D objects are examples of projections due to observation.
-See \figref{examples}.
-In many applications, labels or variables are to be inferred from spherical data.
+Labels or variables are often to be inferred from them.
 Examples are the inference of cosmological parameters from the distribution of mass in the universe \citep{perraudin2019deepspherecosmo}, the segmentation of omnidirectional images \citep{khasanova2017sphericalcnn}, and the segmentation of cyclones from Earth observation \citep{mudigonda2017climateevents}.
 
 \begin{figure}[h]
@@ -165,15 +165,13 @@ Examples are the inference of cosmological parameters from the distribution of m
 		\label{fig:examples:ghcn:graph}
 	}
 	\caption{
-		Examples of intrinsically spherical data:
+		Examples of spherical data:
 		(a) brain activity recorded through magnetoencephalography (MEG),\protect\footnotemark
 		(b) the cosmic microwave background (CMB) temperature from \citet{planck2015overview},
 		(c) hourly precipitation from a climate simulation \citep{jiang2019sphericalcnn}, %\citep{mudigonda2017climateevents},
 		(d) daily maximum temperature from the Global Historical Climatology Network (GHCN).\protect\footnotemark
 		A rigid full-sphere pixelization is not ideal: brain activity is only measured on the scalp, the Milky Way's galactic plane masks observations, climate scientists desire a variable resolution, and the position of weather stations is arbitrary and changes over time.
-		(e) Graphs can faithfully and efficiently represent sampled spherical data by placing vertices where data has been measured.
-		%\todo{something from climate, weather?}
-		%\todo{compare ideal full-spheres (like SHREC'17 projection from Esteves, 360 from Coors) to real-world measurements?}
+		(e) Graphs can faithfully and efficiently represent sampled spherical data by placing vertices where it matters.
 		%\todo{horizontal colorbar for brain}
 	}
 	\label{fig:examples}
@@ -206,23 +204,22 @@ As neural networks (NNs) have proved to be great tools for inference, variants h
 Exploiting the locally Euclidean property of the sphere, early attempts used standard 2D convolutions on a grid discretization of the sphere \citep{boomsma2017sphericalcnn, su2017sphericalcnn, coors2018sphericalcnn}.
 While simple and efficient, those convolutions are not equivariant to rotations.
 On the other side of this tradeoff, \citet{cohen2018sphericalcnn} and \citet{esteves2018sphericalcnn} proposed to perform proper spherical convolutions through the spherical harmonic transform.
-While equivariant to rotations, those convolutions are expensive.
+While equivariant to rotations, those convolutions are expensive (\secref{method:convolution}).
 
 % On the one side, we have Cohen which is computationally very expensive but perfectly equivariant most general, on the other we have cube sphere which computationl very good but not equivariant at all. Other methods are tradedoff between these two. What is a good tradeoff? We think that DeepSphere is.
 
-As the lack of equivariance penalizes performance (\secref{exp:cosmo}) and expensive convolutions prohibit their application to some real-world problems, methods standing between those two extremes are desired.
-\citet{cohen2019gauge} proposed to reduce costs by limiting the size of the representation of the symmetry group.
+As a lack of equivariance can penalize performance (\secref{exp:cosmo}) and expensive convolutions prohibit their application to some real-world problems, methods standing between those two extremes are desired.
+\citet{cohen2019gauge} proposed to reduce costs by limiting the size of the representation of the symmetry group by projecting the data from the sphere to the icosahedron.
+The distortions introduced by this projection might however hinder performance (\secref{exp:climate}).
 % (from the continuous rotation group SO(3) to a discrete rotation group)
 % the dimensionality of feature maps is equal to the size of the irreducible representation of the symmetry group
 %As a platonic solid, it \todo{exhibits discrete rotations}.
 % the representation of its symmetry group is much smaller than SO(3)
-\todo{not all rotations, subset of SO(3)?}
-The projection of the data from the sphere to the icosahedron however introduces distortions that might hinder performance (see the experiments in \secref{exp:climate}).
-\todo{Where does Jiang fit? Need a global coordinate system (ok for planets, not projections like cosmo)}
+%\todo{not all rotations, subset of SO(3)?}
 
-Another approach represents the discretized sphere as a graph connecting pixels according to the distance between them \citep{bruna2013gnn, khasanova2017sphericalcnn, perraudin2019deepspherecosmo}.
+Another approach is to represent the discretized sphere as a graph connecting pixels according to the distance between them \citep{bruna2013gnn, khasanova2017sphericalcnn, perraudin2019deepspherecosmo}.
 While Laplacian-based graph convolutions are more efficient than spherical convolutions, they are not exactly equivariant \citep{defferrard2019deepsphereequiv}.
-In this work, we argue that graph-based spherical CNNs strike an interesting balance, with a controllable tradeoff between cost and equivariance.
+In this work, we argue that graph-based spherical CNNs strike an interesting balance, with a controllable tradeoff between cost and performance (linked to equivariance).
 Experiments on multiple problems of practical interest show the competitiveness and flexibility of this approach.
 % Furthermore, experiments show that, perhaps surprisingly and contrarily to previously published results \citep{cohen2019gauge} \todo{[Bronstein?]}, anisotropic filters might be an unnecessary price to pay.
 % This paper focuses on improving the rotation equivariance of \citet{perraudin2019deepspherecosmo}, a scalable graph-based method designed for cosmological applications.
@@ -258,7 +255,7 @@ Given a sampling scheme $\V$, usually fixed by the application or the available 
 \Secref{equivariance} shows how to set $w$ to minimize the equivariance error.
 %building a good graph amounts to set a good $w$.
 
-\paragraph{Convolution.}
+\paragraph{Convolution.} \label{sec:method:convolution}
 On Euclidean domains, convolutions are efficiently implemented by sliding a window in the signal domain.
 On the sphere however, there is no straightforward way to implement a convolution in the signal domain due to non-uniform samplings.
 Convolutions are most often performed in the spectral domain through a spherical harmonic transform (SHT).
