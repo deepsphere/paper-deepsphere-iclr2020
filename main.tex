@@ -914,7 +914,7 @@ To conclude, we see that the result obtained is of similar form than the result 
 
 The experiment with the model from \cite{jiang2019sphericalcnn} was rerun in order to obtain the AP metrics, but with a batch size of 64 instead of 256 due to GPU memory limit.
 
-Several experiments were run with different architectures for DeepSphere (DS). Jiang architecture use a similar one as \cite{jiang2019sphericalcnn}, with only the convolutional operators replaced. DeepSphere only is the original architecture giving the best results, deeper and with four times more feature maps than Jiang architecture. And DeepSphere with a wider architecture is the same with two times the number of feature maps.
+Several experiments were run with different architectures for DeepSphere (DS). Jiang architecture use a similar one as \cite{jiang2019sphericalcnn}, with only the convolutional operators replaced. DeepSphere only is the original architecture giving the best results, deeper and with four times more feature maps than Jiang architecture. And the wider architecture is the same as the previous one with two times the number of feature maps.
 
 Regarding the weighted loss, the weights are chosen with \texttt{scikit-learn} function \texttt{compute\_class\_weight} on the training set.
 
