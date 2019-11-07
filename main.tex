@@ -27,7 +27,6 @@
 \title{DeepSphere: a graph-based spherical CNN}
 %\title{DeepSphere: an efficient graph-based spherical CNN}
 %\title{DeepSphere, an efficient (& equivariant) graph-based spherical CNN}
-
 \author{Michaël Defferrard, Martino Milani \& Frédérick Gusset \\
 Institute of Electrical Engineering, EPFL, Lausanne, Switzerland \\
 \texttt{\{michael.defferrard,martino.milani,frederick.gusset\}@epfl.ch}
@@ -314,7 +313,7 @@ We analyse our proposed weighting scheme both theoretically and empirically.
 We extend the work of Belkin and Nyiogi to a sufficiently regular, deterministic sampling scheme.
 Given a sampling scheme $\V = \{x_0, \dots, x_{n-1}\}$, define $\sigma_i$ to be the patch of the surface of the sphere corresponding to $x_i$, $A_i$ its corresponding area and $d_i$ the radius of the smallest ball in $\R^3$ containing $\sigma_i$. Define $d^{(n)} := \max_{i=0, \dots, n}d_i$ and $A^{(n)}=\max_{i=0, \dots, n}A_i$.
 \begin{theorem}
-	For a sampling $\V = \{x_i\in\S^2\}_{i=0}^{n-1}$ of the sphere that is equi-area and such that $d^{(n)} \leq \frac{C}{\alpha}, \ \alpha\in (0,\linefrac{1}{2}]$, for all $f: \S^2 \rightarrow \R$ Lipschitz with respect to the Euclidean distance in $\R^3$, for all $y\in\S^2$, there exists a sequence $t_n = n^\beta$ such that 
+	For a sampling $\V = \{x_i\in\S^2\}_{i=0}^{n-1}$ of the sphere that is equi-area and such that $d^{(n)} \leq \frac{C}{n^\alpha}, \ \alpha\in (0,\linefrac{1}{2}]$, for all $f: \S^2 \rightarrow \R$ Lipschitz with respect to the Euclidean distance in $\R^3$, for all $y\in\S^2$, there exists a sequence $t_n = n^\beta$ such that 
 % 	the rescaled Heat Kernel Graph Laplacian $\frac{|\S^2|}{4\pi t_n^2}\b {L}^t_n$ converges pointwise to the Laplace Beltrami operator on the sphere $\Delta{\S^2}$  
 	\begin{equation*}
 	 \lim_{n\to\infty} \frac{|\mathbb{S}^2|}{4\pi t_n^2} \b{L}_n^{t_n} T_\V f [i] =  \Delta_{\mathbb{S}^2}f(x_i)\quad \forall i=0, ..., n-1.
@@ -749,17 +748,17 @@ We start by proving that for smooth functions, for any fixed $t$, the extended g
 	\begin{equation*}
 	\left| \int_{\sigma_{i}}f({ x})\text{d}{\mu(x)} - \frac{1}{n}f( x_i)\right| \leq C_fd^{(n)}\frac{1}{n},	    
 	\end{equation*}
-	where $\sigma_i\subset \S^2$ is the subset of the sphere corresponding to the patch arround $x_i$. Remember that the sampling is equal area.
+	where $\sigma_i\subset \S^2$ is the subset of the sphere corresponding to the patch around $x_i$. Remember that the sampling is equal area.
 	Hence, using the triangular inequality and summing all the contributions of the $n$ patches, we obtain
 	\begin{equation*}
 	\left| \int_{\S^2}f({ x})\text{d}{\mu(x)} - \frac{1}{n}\sum_i f( x_i)\right| \leq \sum_i \left| \frac{1}{4\pi^2} \int_{\sigma_{i}}f({ x})\text{d}{\mu(x)} - \frac{1}{n}f( x_i)\right|\leq n  C_fd^{(n)}\frac{1}{n} = C_fd^{(n)}
 	\end{equation*}
 	A direct application of this result leads to the following pointwise convergences
 	\begin{equation*}
-	\forall f \text{ Lipschiz,}\quad \forall y\in\S^2,  \quad\quad \frac{1}{n}\sum_i e^{-\frac{\|x_i-y\|^2}{4t}}\rightarrow   \int e^{-\frac{\|x-y\|^2}{4t}}d\mu(x) 
+	\forall f \text{ Lipschitz,}\quad \forall y\in\S^2,  \quad\quad \frac{1}{n}\sum_i e^{-\frac{\|x_i-y\|^2}{4t}}\rightarrow   \int e^{-\frac{\|x-y\|^2}{4t}}d\mu(x) 
 	\end{equation*}
     \begin{equation*}
-    \forall f \text{ Lipschiz,}\quad \forall y\in\S^2,  \quad\quad \frac{1}{n}\sum_i e^{-\frac{||x_i-y||^2}{4t}}f(x_i)\rightarrow   \int e^{-\frac{\|x-y\|^2}{4t}}f(x)d\mu(x)        
+    \forall f \text{ Lipschitz,}\quad \forall y\in\S^2,  \quad\quad \frac{1}{n}\sum_i e^{-\frac{||x_i-y||^2}{4t}}f(x_i)\rightarrow   \int e^{-\frac{\|x-y\|^2}{4t}}f(x)d\mu(x)        
     \end{equation*}
 	Definitions \ref{eq:Heat Kernel Graph Laplacian operator} and \ref{eq:Functional approximation to the Laplace-Beltrami operator} end the proof.
 \end{proof}
@@ -792,7 +791,7 @@ Using the assumption $d^{(n)}\leq \frac{C}{\sqrt{n}}$ we find
 \end{equation*}
 We now find the explicit dependence between $t$ and $C_{\phi^t_y}$
 \begin{align*}
-	C_{\phi^t_y} &= \|\partial_x\phi^t(\cdot;y)|\_\infty\\&
+	C_{\phi^t_y} &= \|\partial_x\phi^t(\cdot;y)\|_\infty\\&
 	= \|\partial_x\left(K^t(\cdot;y)f\right)\|_\infty\\&
 	= \|\partial_x K^t(\cdot;y)f + K^t(\cdot;y)\partial_x f||_\infty\\&
 	\leq \|\partial_x K^t(\cdot;y)f\|_\infty + \|K^t(\cdot;y)\partial_x f\|_\infty\\&
@@ -828,7 +827,7 @@ t(n) = n^\beta, &\beta\in(-\frac{2\alpha}{5}, 0) \\
 t(n) = n^\beta, &\beta\in(-\frac{\alpha}{2}, 0)
 \end{cases} \implies t(n) = n^\beta, \quad \beta\in(-\frac{2\alpha}{5}, 0)$.\\
 Indeed, we have\\
-$n^\alpha t^{5/2}=n^{5/2\beta+\alpha}\xrightarrow{n \to \infty} \infty$ since $\frac{5}{2}\beta+\alpha>0 \iff \beta>-\frac{2\alpha}{5}$\\
+$n^alpha t^{5/2}=n^{5/2\beta+\alpha}\xrightarrow{n \to \infty} \infty$ since $\frac{5}{2}\beta+\alpha>0 \iff \beta>-\frac{2\alpha}{5}$\\
 and $n^\alpha t^2=n^{2\beta+\alpha}\xrightarrow {n \to \infty} \infty$ since $2\beta+\alpha>0 \iff \beta>-\frac{\alpha}{2}$.\\
 As a result, for $t=n^\beta$ with $\beta\in(-\frac{1}{5}, 0)$ we have
 $\begin{cases}
@@ -838,7 +837,7 @@ $\begin{cases}
 which concludes the proof.
 \end{proof}
 
-Theorem  \ref{theo:pointwise convergence for a regular sampling}, is then an immediate consequence of Proposition \ref{prop:2} and \ref{prop:3}.
+Theorem \ref{theo:pointwise convergence for a regular sampling}, is then an immediate consequence of Proposition \ref{prop:2} and \ref{prop:3}.
 \begin{proof}[Proof of Theorem \ref{theo:pointwise convergence for a regular sampling}]
 	Thanks to Proposition \ref{prop:2} and Proposition \ref{prop:3}	we conclude that $\forall y\in\S^2 $
 	\begin{equation*}
