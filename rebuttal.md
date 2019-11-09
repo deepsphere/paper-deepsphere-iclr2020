@@ -27,9 +27,9 @@ Ref.
 ### Answer
 
 1. First of all, the operator needs to be a Laplacian (why?), excluding the single-parameter variant of GCN. The two-parameter variant is ChebNet with a polynomial order of K=1. The method scales linearly with K, which is an hyper-parameter to be set (analogous to the kernel size in classical CNNs).
-TODO: check GCN paper for the variants
+TODO{mdeff}: check GCN paper for the variants
 
-2. TODO: Don't understand the question. Read the CCN paper.
+2. TODO{mdeff}: Don't understand the question. Read the CCN paper.
 
 ## Official Blind Review #2
 
@@ -56,18 +56,20 @@ Minor:
 
 ### Answer
 
+We thank the reviewer for their time assessing our work and their feedback.
+
 "The theoretical analysis and discussion of sampling is interesting, though should be more clearly stated throughout and potentially visualized in figures."
-TODO: What should we do?
+TODO{mdeff}: What should we do?
 
 We deliberately excluded experiments on omnidirectional imagery. In our opinion, those don't possess full spherical symmetries as gravity is orienting the objects. We encourage you to check the work of Khasanova and Frossard, who explicitly designed graph-based spherical CNNs for omnidirectional imaging. In [1], they designed a graph that yields an equivariant convolution to a subgroup of SO(3). Longitudinal rotations are equivariant by construction of the equiangular sampling, and they optimized the graph for latitudinal equivariance. Their scheme is presented in section 3.2 of our paper. While their convolution is not equivariant to the whole of SO(3), that is not an issue for this application as gravity prevents objects from rotating around the third axis. It may even be beneficial. Moreover, the orientation given by gravity allows to factorize the spherical graph and design anisotropic filters [2].
 
-The choice of
-redius or kNN in uneven sampling setting
-Sparsifying the graph with a radius or kNN approach doesn't change much. Sparsification is 
+Radius or kNN graphs are means to get a sparse graph for O(n) matrix multiplication, instead of O(n²) for the full distance-based similarity graph. The choice of one or the other doesn't really matter. Sparsification can be seen as a numerical approximation that replaces small values by zeroes. The kNN scheme is often preferred in practice as the choice of k is directly linked to the computational cost, while the choice of a radius large enough to avoid disconnected vertices might include many more edges than necessary on denser areas.
 
-"A figure detailing the parameters and setup for theorem 3.1 and figure 2 would be useful." What does it mean?
+"A figure detailing the parameters and setup for theorem 3.1 and figure 2 would be useful."
+TODO{mdeff): What does it mean?
 
-We thinks the statement about the dispersion of the sampling sequence. Thanks for pointing it out.
+We fixed the statement about the dispersion of the sampling sequence. Thanks for pointing it out.
+TODO{mdeff): Nath, is he correct?
 
 [1] Renata Khasanova and Pascal Frossard. Graph-based classification of omnidirectional images. In Proceedings of the IEEE International Conference on Computer Vision, 2017.
 [2] Renata Khasanova and Pascal Frossard. Geometry Aware Convolutional Filters for Omnidirectional Images Representation. In International Conference on Machine Learning. 2019.
@@ -95,9 +97,11 @@ Cons:
 
 ### Answer
 
-Thanks for your review.
+We thank the reviewer for their time assessing our work and their feedback.
 
-Baselines: I don't think so.
+While novelty might be limited (although we'd argue that designing a good graph is not trivial), potential impact is certainly not. Researchers working with large spherical maps, in multiple fields, will benefit from the possibility to tackle their problems with a neural network.
+
+Which other baselines would you like to see? We compared with previous works that tackled the same tasks. It is difficult (and probably unfair) to adapt baselines not designed to solve those tasks.
 
 ## Official Blind Review #1
 
@@ -118,4 +122,10 @@ As a non-expert of spherical CNN, I don't understand clearly the gap between the
 
 ### Answer
 
-We have a stronger theorem that [...]. No more gap.We have a stronger theorem that [...]. No more gap.
+We thank the reviewer for their time assessing our work and their feedback.
+
+"the theoretical result is not strong enough"
+TODO(mdeff): Nath, can you answer?
+
+We have a stronger theorem that [...]. There is no more gap between Theorem 3.1 and equivariance.
+TODO{mdeff}: Nath, is it true? Do we have spectral convergence? Or uniform is sufficient? Can you complete the answer?
