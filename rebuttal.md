@@ -56,20 +56,24 @@ Minor:
 
 ### Answer
 
-We thank the reviewer for their time assessing our work and their feedback.
+We thank the reviewer for their time assessing our work and their constructive feedback.
 
 "The theoretical analysis and discussion of sampling is interesting, though should be more clearly stated throughout and potentially visualized in figures."
-TODO{mdeff}: What should we do?
+TODO{mdeff}: What should we do? 
+{nati}: I think we should say that it is beyond the scope of this paper… We already have a loooot of appendices.
 
-We deliberately excluded experiments on omnidirectional imagery. In our opinion, those don't possess full spherical symmetries as gravity is orienting the objects. We encourage you to check the work of Khasanova and Frossard, who explicitly designed graph-based spherical CNNs for omnidirectional imaging. In [1], they designed a graph that yields an equivariant convolution to a subgroup of SO(3). Longitudinal rotations are equivariant by construction of the equiangular sampling, and they optimized the graph for latitudinal equivariance. Their scheme is presented in section 3.2 of our paper. While their convolution is not equivariant to the whole of SO(3), that is not an issue for this application as gravity prevents objects from rotating around the third axis. It may even be beneficial. Moreover, the orientation given by gravity allows to factorize the spherical graph and design anisotropic filters [2].
+We deliberately excluded experiments on omnidirectional imagery. In our opinion, those don't possess full spherical symmetries as gravity is orienting the objects. We encourage the reviewer to check the work of Khasanova and Frossard, who explicitly designed graph-based spherical CNNs for omnidirectional imaging. In [1], they designed a graph that yields an equivariant convolution to a subgroup of SO(3). Longitudinal rotations are equivariant by construction of the equiangular sampling, and they optimized the graph for latitudinal equivariance. Their scheme is presented in section 3.2 of our paper. While their convolution is not equivariant to the whole of SO(3), that is not an issue for this application as gravity prevents objects from rotating around the third axis. It may even be beneficial. Moreover, the orientation given by gravity allows factorizing the spherical graph and design anisotropic filters [2].
 
-Radius or kNN graphs are means to get a sparse graph for O(n) matrix multiplication, instead of O(n²) for the full distance-based similarity graph. The choice of one or the other doesn't really matter. Sparsification can be seen as a numerical approximation that replaces small values by zeroes. The kNN scheme is often preferred in practice as the choice of k is directly linked to the computational cost, while the choice of a radius large enough to avoid disconnected vertices might include many more edges than necessary on denser areas.
+Radius or kNN graphs are means to get a sparse graph for O(n) matrix multiplication, instead of O(n²) for the full distance-based similarity graph. We believe that the choice of one or the other doesn't really matter. Sparsification can be seen as a numerical approximation that replaces small values by zeroes. The kNN scheme is often preferred in practice as the choice of k is directly linked to the computational cost, while the choice of a radius large enough to avoid disconnected vertices might include many more edges than necessary on denser areas.
 
 "A figure detailing the parameters and setup for theorem 3.1 and figure 2 would be useful."
-TODO{mdeff): What does it mean?
+TODO{mdeff): What does it mean? 
+nati: I am not sure. We might just want to ask him?
+I think he wants the value of t that we used... Hence, we should make it clear that we did not use directly theorem 3.1 to make figure 2, but that we selected value for t that lead to good results.
 
 We fixed the statement about the dispersion of the sampling sequence. Thanks for pointing it out.
 TODO{mdeff): Nath, is he correct?
+{nati}: I think our original version is correct. Given a small surface sigma_i and its corresponding point x_i, d_i defines the biggest distance to the center. Hence, we do not care if the ball contains other points surfaces. However, we should add that the ball needs to be centered in x_i. (Can you just check with Martino to be on the safe side?)
 
 [1] Renata Khasanova and Pascal Frossard. Graph-based classification of omnidirectional images. In Proceedings of the IEEE International Conference on Computer Vision, 2017.
 [2] Renata Khasanova and Pascal Frossard. Geometry Aware Convolutional Filters for Omnidirectional Images Representation. In International Conference on Machine Learning. 2019.
@@ -97,7 +101,7 @@ Cons:
 
 ### Answer
 
-We thank the reviewer for their time assessing our work and their feedback.
+We thank the reviewer for their time assessing our work and their constructive feedback.
 
 While novelty might be limited (although we'd argue that designing a good graph is not trivial), potential impact is certainly not. Researchers working with large spherical maps, in multiple fields, will benefit from the possibility to tackle their problems with a neural network.
 
@@ -122,10 +126,13 @@ As a non-expert of spherical CNN, I don't understand clearly the gap between the
 
 ### Answer
 
-We thank the reviewer for their time assessing our work and their feedback.
+We thank the reviewer for their time assessing our work and their constructive feedback.
 
 "the theoretical result is not strong enough"
-TODO(mdeff): Nath, can you answer?
+Since the first submission of the paper, we have made some progress with respect of the theoretical contributions. 
+In the new version of the paper, we add a new theorem that shows equivariance at the limit where the sampling is infinite. This new result is a pointwise convergence, meaning that for a fixed function f, RLf(x) -> LRf(x). 
+To answer the last point of the reviewer, thanks to this new result, we know that there does not exist any counterexample where Theorem 3.1 holds while having no rotational equivariance.
+(Check with Martino to be on the safe side)
 
-We have a stronger theorem that [...]. There is no more gap between Theorem 3.1 and equivariance.
 TODO{mdeff}: Nath, is it true? Do we have spectral convergence? Or uniform is sufficient? Can you complete the answer?
+{nati}: I would not speak about spectral convergence as it is complicated...
