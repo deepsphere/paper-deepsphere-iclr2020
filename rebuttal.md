@@ -26,7 +26,7 @@ Ref.
 2. Covariant Compositional Networks For Learning Graphs. ICLR'18
 
 ### Answer
-Dear Jialin Liu,
+
 Thank you for your interest and questions.
 
 1. First of all, the operator needs to be a Laplacian (why?), excluding the single-parameter variant of GCN. The two-parameter variant is ChebNet with a polynomial order of K=1. The method scales linearly with K, which is an hyper-parameter to be set (analogous to the kernel size in classical CNNs).
@@ -67,12 +67,11 @@ Minor:
 
 We thank the reviewer for their time assessing our work and their constructive feedback.
 
-We deliberately excluded experiments on omnidirectional imagery. In our opinion, those don't possess full spherical symmetries as gravity is orienting the objects. We encourage the reviewer to check the work of Khasanova and Frossard, who explicitly designed graph-based spherical CNNs for omnidirectional imaging. In [1], they designed a graph that yields an equivariant convolution to a subgroup of SO(3). Longitudinal rotations are equivariant by construction of the equiangular sampling, and they optimized the graph for latitudinal equivariance. Their scheme is presented in section 3.2 of our paper. While their convolution is not equivariant to the whole of SO(3), that is not an issue for this application as gravity prevents objects from rotating around the third axis. It may even be beneficial. Moreover, the orientation given by gravity allows factorizing the spherical graph and design anisotropic filters [2].
+We deliberately excluded experiments on omnidirectional imagery. In our opinion, those don't possess full spherical symmetries as gravity is orienting the objects. We encourage the reviewer to check the work of Khasanova and Frossard, who explicitly designed graph-based spherical CNNs for omnidirectional imaging. In [1], they designed a graph that yields an equivariant convolution to a subgroup of SO(3). Longitudinal rotations are equivariant by construction of the equiangular sampling, and they optimized the graph for latitudinal equivariance. Their scheme is presented in section 3.2 of our paper. While their convolution is not equivariant to the whole of SO(3), that is not an issue for this application as gravity prevents objects from rotating around the third axis. It may even be beneficial. Moreover, the orientation given by gravity allows to factorize the spherical graph and design anisotropic filters [2].
 
-Radius or kNN graphs are means to get a sparse graph for O(n) matrix multiplication, instead of O(n²) for the full distance-based similarity graph. We believe that the choice of one or the other doesn't really matter. Sparsification can be seen as a numerical approximation that replaces small values by zeroes. The kNN scheme is often preferred in practice as the choice of k is directly linked to the computational cost, while the choice of a radius large enough to avoid disconnected vertices might include many more edges than necessary on denser areas.
+Radius or kNN graphs are means to get a sparse graph for O(n) matrix multiplication, instead of O(n²) for the full distance-based similarity graph. We believe that the choice of one or the other doesn't really matter. Sparsification can be seen as a numerical approximation that replaces small values by zeros. The kNN scheme is often preferred in practice as the choice of k is directly linked to the computational cost, while the choice of a radius large enough to avoid disconnected vertices might include many more edges than necessary on denser areas.
 
-Thanks for pointing out an unclear statement about the dispersion of the sampling sequence. d_i should be thought of as the largest distance between the center x_i and any point on the surface sigma_i. Hence, we define d_i to be the radius of the smallest ball centered at x_i containing sigma_i. We'll clarify.
-TODO: Martino, do you approve? YES I APPROVE
+Thanks for pointing out an unclear statement about the dispersion of the sampling sequence. d_i should be understood as the largest distance between the center x_i and any point on the surface sigma_i. Hence, we define d_i to be the radius of the smallest ball centered at x_i containing sigma_i. We'll clarify.
 
 From the following two sentences, we don't understand what could be improved.
 * "The theoretical analysis and discussion of sampling is interesting, though should be more clearly stated throughout and potentially visualized in figures."
@@ -134,6 +133,4 @@ As a non-expert of spherical CNN, I don't understand clearly the gap between the
 
 We thank the reviewer for their time assessing our work and their constructive feedback.
 
-We prepared a revised manuscript, to be uploaded shortly, containing a deeper theoretical discussion closing the gap between the result Theorem 3.1 and rotation equivariance. In a small proposition, to be added after theorem 3.1, we precise mathematically the relationship between these two concepts. In short, we proved that, if theorem 3.1 holds, our graph Laplacian L commutes with any rotation operator R in the limit of infinite sampling (pointwise), i.e. LRf(x)-RLf(x) \to 0, thus answering the reviewer's concerns about this subject.
-
-
+We prepared a revised manuscript, to be uploaded shortly, containing a deeper theoretical discussion closing the gap between Theorem 3.1 and rotation equivariance. In a small proposition, to be added after theorem 3.1, we precise mathematically the relationship between these two concepts. In short, we proved that, if theorem 3.1 holds, our graph Laplacian L commutes with any rotation operator R in the limit of infinite sampling (pointwise), i.e., |LRf(x) - RLf(x)| -> 0, thus answering the reviewer's concerns about this subject.
