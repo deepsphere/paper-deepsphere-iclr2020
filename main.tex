@@ -941,7 +941,7 @@ In the work of \cite{belkin2005towards} the sampling is drawn form a uniform ran
 
 To conclude, we see that the result obtained is of similar form than the result obtained in \cite{belkin2005towards}. Given the kernel density $t(n)=n^\beta$, \cite{belkin2005towards} proved convergence in the random case for $\beta \in (-\frac{1}{4}, 0)$ and we proved convergence in the deterministic case for $\beta \in (-\frac{2\alpha}{5}, 0)$, where $\alpha \in (0, \linefrac{1}{2}]$ (for the spherical Manifold).
 
-\subsection{Proof of proposition \ref{prop:equivariance}}
+\section{Proof of proposition \ref{prop:equivariance}}
 \begin{proof}
 Fix $x\in \mathbb S^2$. Since any rotation $\mathcal R_g$ is an isometry, and the Laplacian $\Delta$ commutes with all isometries of a Riemanniann manifold \cite{shubin}, and defining $\mathcal R_g f =: f'$ for ease of notation, we can write that 
 	\begin{align*}
@@ -952,8 +952,8 @@ Fix $x\in \mathbb S^2$. Since any rotation $\mathcal R_g$ is an isometry, and th
 	
 Since $g^{-1}(x)\in\mathbb{S}^2$ and $f'$ still satisfies hypothesis, we can apply theorem \ref{theo:pointwise convergence for a regular sampling} to conclude that
 \begin{align*}
- &\seminorm{(\Ln f - \laplacian f ) (g^{-1}(x))} \to 0\\
-  &\seminorm{ \laplacian f' (x) - \Ln f'(x)}\to 0
+ &\seminorm{(\Ln f - \laplacian f ) (g^{-1}(x))} \xrightarrow{n\to\infty}0\\
+  &\seminorm{ \laplacian f' (x) - \Ln f'(x)}\xrightarrow{n\to\infty}0
 \end{align*}
 to conclude that $$\forall x\in\mathbb S^2 \quad\seminorm{\Rg \Ln f (x) - \Ln \Rg f(x) } \xrightarrow{n\to\infty}0$$
 
