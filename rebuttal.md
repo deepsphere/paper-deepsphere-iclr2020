@@ -25,8 +25,17 @@ Ref.
 2. Covariant Compositional Networks For Learning Graphs. ICLR'18
 
 ### Answer
+Dear Jialin Liu,
+Thank you for your interest and questions.
 
 1. First of all, the operator needs to be a Laplacian (why?), excluding the single-parameter variant of GCN. The two-parameter variant is ChebNet with a polynomial order of K=1. The method scales linearly with K, which is an hyper-parameter to be set (analogous to the kernel size in classical CNNs).
+For the theory
+{nati version} : Practically, we believe that any graph neural network variant may work and some might even slightly beat ChebyNet. 
+However, our equivariance theory utilizes the graph Laplacian as a base building block. 
+Hence, we do not know the theoretical properties of other GCNs such as the single parameter variant from T.K. Kipf. 
+Note that the two-parameter variant from T.K. Kipf is ChebNet with a polynomial order of K=1. 
+Eventually, the method we use scales linearly with K, which is an hyper-parameter to be set (analogous to the kernel size in classical CNNs).
+
 TODO{mdeff}: check GCN paper for the variants
 
 2. TODO{mdeff}: Don't understand the question. Read the CCN paper.
