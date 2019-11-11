@@ -29,16 +29,15 @@ Dear Jialin Liu,
 Thank you for your interest and questions.
 
 1. First of all, the operator needs to be a Laplacian (why?), excluding the single-parameter variant of GCN. The two-parameter variant is ChebNet with a polynomial order of K=1. The method scales linearly with K, which is an hyper-parameter to be set (analogous to the kernel size in classical CNNs).
-For the theory
-{nati version} : Practically, we believe that any graph neural network variant may work and some might even slightly beat ChebyNet. 
-However, our equivariance theory utilizes the graph Laplacian as a base building block. 
-Hence, we do not know the theoretical properties of other GCNs such as the single parameter variant from T.K. Kipf. 
-Note that the two-parameter variant from T.K. Kipf is ChebNet with a polynomial order of K=1. 
+TODO(mdeff): check GCN paper for the variants
+TODO(nati) my version:
+Practically, we believe that any graph neural network variant may work and some might even slightly beat ChebyNet.
+However, our equivariance theory utilizes the graph Laplacian as a base building block.
+Hence, we do not know the theoretical properties of other GCNs such as the single parameter variant from T.K. Kipf.
+Note that the two-parameter variant from T.K. Kipf is ChebNet with a polynomial order of K=1.
 Eventually, the method we use scales linearly with K, which is an hyper-parameter to be set (analogous to the kernel size in classical CNNs).
 
-TODO{mdeff}: check GCN paper for the variants
-
-2. TODO{mdeff}: Don't understand the question. Read the CCN paper.
+2. TODO(mdeff): Don't understand the question. Read the CCN paper.
 
 ## Official Blind Review #2
 
@@ -68,21 +67,25 @@ Minor:
 We thank the reviewer for their time assessing our work and their constructive feedback.
 
 "The theoretical analysis and discussion of sampling is interesting, though should be more clearly stated throughout and potentially visualized in figures."
-TODO{mdeff}: What should we do? 
-{nati}: I think we should say that it is beyond the scope of this paper… We already have a loooot of appendices.
+TODO(mdeff): What should we do?
+TODO(nati): I think we should say that it is beyond the scope of this paper… We already have a loooot of appendices.
+TODO(mdeff): I mean, I don't understand what he would like us to do.
 
 We deliberately excluded experiments on omnidirectional imagery. In our opinion, those don't possess full spherical symmetries as gravity is orienting the objects. We encourage the reviewer to check the work of Khasanova and Frossard, who explicitly designed graph-based spherical CNNs for omnidirectional imaging. In [1], they designed a graph that yields an equivariant convolution to a subgroup of SO(3). Longitudinal rotations are equivariant by construction of the equiangular sampling, and they optimized the graph for latitudinal equivariance. Their scheme is presented in section 3.2 of our paper. While their convolution is not equivariant to the whole of SO(3), that is not an issue for this application as gravity prevents objects from rotating around the third axis. It may even be beneficial. Moreover, the orientation given by gravity allows factorizing the spherical graph and design anisotropic filters [2].
 
 Radius or kNN graphs are means to get a sparse graph for O(n) matrix multiplication, instead of O(n²) for the full distance-based similarity graph. We believe that the choice of one or the other doesn't really matter. Sparsification can be seen as a numerical approximation that replaces small values by zeroes. The kNN scheme is often preferred in practice as the choice of k is directly linked to the computational cost, while the choice of a radius large enough to avoid disconnected vertices might include many more edges than necessary on denser areas.
 
 "A figure detailing the parameters and setup for theorem 3.1 and figure 2 would be useful."
-TODO{mdeff): What does it mean? 
-nati: I am not sure. We might just want to ask him?
+TODO(mdeff): What does it mean?
+TODO(nati): I am not sure. We might just want to ask him?
 I think he wants the value of t that we used... Hence, we should make it clear that we did not use directly theorem 3.1 to make figure 2, but that we selected value for t that lead to good results.
 
 We fixed the statement about the dispersion of the sampling sequence. Thanks for pointing it out.
-TODO{mdeff): Nath, is he correct?
-{nati}: I think our original version is correct. Given a small surface sigma_i and its corresponding point x_i, d_i defines the biggest distance to the center. Hence, we do not care if the ball contains other points surfaces. However, we should add that the ball needs to be centered in x_i. (Can you just check with Martino to be on the safe side?)
+TODO(mdeff): Nath, is he correct?
+TODO(nati): I think our original version is correct. Given a small surface sigma_i and its corresponding point x_i, d_i defines the biggest distance to the center. Hence, we do not care if the ball contains other points surfaces. However, we should add that the ball needs to be centered in x_i. (Can you just check with Martino to be on the safe side?)
+TODO(mdeff): Ok so if I understood correctly, d_i is the largest distance between the center x_i and any point on the surface sigma_i. (That also corresponds to what I remember from past discussions.) Martino, do you confirm? If true, we should formulate it better in the paper.
+
+A revised manuscript will be uploaded shortly.
 
 [1] Renata Khasanova and Pascal Frossard. Graph-based classification of omnidirectional images. In Proceedings of the IEEE International Conference on Computer Vision, 2017.
 [2] Renata Khasanova and Pascal Frossard. Geometry Aware Convolutional Filters for Omnidirectional Images Representation. In International Conference on Machine Learning. 2019.
@@ -112,7 +115,7 @@ Cons:
 
 We thank the reviewer for their time assessing our work and their constructive feedback.
 
-While novelty might be limited (although we'd argue that designing a good graph is not trivial), potential impact is certainly not. Researchers working with large spherical maps, in multiple fields, will benefit from the possibility to tackle their problems with a neural network.
+While novelty might be limited (although we'd argue that designing a good graph is non-trivial, if only by checking how many papers have been written on the convergence / consistency of discrete Laplacians), potential impact is certainly not. Researchers working with large spherical maps, in multiple fields, will benefit from the possibility to tackle their problems with a neural network.
 
 Which other baselines would you like to see? We compared with previous works that tackled the same tasks. It is difficult (and probably unfair) to adapt baselines not designed to solve those tasks.
 
@@ -137,11 +140,8 @@ As a non-expert of spherical CNN, I don't understand clearly the gap between the
 
 We thank the reviewer for their time assessing our work and their constructive feedback.
 
-"the theoretical result is not strong enough"
-Since the first submission of the paper, we have made some progress with respect of the theoretical contributions. 
-In the new version of the paper, we add a new theorem that shows equivariance at the limit where the sampling is infinite. This new result is a pointwise convergence, meaning that for a fixed function f, RLf(x) -> LRf(x). 
-To answer the last point of the reviewer, thanks to this new result, we know that there does not exist any counterexample where Theorem 3.1 holds while having no rotational equivariance.
-(Check with Martino to be on the safe side)
+A revised manuscript, to be uploaded shortly, contains a stronger theoretical result. The new theorem proves that for a fixed function f, RLf(x) = LRf(x) in the limit of infinite sampling. That is, it proves equivariance (in addition to convergence to the Laplace-Beltrami proved by Theorem 3.1).
 
-TODO{mdeff}: Nath, is it true? Do we have spectral convergence? Or uniform is sufficient? Can you complete the answer?
-{nati}: I would not speak about spectral convergence as it is complicated...
+Thanks to this new result, we know that there does not exist any counterexample where Theorem 3.1 holds while not having rotational equivariance.
+
+TODO(nati): check with Martino to be on the safe side
