@@ -48,6 +48,11 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 \newcommand{\G}{\mathcal{G}}  % graph
 \newcommand{\V}{\mathcal{V}}  % vertex set
 \newcommand{\E}{\mathcal{E}}  % edge set
+\newcommand{\laplacian}{\Delta_{\mathbb S^2}}
+\newcommand{\Rg}{\mathcal R_g}
+\newcommand{\seminorm}[1]{\left|#1\right|}
+\newcommand{\Ln}{L_n^{t_n}}
+
 \DeclareMathOperator*{\diag}{diag}
 
 \newcommand{\fix}{\marginpar{FIX}}
@@ -377,25 +382,41 @@ Given $k$, the optimal $t$ is found by searching for the minimizer of \eqref{eq:
 We analyse our proposed weighting scheme both theoretically and empirically.
 
 \paragraph{Theoretical convergence.}
-We extend the work of Belkin and Nyiogi to a sufficiently regular, deterministic sampling scheme.
-Given a sampling scheme $\V = \{x_0, \dots, x_{n-1}\}$, define $\sigma_i$ to be the patch of the surface of the sphere corresponding to $x_i$, $A_i$ its corresponding area and $d_i$ the radius of the smallest ball in $\R^3$ containing $\sigma_i$ and centered at $x_i$. Define $d^{(n)} := \max_{i=0, \dots, n}d_i$ and $A^{(n)}=\max_{i=0, \dots, n}A_i$.
+We extend the work of Belkin and Nyiogi to a sufficiently regular, deterministic sampling scheme. \mart{Here we insert the definition of the extended graph laplacian and of the rotation operator Rg} Following their setting, we define the extended graph Laplacian operator as a linear operator $L_n^t: L^{2}(\mathcal{M}) \rightarrow L^{2}(\mathcal{M})$ such that
+	\begin{equation}
+	\label{eq:Heat Kernel Graph Laplacian operator}
+	 L_n^tf(y) := \frac{1}{n}\sum_{i=0}^{n-1} e^{ -\frac{\|x_i-y\|^2}{4t}} \left(f(y)-f(x_i)\right).
+	\end{equation}
+Note that we have the following relation $\b{L}_n^t \b{f} = T_\V L_n^t f$.
+Given a sampling scheme $\V = \{x_0, \dots, x_{n-1}\}$, we also define $\sigma_i$ to be the patch of the surface of the sphere corresponding to $x_i$, $A_i$ its corresponding area and $d_i$ the radius of the smallest ball in $\R^3$ containing only $\sigma_i$. Define $d^{(n)} := \max_{i=0, \dots, n}d_i$ and $A^{(n)}=\max_{i=0, \dots, n}A_i$. Given any rotation $g\in SO(3)$, we define the corresponding rotation operator $\mathcal R_g$ such that for any function $f$ on the sphere 
+\begin{equation}\label{eq:rotation operator}
+\mathcal R_g f(x) := f(g^{-1}(x)).
+\end{equation}
 \begin{theorem}
 	For a sampling $\V = \{x_i\in\S^2\}_{i=0}^{n-1}$ of the sphere that is equi-area and such that $d^{(n)} \leq \frac{C}{n^\alpha}, \ \alpha\in (0,\linefrac{1}{2}]$, for all $f: \S^2 \rightarrow \R$ Lipschitz with respect to the Euclidean distance in $\R^3$, for all $y\in\S^2$, there exists a sequence $t_n = n^\beta$ such that 
 % 	the rescaled Heat Kernel Graph Laplacian $\frac{|\S^2|}{4\pi t_n^2}\b {L}^t_n$ converges pointwise to the Laplace Beltrami operator on the sphere $\Delta{\S^2}$  
 	\begin{equation*}
-	 \lim_{n\to\infty} \frac{|\mathbb{S}^2|}{4\pi t_n^2} \b{L}_n^{t_n} T_\V f [i] =  \Delta_{\mathbb{S}^2}f(x_i)\quad \forall i=0, ..., n-1.
+		\lim_{n\to\infty}\frac{1}{4\pi t_n^2} L_n^{t_n}f(y) = \frac{1}{|\S^2|}\triangle_{\S^2}f(y)
 	\end{equation*} 
 % 	for $n\to\infty$.
 	\label{theo:pointwise convergence for a regular sampling}
 \end{theorem}
-As a direct implication of this theorem, $\b{L}$ converges pointwisely toward the Laplace-Beltrami operator ($\Delta_{\S^2}$). This operator commutes with rotation and hence this convergence is a strong hint for equivariance.
+As a direct implication of this theorem, $\b{L}$ converges pointwisely toward the Laplace-Beltrami operator ($\Delta_{\S^2}$) in the sense explained in \cite{belkin2007convergence}. \mart{here we insert the link between consistency and equivariance} This operator commutes with rotation and hence this convergence is a strong hint for equivariance, as formalized in the following proposition.
+%%%%%%%%%%%%%%%%%%%%%%%  link between consistency and equivariance %%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{prop}\label{prop:equivariance}
+Under the hypothesis of theorem \ref{theo:pointwise convergence for a regular sampling}, we have the following pointwise convergence
+\begin{equation*}
+\forall x\in\mathbb S^2\quad\left| \mathcal R_g L_n^{t_n} f (x) - L_n^{t_n} \mathcal R_g f(x) \right| \xrightarrow{n\to\infty}0.
+\end{equation*}
+\end{prop}
+%%%%%%%%%%%%%%%%%%%%%%% end of link between consistency and equivariance %%%%%%%%%%%%%%%%%%%%%%%%%
+
 Importantly, the proof of Theorem \ref{theo:pointwise convergence for a regular sampling} in Appendix \ref{sec: appendix: proof of theorem} inspires us in the construction of our graph Laplacian. It is inspirational for the graph construction and for how the parameter $t$ needs to be adjusted with respect to the number of points $n$.
 
-Nevetheless, it is important to keep in mind the limits of Theorem \ref{theo:pointwise convergence for a regular sampling}.
-First, it is \emph{not} a proof of equivariance of the graph convolution for a specific sampling. To construct such a proof, a stronger convergence result is needed, for example uniform convergence (instead of pointwise).
+Nevertheless, it is important to keep in mind the limits of Theorem \ref{theo:pointwise convergence for a regular sampling}.
+First, it is \emph{not} a proof of equivariance of the graph convolution for a specific sampling. To construct such a proof, a stronger convergence result is needed, for example spectral convergence (instead of pointwise).
 % \todo{Can we intuitively write what pointwise convergence means, and how it is more limited than spectral or uniform convergence?}
-We note that in the random sampling case, the graph laplacian does \emph{not} converges uniformly in general \cite[Sec. 3]{belkin2007convergence}, but does for a class of Lipschitz functions \cite[Sec. 6]{belkin2005towards}.  Second, while do not have a formal proof for it, we strongly believe that the HEALPix sampling does satisfy the hypothesis $d^{(n)}\leq \frac{C}{n^\alpha}, \ \alpha\in (0,\linefrac{1}{2}]$ with $\alpha$ very close or equal to $\linefrac{1}{2}$. The empirical results discussed in the next paragraph also point in this direction. This is further discussed in Appendix \ref{sec: appendix: proof of theorem}.
-
+We note that in the random sampling case, the graph laplacian does \emph{not} converge uniformly in general \cite[Sec. 3]{belkin2007convergence}, but does for a class of Lipschitz functions \cite[Sec. 6]{belkin2005towards}.  Second, while do not have a formal proof for it, we strongly believe that the HEALPix sampling does satisfy the hypothesis $d^{(n)}\leq \frac{C}{n^\alpha}, \ \alpha\in (0,\linefrac{1}{2}]$ with $\alpha$ very close or equal to $\linefrac{1}{2}$. The empirical results discussed in the next paragraph also points in this direction. This is further discussed in Appendix \ref{sec: appendix: proof of theorem}.
 
 % 3) Show experimental results
 \paragraph{Empirical convergence.}
@@ -739,12 +760,11 @@ The proof of theorem \ref{theo:pointwise convergence for a regular sampling} is 
 Given a sampling $\V = \{x_i\in\mathcal M\}_{i=0}^{n-1}$ of a closed, compact and infinitely differentiable manifold $\mathcal{M}$, a smooth ($\in\mathcal{C}_\infty(\mathcal{M)}$) function  $f:\mathcal{M} \rightarrow \mathbb{R}$, and defined the vector $\b{f}$ of samples of $f$ as follows: $T_\V f = \b{f} \in \mathbb{R}^n,\ \b{f}_i = f(x_i)$.
 The proof is constructed by leveraging 3 different operators:
 \begin{itemize}
-    \item The extended graph Laplacian operator is a linear operator $L_n^t: L^{2}(\mathcal{M}) \rightarrow L^{2}(\mathcal{M})$  is defined as
+    \item The extended graph Laplacian operator
 	\begin{equation}
 	\label{eq:Heat Kernel Graph Laplacian operator}
 	 L_n^tf(y) := \frac{1}{n}\sum_{i=0}^{n-1} e^{ -\frac{\|x_i-y\|^2}{4t}} \left(f(y)-f(x_i)\right).
 	\end{equation}
-	Note that we have the following relation $\b{L}_n^t \b{f} = T_\V L_n^t f$.
 	\item The functional approximation to the Laplace-Beltrami operator is a linear operator $L^t: L^{2}(\mathcal{M}) \rightarrow L^{2}(\mathcal{M})$ defined  as
 	\begin{equation}
     \label{eq:Functional approximation to the Laplace-Beltrami operator}
@@ -911,10 +931,6 @@ Theorem \ref{theo:pointwise convergence for a regular sampling}, is then an imme
 	\begin{equation*}
 	\lim_{n\to\infty}\frac{1}{4\pi t_n^2} L_n^{t_n}f(y) =  \lim_{n\to\infty}\frac{1}{4\pi t_n^2} L^{t_n}f(y) = \frac{1}{|\S^2|}\triangle_{\S^2}f(y)
 	\end{equation*}
-	Eventually selecting $y$ as a point of the sampling, we obtain
-	\begin{equation*}
-	 \lim_{n\to\infty} \frac{|\mathbb{S}^2|}{4\pi t_n^2} \b{L}_n^{t_n} T_\V f [i] =  \Delta_{\mathbb{S}^2}f(x_i)\quad \forall i=0, ..., n-1.
-	\end{equation*} 
 \end{proof}
 
 % I don't really have time to think clearly about this sorry
@@ -924,6 +940,24 @@ Theorem \ref{theo:pointwise convergence for a regular sampling}, is then an imme
 In the work of \cite{belkin2005towards} the sampling is drawn form a uniform random distribution on the sphere, and their proof heavily relies on the uniformity properties of the distribution from which the sampling is drawn. In our case the sampling is deterministic, and this is indeed a problem that we need to overcome by imposing the regularity conditions above.
 
 To conclude, we see that the result obtained is of similar form than the result obtained in \cite{belkin2005towards}. Given the kernel density $t(n)=n^\beta$, \cite{belkin2005towards} proved convergence in the random case for $\beta \in (-\frac{1}{4}, 0)$ and we proved convergence in the deterministic case for $\beta \in (-\frac{2\alpha}{5}, 0)$, where $\alpha \in (0, \linefrac{1}{2}]$ (for the spherical Manifold).
+
+\subsection{Proof of proposition \ref{prop:equivariance}}
+\begin{proof}
+Fix $x\in \mathbb S^2$. Since any rotation $\mathcal R_g$ is an isometry, and the Laplacian $\Delta$ commutes with all isometries of a Riemanniann manifold \cite{shubin}, and defining $\mathcal R_g f =: f'$ for ease of notation, we can write that 
+	\begin{align*}
+			\seminorm{\Rg \Ln f (x) - \Ln \Rg f(x) } &\leq \seminorm{\Rg \Ln f (x) - \Rg \laplacian f(x)} + \seminorm{\Rg \laplacian f (x) - \Ln \Rg f(x)} =\\
+			& =\seminorm{\Rg (\Ln f - \laplacian f ) (x)} + \seminorm{ \laplacian f' (x) - \Ln f'(x)} \leq \\
+			& \leq \seminorm{(\Ln f - \laplacian f ) (g^{-1}(x))} + \seminorm{ \laplacian f' (x) - \Ln f'(x)}
+	\end{align*}
+	
+Since $g^{-1}(x)\in\mathbb{S}^2$ and $f'$ still satisfies hypothesis, we can apply theorem \ref{theo:pointwise convergence for a regular sampling} to conclude that
+\begin{align*}
+ &\seminorm{(\Ln f - \laplacian f ) (g^{-1}(x))} \to 0\\
+  &\seminorm{ \laplacian f' (x) - \Ln f'(x)}\to 0
+\end{align*}
+to conclude that $$\forall x\in\mathbb S^2 \quad\seminorm{\Rg \Ln f (x) - \Ln \Rg f(x) } \xrightarrow{n\to\infty}0$$
+
+\end{proof}
 
 
 \section{Experimental details}
