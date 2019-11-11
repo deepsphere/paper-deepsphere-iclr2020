@@ -134,6 +134,6 @@ As a non-expert of spherical CNN, I don't understand clearly the gap between the
 
 We thank the reviewer for their time assessing our work and their constructive feedback.
 
-We prepared a revised manuscript, to be uploaded shortly, containing a deeper theoretical discussion about the gap between the result Theorem 3.1 and rotation equivariance. In a small proposition, to be added after theorem 3.1, we precise mathematically the relationship between these two concepts. In short, we proved that, if theorem 3.1 holds, our graph Laplacian L commutes with any rotation operator R in the limit of infinite sampling (pointwise), i.e. LRf(x)-RLf(x) \to 0, thus answering the reviewer's concerns about this subject.
+We prepared a revised manuscript, to be uploaded shortly, containing a deeper theoretical discussion closing the gap between the result Theorem 3.1 and rotation equivariance. In a small proposition, to be added after theorem 3.1, we precise mathematically the relationship between these two concepts. In short, we proved that, if theorem 3.1 holds, our graph Laplacian L commutes with any rotation operator R in the limit of infinite sampling (pointwise), i.e. LRf(x)-RLf(x) \to 0, thus answering the reviewer's concerns about this subject.
 
 
