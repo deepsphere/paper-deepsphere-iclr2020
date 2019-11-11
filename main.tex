@@ -394,7 +394,7 @@ Given a sampling scheme $\V = \{x_0, \dots, x_{n-1}\}$, we also define $\sigma_i
 \mathcal R_g f(x) := f(g^{-1}(x)).
 \end{equation}
 \begin{theorem}
-	For a sampling $\V = \{x_i\in\S^2\}_{i=0}^{n-1}$ of the sphere that is equi-area and such that $d^{(n)} \leq \frac{C}{n^\alpha}, \ \alpha\in (0,\linefrac{1}{2}]$, for all $f: \S^2 \rightarrow \R$ Lipschitz with respect to the Euclidean distance in $\R^3$, for all $y\in\S^2$, there exists a sequence $t_n = n^\beta$ such that 
+	For a sampling $\V = \{x_i\in\S^2\}_{i=0}^{n-1}$ of the sphere that is equi-area and such that $d^{(n)} \leq \frac{C}{n^\alpha}, \ \alpha\in (0,\linefrac{1}{2}]$, for all $f: \S^2 \rightarrow \R$ Lipschitz with respect to the Euclidean distance in $\R^3$, for all $y\in\S^2$, there exists a sequence $t_n = n^\beta$, $\beta\in\mathbb R$ such that 
 % 	the rescaled Heat Kernel Graph Laplacian $\frac{|\S^2|}{4\pi t_n^2}\b {L}^t_n$ converges pointwise to the Laplace Beltrami operator on the sphere $\Delta{\S^2}$  
 	\begin{equation*}
 		\lim_{n\to\infty}\frac{1}{4\pi t_n^2} L_n^{t_n}f(y) = \frac{1}{|\S^2|}\triangle_{\S^2}f(y)
@@ -402,7 +402,7 @@ Given a sampling scheme $\V = \{x_0, \dots, x_{n-1}\}$, we also define $\sigma_i
 % 	for $n\to\infty$.
 	\label{theo:pointwise convergence for a regular sampling}
 \end{theorem}
-As a direct implication of this theorem, $\b{L}$ converges pointwisely toward the Laplace-Beltrami operator ($\Delta_{\S^2}$) in the sense explained in \cite{belkin2007convergence}. \mart{here we insert the link between consistency and equivariance} This operator commutes with rotation and hence this convergence is a strong hint for equivariance, as formalized in the following proposition.
+As a direct implication of this theorem, $\b{L}$ converges pointwise towards the Laplace-Beltrami operator ($\Delta_{\S^2}$) in the sense explained in \cite{belkin2007convergence}. \mart{here we insert the link between consistency and equivariance} This operator commutes with rotation and hence this convergence is a strong hint for equivariance, as formalized in the following proposition.
 %%%%%%%%%%%%%%%%%%%%%%%  link between consistency and equivariance %%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{prop}\label{prop:equivariance}
 Under the hypothesis of theorem \ref{theo:pointwise convergence for a regular sampling}, we have the following pointwise convergence

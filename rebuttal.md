@@ -4,7 +4,8 @@
 
 We uploaded an improved manuscript thanks to the reviewers' comments.
 The following has been updated:
-* New proof
+* Slightly (very slightly) different statement of theorem 3.1
+* new proposition (now called prop 1) formalizing the relation between theorem 3.1 and rotation equivariance
 
 A link to a public git repository containing all the code will be added to the camera-ready version.
 
@@ -71,7 +72,7 @@ We deliberately excluded experiments on omnidirectional imagery. In our opinion,
 Radius or kNN graphs are means to get a sparse graph for O(n) matrix multiplication, instead of O(n²) for the full distance-based similarity graph. We believe that the choice of one or the other doesn't really matter. Sparsification can be seen as a numerical approximation that replaces small values by zeroes. The kNN scheme is often preferred in practice as the choice of k is directly linked to the computational cost, while the choice of a radius large enough to avoid disconnected vertices might include many more edges than necessary on denser areas.
 
 Thanks for pointing out an unclear statement about the dispersion of the sampling sequence. d_i should be thought of as the largest distance between the center x_i and any point on the surface sigma_i. Hence, we define d_i to be the radius of the smallest ball centered at x_i containing sigma_i. We'll clarify.
-TODO: Martino, do you approve?
+TODO: Martino, do you approve? YES I APPROVE
 
 From the following two sentences, we don't understand what could be improved.
 * "The theoretical analysis and discussion of sampling is interesting, though should be more clearly stated throughout and potentially visualized in figures."
@@ -133,8 +134,6 @@ As a non-expert of spherical CNN, I don't understand clearly the gap between the
 
 We thank the reviewer for their time assessing our work and their constructive feedback.
 
-A revised manuscript, to be uploaded shortly, contains a stronger theoretical result. We proved that for a fixed function f, RLf(x) = LRf(x) in the limit of infinite sampling. That is, we proved equivariance (using the convergence to the Laplace-Beltrami proved by Theorem 3.1).
+We prepared a revised manuscript, to be uploaded shortly, containing a deeper theoretical discussion about the gap between the result Theorem 3.1 and rotation equivariance. In a small proposition, to be added after theorem 3.1, we precise mathematically the relationship between these two concepts. In short, we proved that, if theorem 3.1 holds, our graph Laplacian L commutes with any rotation operator R in the limit of infinite sampling (pointwise), i.e. LRf(x)-RLf(x) \to 0, thus answering the reviewer's concerns about this subject.
 
-Thanks to this new result, there is no gap anymore. Hence, there does not exist any counterexample where Theorem 3.1 holds while not having rotational equivariance.
 
-TODO: Martino, do you approve?
