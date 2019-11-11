@@ -388,7 +388,7 @@ We extend the work of Belkin and Nyiogi to a sufficiently regular, deterministic
 	 L_n^tf(y) := \frac{1}{n}\sum_{i=0}^{n-1} e^{ -\frac{\|x_i-y\|^2}{4t}} \left(f(y)-f(x_i)\right).
 	\end{equation}
 Note that we have the following relation $\b{L}_n^t \b{f} = T_\V L_n^t f$.
-Given a sampling scheme $\V = \{x_0, \dots, x_{n-1}\}$, we also define $\sigma_i$ to be the patch of the surface of the sphere corresponding to $x_i$, $A_i$ its corresponding area and $d_i$ the radius of the smallest ball in $\R^3$ containing only $\sigma_i$. Define $d^{(n)} := \max_{i=0, \dots, n}d_i$ and $A^{(n)}=\max_{i=0, \dots, n}A_i$. Given any rotation $g\in SO(3)$, we define the corresponding rotation operator $\mathcal R_g$ such that for any function $f$ on the sphere 
+Given a sampling scheme $\V = \{x_0, \dots, x_{n-1}\}$, we also define $\sigma_i$ to be the patch of the surface of the sphere corresponding to $x_i$, $A_i$ its corresponding area and $d_i$ the radius of the smallest ball in $\R^3$ containing $\sigma_i$ and centered at $x_i$. Define $d^{(n)} := \max_{i=0, \dots, n}d_i$ and $A^{(n)}=\max_{i=0, \dots, n}A_i$. Given any rotation $g\in SO(3)$, we define the corresponding rotation operator $\mathcal R_g$ such that for any function $f$ on the sphere 
 \begin{equation}\label{eq:rotation operator}
 \mathcal R_g f(x) := f(g^{-1}(x)).
 \end{equation}

@@ -66,24 +66,17 @@ Minor:
 
 We thank the reviewer for their time assessing our work and their constructive feedback.
 
-"The theoretical analysis and discussion of sampling is interesting, though should be more clearly stated throughout and potentially visualized in figures."
-TODO(mdeff): What should we do?
-TODO(nati): I think we should say that it is beyond the scope of this paper… We already have a loooot of appendices.
-TODO(mdeff): I mean, I don't understand what he would like us to do.
-
 We deliberately excluded experiments on omnidirectional imagery. In our opinion, those don't possess full spherical symmetries as gravity is orienting the objects. We encourage the reviewer to check the work of Khasanova and Frossard, who explicitly designed graph-based spherical CNNs for omnidirectional imaging. In [1], they designed a graph that yields an equivariant convolution to a subgroup of SO(3). Longitudinal rotations are equivariant by construction of the equiangular sampling, and they optimized the graph for latitudinal equivariance. Their scheme is presented in section 3.2 of our paper. While their convolution is not equivariant to the whole of SO(3), that is not an issue for this application as gravity prevents objects from rotating around the third axis. It may even be beneficial. Moreover, the orientation given by gravity allows factorizing the spherical graph and design anisotropic filters [2].
 
 Radius or kNN graphs are means to get a sparse graph for O(n) matrix multiplication, instead of O(n²) for the full distance-based similarity graph. We believe that the choice of one or the other doesn't really matter. Sparsification can be seen as a numerical approximation that replaces small values by zeroes. The kNN scheme is often preferred in practice as the choice of k is directly linked to the computational cost, while the choice of a radius large enough to avoid disconnected vertices might include many more edges than necessary on denser areas.
 
-"A figure detailing the parameters and setup for theorem 3.1 and figure 2 would be useful."
-TODO(mdeff): What does it mean?
-TODO(nati): I am not sure. We might just want to ask him?
-I think he wants the value of t that we used... Hence, we should make it clear that we did not use directly theorem 3.1 to make figure 2, but that we selected value for t that lead to good results.
+Thanks for pointing out an unclear statement about the dispersion of the sampling sequence. d_i should be thought of as the largest distance between the center x_i and any point on the surface sigma_i. Hence, we define d_i to be the radius of the smallest ball centered at x_i containing sigma_i. We'll clarify.
+TODO: Martino, do you approve?
 
-We fixed the statement about the dispersion of the sampling sequence. Thanks for pointing it out.
-TODO(mdeff): Nath, is he correct?
-TODO(nati): I think our original version is correct. Given a small surface sigma_i and its corresponding point x_i, d_i defines the biggest distance to the center. Hence, we do not care if the ball contains other points surfaces. However, we should add that the ball needs to be centered in x_i. (Can you just check with Martino to be on the safe side?)
-TODO(mdeff): Ok so if I understood correctly, d_i is the largest distance between the center x_i and any point on the surface sigma_i. (That also corresponds to what I remember from past discussions.) Martino, do you confirm? If true, we should formulate it better in the paper.
+From the following two sentences, we don't understand what could be improved.
+* "The theoretical analysis and discussion of sampling is interesting, though should be more clearly stated throughout and potentially visualized in figures."
+* "A figure detailing the parameters and setup for theorem 3.1 and figure 2 would be useful."
+We would be glad if the reviewer could elaborate.
 
 A revised manuscript will be uploaded shortly.
 
@@ -140,8 +133,8 @@ As a non-expert of spherical CNN, I don't understand clearly the gap between the
 
 We thank the reviewer for their time assessing our work and their constructive feedback.
 
-A revised manuscript, to be uploaded shortly, contains a stronger theoretical result. The new theorem proves that for a fixed function f, RLf(x) = LRf(x) in the limit of infinite sampling. That is, it proves equivariance (in addition to convergence to the Laplace-Beltrami proved by Theorem 3.1).
+A revised manuscript, to be uploaded shortly, contains a stronger theoretical result. We proved that for a fixed function f, RLf(x) = LRf(x) in the limit of infinite sampling. That is, we proved equivariance (using the convergence to the Laplace-Beltrami proved by Theorem 3.1).
 
-Thanks to this new result, we know that there does not exist any counterexample where Theorem 3.1 holds while not having rotational equivariance.
+Thanks to this new result, there is no gap anymore. Hence, there does not exist any counterexample where Theorem 3.1 holds while not having rotational equivariance.
 
-TODO(nati): check with Martino to be on the safe side
+TODO: Martino, do you approve?
