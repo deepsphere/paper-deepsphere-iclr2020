@@ -51,7 +51,7 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 \newcommand{\laplacian}{\Delta_{\mathbb S^2}}
 \newcommand{\Rg}{\mathcal R_g}
 \newcommand{\seminorm}[1]{\left|#1\right|}
-\newcommand{\Ln}{L_n^{t_n}}
+\newcommand{\Ln}{\hat L_n^{t_n}}
 
 \DeclareMathOperator*{\diag}{diag}
 
@@ -402,12 +402,12 @@ Given a sampling scheme $\V = \{x_0, \dots, x_{n-1}\}$, we also define $\sigma_i
 % 	for $n\to\infty$.
 	\label{theo:pointwise convergence for a regular sampling}
 \end{theorem}
-As a direct implication of this theorem, $\b{L}$ converges pointwise towards the Laplace-Beltrami operator ($\Delta_{\S^2}$) in the sense explained in \cite{belkin2007convergence}. \mart{here we insert the link between consistency and equivariance} This operator commutes with rotation and hence this convergence is a strong hint for equivariance, as formalized in the following proposition.
+As a direct implication of this theorem, the rescaled operator $\hat L_n^{t_n} := \frac{|\mathbb S^2|}{4\pi t^2}L_n^{t_n}$ (and its discrete counterpart $ \mathbf{\hat L} = \frac{|\mathbb S^2|}{4\pi t^2} \mathbf L$) converges pointwise towards the Laplace-Beltrami operator ($\Delta_{\S^2}$) in the sense explained in \cite{belkin2007convergence}. This operator commutes with rotation and hence this convergence is a strong hint for equivariance, as formalized in the following proposition.
 %%%%%%%%%%%%%%%%%%%%%%%  link between consistency and equivariance %%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{prop}\label{prop:equivariance}
-Under the hypothesis of theorem \ref{theo:pointwise convergence for a regular sampling}, we have the following pointwise convergence
+Under the hypothesis of theorem \ref{theo:pointwise convergence for a regular sampling}, we have the following pointwise convergence for the rescaled graph Laplacian 
 \begin{equation*}
-\forall x\in\mathbb S^2\quad\left| \mathcal R_g L_n^{t_n} f (x) - L_n^{t_n} \mathcal R_g f(x) \right| \xrightarrow{n\to\infty}0.
+\forall y\in\mathbb S^2\quad\left| \mathcal R_g \hat L_n^{t_n} f (y) - \hat L_n^{t_n} \mathcal R_g f(y) \right| \xrightarrow{n\to\infty}0.
 \end{equation*}
 \end{prop}
 %%%%%%%%%%%%%%%%%%%%%%% end of link between consistency and equivariance %%%%%%%%%%%%%%%%%%%%%%%%%
@@ -945,14 +945,14 @@ To conclude, we see that the result obtained is of similar form than the result 
 
 \section{Proof of proposition \ref{prop:equivariance}}
 \begin{proof}
-Fix $x\in \mathbb S^2$. Since any rotation $\mathcal R_g$ is an isometry, and the Laplacian $\Delta$ commutes with all isometries of a Riemanniann manifold \cite{shubin}, and defining $\mathcal R_g f =: f'$ for ease of notation, we can write that 
+Fix $x\in \mathbb S^2$. Since any rotation $\mathcal R_g$ is an isometry, and the Laplacian $\Delta$ commutes with all isometries of a Riemanniann manifold, and defining $\mathcal R_g f =: f'$ for ease of notation, we can write that 
 	\begin{align*}
 			\seminorm{\Rg \Ln f (x) - \Ln \Rg f(x) } &\leq \seminorm{\Rg \Ln f (x) - \Rg \laplacian f(x)} + \seminorm{\Rg \laplacian f (x) - \Ln \Rg f(x)} =\\
 			& =\seminorm{\Rg (\Ln f - \laplacian f ) (x)} + \seminorm{ \laplacian f' (x) - \Ln f'(x)} \leq \\
 			& \leq \seminorm{(\Ln f - \laplacian f ) (g^{-1}(x))} + \seminorm{ \laplacian f' (x) - \Ln f'(x)}
 	\end{align*}
 	
-Since $g^{-1}(x)\in\mathbb{S}^2$ and $f'$ still satisfies hypothesis, we can apply theorem \ref{theo:pointwise convergence for a regular sampling} to conclude that
+Since $g^{-1}(x)\in\mathbb{S}^2$ and $f'$ still satisfies hypothesis, we can apply theorem \ref{theo:pointwise convergence for a regular sampling} to say that
 \begin{align*}
  &\seminorm{(\Ln f - \laplacian f ) (g^{-1}(x))} \xrightarrow{n\to\infty}0\\
   &\seminorm{ \laplacian f' (x) - \Ln f'(x)}\xrightarrow{n\to\infty}0
