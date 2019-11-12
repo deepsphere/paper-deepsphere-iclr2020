@@ -4,7 +4,8 @@ from os import path
 
 from matplotlib import pyplot as plt
 
-#plt.rc('font', family='Latin Modern Roman')
+plt.rc('font', family='Latin Modern Roman')  # Latin Modern for text
+plt.rc('mathtext', fontset='cm')  # Computer Modern for math (default is dejavusans)
 #plt.rc('text', usetex=True)
 #plt.rc('text.latex', preamble=r'\usepackage{lmodern}')
 
@@ -45,14 +46,14 @@ kernel_width_optimal = {
     },
 }
 
-fig, ax = plt.subplots(figsize=(5, 3))
+fig, ax = plt.subplots(figsize=(4, 2.3))
 for neighbors, optimums in sorted(kernel_width_optimal.items(), reverse=True):
-    nside = list(optimums.keys())
+    nside = [12*n**2 for n in optimums.keys()]
     width = list(optimums.values())
     ax.loglog(nside, width, '.-', label=f'$k={neighbors}$ neighbors')
 ax.legend(loc='upper right')
-ax.set_xlabel('$N_{side}$ ($n = 12 N_{side}^2$ pixels)')
-ax.set_ylabel('kernel width $t$')
+ax.set_xlabel('$n = 12 N_{side}^2$ pixels', fontsize=14)
+ax.set_ylabel('kernel width $t$', fontsize=14)
 #ax.set_title('optimal kernel widths')
 
 fig.tight_layout()
