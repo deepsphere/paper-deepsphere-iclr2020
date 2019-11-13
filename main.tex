@@ -383,17 +383,21 @@ Given $k$, the optimal $t$ is found by searching for the minimizer of \eqref{eq:
 We analyse our proposed weighting scheme both theoretically and empirically.
 
 \paragraph{Theoretical convergence.}
-We extend the work of Belkin and Nyiogi to a sufficiently regular, deterministic sampling scheme. For this purpose we need now to introduce some definitions. Following their setting, we define the extended graph Laplacian operator as the linear operator $L_n^t: L^{2}(\mathcal{M}) \rightarrow L^{2}(\mathcal{M})$ such that
+We extend the work of \citep{belkin2005towards} to a sufficiently regular, deterministic sampling scheme. 
+Following their setting, we will work with the extended graph Laplacian operator as the linear operator $L_n^t: L^{2}(\mathcal{M}) \rightarrow L^{2}(\mathcal{M})$ such that
 	\begin{equation}
 	\label{eq:Heat Kernel Graph Laplacian operator}
 	 L_n^t f(y) := \frac{1}{n}\sum_{i=0}^{n-1} e^{ -\frac{\|x_i-y\|^2}{4t}} \left(f(y)-f(x_i)\right).
 	\end{equation}
-and the rescaled graph Laplacian operator
-    \begin{equation}
-	\label{eq:rescaled Heat Kernel Graph Laplacian operator}
-	 \hat L_n^t := \frac{|\mathbb S^2|}{4\pi t^2}L_n^t
-	\end{equation}
-Note that we have the following relations $\b{L}_n^t \b{f} = T_\V L_n^t f$, $\b{\hat L} = \frac{|\mathbb S^2|}{4\pi t^2}\b L_n^t$. Given a sampling scheme $\V = \{x_0, \dots, x_{n-1}\}$, we define $\sigma_i$ to be the patch of the surface of the sphere corresponding to $x_i$, $A_i$ its corresponding area, and $d_i$ as the largest distance between the center $x_i$ and any point on the surface $\sigma_i$.
+This operator extends the graph Laplacian operator previously defined with the weight scheme of \eqref{eqn:weights:belkin} to each point of the manifold, i.e. the sphere. 
+As the radius of the kernel $t$ will be adapted to the number of sample, we also rescale the graph Laplacian operator as
+    % \begin{equation}
+	% \label{eq:rescaled Heat Kernel Graph Laplacian operator}
+	 $\hat{L}_n^t := \frac{|\mathbb S^2|}{4\pi t^2}L_n^t$
+	% \end{equation}
+Hence, we have the following relations $\b{L}_n^t \b{f} = T_\V L_n^t f$. 
+% $\b{\hat L} = \frac{|\mathbb S^2|}{4\pi t^2}\b L_n^t$. \nati{why define this, we are not using it}
+Given a sampling scheme $\V = \{x_0, \dots, x_{n-1}\}$, we define $\sigma_i$ to be the patch of the surface of the sphere corresponding to $x_i$, $A_i$ its corresponding area, and $d_i$ as the largest distance between the center $x_i$ and any point on the surface $\sigma_i$.
  Define $d^{(n)} := \max_{i=0, \dots, n}d_i$ and $A^{(n)}=\max_{i=0, \dots, n}A_i$.
 Given any rotation $g\in SO(3)$, we define the corresponding rotation operator $\mathcal R_g$ such that for any function $f$ on the sphere
 \begin{equation}\label{eq:rotation operator}
@@ -403,27 +407,30 @@ Given any rotation $g\in SO(3)$, we define the corresponding rotation operator $
 	For a sampling $\V = \{x_i\in\S^2\}_{i=0}^{n-1}$ of the sphere that is equi-area and such that $d^{(n)} \leq \frac{C}{n^\alpha}, \ \alpha\in (0,\linefrac{1}{2}]$, for all $f: \S^2 \rightarrow \R$ Lipschitz with respect to the Euclidean distance in $\R^3$, for all $y\in\S^2$, there exists a sequence $t_n = n^\beta$, $\beta\in\mathbb R$ such that 
 % 	the rescaled Heat Kernel Graph Laplacian $\frac{|\S^2|}{4\pi t_n^2}\b {L}^t_n$ converges pointwise to the Laplace Beltrami operator on the sphere $\Delta{\S^2}$  
 	\begin{equation*}
-		\lim_{n\to\infty}\hat L_n^{t_n}f(y) = \triangle_{\S^2}f(y).
+		\lim_{n\to\infty}\hat{L}_n^{t_n}f(y) = \triangle_{\S^2}f(y).
 	\end{equation*} 
 	\label{theo:pointwise convergence for a regular sampling}
 \end{theorem}
-As a direct implication of this theorem, the discrete counterpart $ \mathbf{\hat L}$ converges pointwise towards the Laplace-Beltrami operator ($\Delta_{\S^2}$) in the sense explained in \cite{belkin2007convergence}. This operator commutes with rotation and hence theorem \ref{theo:pointwise convergence for a regular sampling} is a strong hint for equivariance, as formalized in the following proposition.
+As a direct implication of this theorem, the discrete counterpart of $ \mathbf{\hat L}$ converges pointwise towards the Laplace-Beltrami operator ($\Delta_{\S^2}$) in the sense explained in \cite{belkin2007convergence}. This operator commutes with rotation and hence Theorem \ref{theo:pointwise convergence for a regular sampling} is a strong step toward equivariance. We formalize in the following proposition.
 %%%%%%%%%%%%%%%%%%%%%%%  link between consistency and equivariance %%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{prop}\label{prop:equivariance}
+\begin{theorem}\label{theo:equivariance}
 Under the hypothesis of theorem \ref{theo:pointwise convergence for a regular sampling}, the rescaled graph Laplacian commutes with any rotation, in the limit of infinite sampling, i.e.,
 \begin{equation*}
 \forall y\in\mathbb S^2\quad\left| \mathcal R_g \hat L_n^{t_n} f (y) - \hat L_n^{t_n} \mathcal R_g f(y) \right| \xrightarrow{n\to\infty}0.
 \end{equation*}
-\end{prop}
+\end{theorem}
 %%%%%%%%%%%%%%%%%%%%%%% end of link between consistency and equivariance %%%%%%%%%%%%%%%%%%%%%%%%%
 
-Importantly, the proof of Theorem \ref{theo:pointwise convergence for a regular sampling} in Appendix \ref{sec: appendix: proof of theorem} inspires us in the construction of our graph Laplacian. It is inspirational for the graph construction and for how the parameter $t$ needs to be adjusted with respect to the number of points $n$.
+Importantly, one of the important benefit of Theorem \ref{theo:pointwise convergence for a regular sampling} is that its proof (in Appendix \ref{sec: appendix: proof of theorem}) inspires us in the construction of our graph Laplacian. 
+In particular, it gives us insides for how the parameter $t$ needs to be adjusted with respect to the number of points $n$.
 
-Nevertheless, it is important to keep in mind the limits of Theorem \ref{theo:pointwise convergence for a regular sampling}.
-First, it is \emph{not} a proof of equivariance of the graph convolution for a specific sampling. To construct such a proof, a stronger convergence result is needed, for example spectral convergence (instead of pointwise).
+% Nevertheless, it is important to keep in mind the limits of Theorem \ref{theo:pointwise convergence for a regular sampling}.
+% First, it is \emph{not} a proof of equivariance of the graph convolution for a specific sampling. To construct such a proof, a stronger convergence result is needed, for example spectral convergence (instead of pointwise).
 % \todo{Can we intuitively write what pointwise convergence means, and how it is more limited than spectral or uniform convergence?}
-We note that in the random sampling case, the graph laplacian does \emph{not} converge uniformly in general \cite[Sec. 3]{belkin2007convergence}, but does for a class of Lipschitz functions \cite[Sec. 6]{belkin2005towards}.  Second, while do not have a formal proof for it, we strongly believe that the HEALPix sampling does satisfy the hypothesis $d^{(n)}\leq \frac{C}{n^\alpha}, \ \alpha\in (0,\linefrac{1}{2}]$ with $\alpha$ very close or equal to $\linefrac{1}{2}$. The empirical results discussed in the next paragraph also points in this direction. This is further discussed in Appendix \ref{sec: appendix: proof of theorem}.
+We note that in the random sampling case, the graph laplacian does \emph{not} converge uniformly in general \cite[Sec. 3]{belkin2007convergence}, but does for a class of Lipschitz functions \cite[Sec. 6]{belkin2005towards}.  
+Second, while do not have a formal proof for it, we strongly believe that the HEALPix sampling does satisfy the hypothesis $d^{(n)}\leq \frac{C}{n^\alpha}, \ \alpha\in (0,\linefrac{1}{2}]$ with $\alpha$ very close or equal to $\linefrac{1}{2}$. The empirical results discussed in the next paragraph also points in this direction. This is further discussed in Appendix \ref{sec: appendix: proof of theorem}.
 % 3) Show experimental results
+
 \paragraph{Empirical convergence.}
 
 % 3.0) explain how we obtained the figures
@@ -941,7 +948,7 @@ In the work of \cite{belkin2005towards} the sampling is drawn form a uniform ran
 
 To conclude, we see that the result obtained is of similar form than the result obtained in \cite{belkin2005towards}. Given the kernel density $t(n)=n^\beta$, \cite{belkin2005towards} proved convergence in the random case for $\beta \in (-\frac{1}{4}, 0)$ and we proved convergence in the deterministic case for $\beta \in (-\frac{2\alpha}{5}, 0)$, where $\alpha \in (0, \linefrac{1}{2}]$ (for the spherical Manifold).
 
-\section{Proof of proposition \ref{prop:equivariance}}
+\section{Proof of Theorem~\ref{theo:equivariance}}
 \begin{proof}
 Fix $x\in \mathbb S^2$. Since any rotation $\mathcal R_g$ is an isometry, and the Laplacian $\Delta$ commutes with all isometries of a Riemanniann manifold, and defining $\mathcal R_g f =: f'$ for ease of notation, we can write that 
 	\begin{align*}
