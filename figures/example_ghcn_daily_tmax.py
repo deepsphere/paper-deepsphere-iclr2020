@@ -30,7 +30,8 @@ from matplotlib import pyplot as plt
 import cartopy.crs as ccrs
 
 
-# plt.rc('font', family='Latin Modern Roman')
+# plt.rc('font', family='Latin Modern Roman')  # Latin Modern for text
+# plt.rc('mathtext', fontset='cm')  # Computer Modern for math (default is dejavusans)
 plt.rc('text', usetex=True)
 plt.rc('text.latex', preamble=r'\usepackage{lmodern}')
 
