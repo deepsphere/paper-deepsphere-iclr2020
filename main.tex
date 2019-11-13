@@ -102,30 +102,30 @@ contributions:\\
 % 	\item anonymize DeepSphere citation - Not doing that
 % 	\item climate spherical figure: inputs with TC and AR labels superimposed [Frédérick]
 	\item citet for inline, citep for parenthesis
-	\item More details on related work? Not sure we have the space. If yes, detailed comparison with related work after method.
+	\item More details on related work? Not sure we have the space. If yes, detailed comparison with related work after method. \nati{I would drop this.}
 	\item PSD of climate data: how does it compare to cosmo and 3D objects?
 	\item align the spheres in figure 1
 	\item mention that \citep{esteves2018sphericalcnn} and \citep{cohen2018sphericalcnn} computed equivariance error
 	\item check footnotes
-	\item climate data on spectrum plot
-	\item result tables: only what supports the main message in the text, everything we have in the appendix
+	\item climate data on spectrum plot \nati{I would drop this}
+	\item result tables: only what supports the main message in the text, everything we have in the appendix \nati{I think this is done now}
 	\item Unify vocabulary. Sampling, discretization, or pixelization of the sphere? Signal, maps, functions. Irregular, uneven. Coarsening, down-sampling.
 	\item check English vs American English
 	\item unify enumerations. I like (i), (ii), etc.
-	\item notation: should we use indices from 1 to n instead of 0 to n-1 for compactness?
-	\item add \citet{bruna2013gnn} in equivariance? They were the first to do a spherical CNN with graphs. Graph is built from a uniform random sampling of the sphere.
-	\item figure placements
-	\item do the experiments on the icosahedral grid with the pooling as defined in the paper
+	\item notation: should we use indices from 1 to n instead of 0 to n-1 for compactness? \nati{I think this is already done.}
+	\item add \citet{bruna2013gnn} in equivariance? They were the first to do a spherical CNN with graphs. Graph is built from a uniform random sampling of the sphere. \nati{Where do you want to add them?}
+	\item figure placements \nati{Good according to me}
+	\item do the experiments on the icosahedral grid with the pooling as defined in the paper \nati{I guess we are not doing that.}
 	\item put all the code (learning experiments from Frédérick and equivariance experiments from Martino) in a common reproducible git repository to be linked from the paper
 	\item update pygsp and merge sphere branch
 	\item check that NN architectures and hyper-params are correctly reported
-	\item keep NN architecture and hyper-params in the main text? Move the paragraph to appendix if not enough space.
+	\item keep NN architecture and hyper-params in the main text? Move the paragraph to appendix if not enough space. \nati{I think this does not apply anymore}
 	%\item shall we still site adam and batch norm? no, mainstream enough
-	\item check results for ModelNet40 and integrate in text
+	\item check results for ModelNet40 and integrate in text \nati{I would drop this}
 	\item Check that HEALPix is introduced in the introduction
-	\item heuristic used to set the kernel width in v1. Add values to \figref{kernel_widths} for comparison.
+	\item heuristic used to set the kernel width in v1. Add values to \figref{kernel_widths} for comparison.  \nati{Bit syre what you mean here...}
 % 	\item check experiments section [Frédérick]: all the results numbers and NN + training details
-	\item compute the invariance error of the whole NNs (before and after training, invariance can be learned)
+	\item compute the invariance error of the whole NNs (before and after training, invariance can be learned) \nati{I guess we are not doing that}
 	\item add it with equivariance error of the convolution to \tabref{cosmo}
 	\item insert \citet{jiang2019sphericalcnn} in intro: Need a global coordinate system (ok for planets, not projections like cosmo)
 \end{itemize}
