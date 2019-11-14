@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from os import path
+import numpy as np
 
 from matplotlib import pyplot as plt
 
@@ -46,11 +47,16 @@ kernel_width_optimal = {
     },
 }
 
+v1_data = np.load('deepsphere_v1_kernel.npz')
+v1_t = v1_data['t']
+v1_nside = v1_data['nside']
+
 fig, ax = plt.subplots(figsize=(4, 2.3))
 for neighbors, optimums in sorted(kernel_width_optimal.items(), reverse=True):
-    nside = [12*n**2 for n in optimums.keys()]
-    width = list(optimums.values())
+    nside = np.array([12*n**2 for n in optimums.keys()])
+    width = np.array(list(optimums.values()))**2/(4*np.log(2))
     ax.loglog(nside, width, '.-', label=f'$k={neighbors}$ neighbors')
+ax.loglog(12*v1_nside[5:]**2, v1_t[5:], '.-', label=f'Perraudin et. al.')
 ax.legend(loc='upper right')
 ax.set_xlabel('$n = 12 N_{side}^2$ pixels', fontsize=14)
 ax.set_ylabel('kernel width $t$', fontsize=14)
