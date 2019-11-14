@@ -149,7 +149,7 @@ rebuttal:
 \maketitle
 
 \begin{abstract}
-% We have to submit soon... The last sentence is a bit disconnected. Yep, better... Let submit... It is time.... Submit Submit Submit Submit 2 minutes... DONE!!!!! 
+% We have to submit soon... The last sentence is a bit disconnected. Yep, better... Let submit... It is time.... Submit Submit Submit Submit 2 minutes... DONE!!!!!
 Designing a convolution for a spherical neural network requires a delicate tradeoff between efficiency and rotation equivariance.
 % exactitude with respect to equivariance.
 DeepSphere, a method based on a graph representation of the discretized sphere, strikes a controllable balance between these two desiderata.
@@ -358,7 +358,7 @@ The expected value is obtained by averaging over a finite number of random funct
 
 \subsection{Finding the optimal set of weights}  \label{sec:optimal}
 % 1) summary the work of Khasanova
-Naturally, \citet{khasanova2017sphericalcnn} designed a Laplacian $\b{L}$ that minimizes \eqref{eq:equivariance error} for specific rotations on the longitude and latitude axis. 
+Naturally, \citet{khasanova2017sphericalcnn} designed a Laplacian $\b{L}$ that minimizes \eqref{eq:equivariance error} for specific rotations on the longitude and latitude axis.
 Working specifically with the equiangular sampling, they consider the set $\mathcal{G}$ of all the possible graphs where each node is connected only to four of its nearest neighbours (North, South, West, East).
 % and propose a weighting scheme $w_{ij}$ that minimizes \eqref{eq:equivariance error} for specific rotations on the longitude latitude axis.
 Their approach leads to weights $w_{ij}$ inversely proportional to the Euclidean distance between vertices:
@@ -382,19 +382,19 @@ Given $k$, the optimal $t$ is found by searching for the minimizer of \eqref{eq:
 We analyse our proposed weighting scheme both theoretically and empirically.
 
 \paragraph{Theoretical convergence.}
-We extend the work of \citep{belkin2005towards} to a sufficiently regular, deterministic sampling scheme. 
+We extend the work of \citep{belkin2005towards} to a sufficiently regular, deterministic sampling scheme.
 Following their setting, we will work with the extended graph Laplacian operator as the linear operator $L_n^t: L^{2}(\mathcal{M}) \rightarrow L^{2}(\mathcal{M})$ such that
 	\begin{equation}
 	\label{eq:Heat Kernel Graph Laplacian operator}
 	 L_n^t f(y) := \frac{1}{n}\sum_{i=0}^{n-1} e^{ -\frac{\|x_i-y\|^2}{4t}} \left(f(y)-f(x_i)\right).
 	\end{equation}
-This operator extends the graph Laplacian operator previously defined with the weight scheme of \eqref{eqn:weights:belkin} to each point of the manifold, i.e. the sphere. 
+This operator extends the graph Laplacian operator previously defined with the weight scheme of \eqref{eqn:weights:belkin} to each point of the manifold, i.e. the sphere.
 As the radius of the kernel $t$ will be adapted to the number of sample, we also rescale the graph Laplacian operator as
     % \begin{equation}
 	% \label{eq:rescaled Heat Kernel Graph Laplacian operator}
 	 $\hat{L}_n^t := \frac{|\mathbb S^2|}{4\pi t^2}L_n^t$
 	% \end{equation}
-Hence, we have the following relations $\b{L}_n^t \b{f} = T_\V L_n^t f$. 
+Hence, we have the following relations $\b{L}_n^t \b{f} = T_\V L_n^t f$.
 % $\b{\hat L} = \frac{|\mathbb S^2|}{4\pi t^2}\b L_n^t$. \nati{why define this, we are not using it}
 Given a sampling scheme $\V = \{x_0, \dots, x_{n-1}\}$, we define $\sigma_i$ to be the patch of the surface of the sphere corresponding to $x_i$, $A_i$ its corresponding area, and $d_i$ as the largest distance between the center $x_i$ and any point on the surface $\sigma_i$.
  Define $d^{(n)} := \max_{i=0, \dots, n}d_i$ and $A^{(n)}=\max_{i=0, \dots, n}A_i$.
@@ -403,11 +403,11 @@ Given any rotation $g\in SO(3)$, we define the corresponding rotation operator $
 	\mathcal R_g f(x) := f(g^{-1}(x)).
 \end{equation}
 \begin{theorem}
-	For a sampling $\V = \{x_i\in\S^2\}_{i=0}^{n-1}$ of the sphere that is equi-area and such that $d^{(n)} \leq \frac{C}{n^\alpha}, \ \alpha\in (0,\linefrac{1}{2}]$, for all $f: \S^2 \rightarrow \R$ Lipschitz with respect to the Euclidean distance in $\R^3$, for all $y\in\S^2$, there exists a sequence $t_n = n^\beta$, $\beta\in\mathbb R$ such that 
-% 	the rescaled Heat Kernel Graph Laplacian $\frac{|\S^2|}{4\pi t_n^2}\b {L}^t_n$ converges pointwise to the Laplace Beltrami operator on the sphere $\Delta{\S^2}$  
+	For a sampling $\V = \{x_i\in\S^2\}_{i=0}^{n-1}$ of the sphere that is equi-area and such that $d^{(n)} \leq \frac{C}{n^\alpha}, \ \alpha\in (0,\linefrac{1}{2}]$, for all $f: \S^2 \rightarrow \R$ Lipschitz with respect to the Euclidean distance in $\R^3$, for all $y\in\S^2$, there exists a sequence $t_n = n^\beta$, $\beta\in\mathbb R$ such that
+% 	the rescaled Heat Kernel Graph Laplacian $\frac{|\S^2|}{4\pi t_n^2}\b {L}^t_n$ converges pointwise to the Laplace Beltrami operator on the sphere $\Delta{\S^2}$
 	\begin{equation*}
 		\lim_{n\to\infty}\hat{L}_n^{t_n}f(y) = \triangle_{\S^2}f(y).
-	\end{equation*} 
+	\end{equation*}
 	\label{theo:pointwise convergence for a regular sampling}
 \end{theorem}
 As a direct implication of this theorem, the discrete counterpart of $ \mathbf{\hat L}$ converges pointwise towards the Laplace-Beltrami operator ($\Delta_{\S^2}$) in the sense explained in \citep{belkin2007convergence}. This operator commutes with rotation and hence Theorem \ref{theo:pointwise convergence for a regular sampling} is a strong step toward equivariance. We formalize in the following proposition.
@@ -420,13 +420,13 @@ Under the hypothesis of theorem \ref{theo:pointwise convergence for a regular sa
 \end{theorem}
 %%%%%%%%%%%%%%%%%%%%%%% end of link between consistency and equivariance %%%%%%%%%%%%%%%%%%%%%%%%%
 
-Importantly, one of the important benefit of Theorem \ref{theo:pointwise convergence for a regular sampling} is that its proof (in Appendix \ref{sec: appendix: proof of theorem}) inspires us in the construction of our graph Laplacian. 
+Importantly, one of the important benefit of Theorem \ref{theo:pointwise convergence for a regular sampling} is that its proof (in Appendix \ref{sec: appendix: proof of theorem}) inspires us in the construction of our graph Laplacian.
 In particular, it gives us insides for how the parameter $t$ needs to be adjusted with respect to the number of points $n$.
 
 % Nevertheless, it is important to keep in mind the limits of Theorem \ref{theo:pointwise convergence for a regular sampling}.
 % First, it is \emph{not} a proof of equivariance of the graph convolution for a specific sampling. To construct such a proof, a stronger convergence result is needed, for example spectral convergence (instead of pointwise).
 % \todo{Can we intuitively write what pointwise convergence means, and how it is more limited than spectral or uniform convergence?}
-We note that in the random sampling case, the graph laplacian does \emph{not} converge uniformly in general \cite[Sec. 3]{belkin2007convergence}, but does for a class of Lipschitz functions \cite[Sec. 6]{belkin2005towards}.  
+We note that in the random sampling case, the graph laplacian does \emph{not} converge uniformly in general \cite[Sec. 3]{belkin2007convergence}, but does for a class of Lipschitz functions \cite[Sec. 6]{belkin2005towards}.
 Second, while do not have a formal proof for it, we strongly believe that the HEALPix sampling does satisfy the hypothesis $d^{(n)}\leq \frac{C}{n^\alpha}, \ \alpha\in (0,\linefrac{1}{2}]$ with $\alpha$ very close or equal to $\linefrac{1}{2}$. The empirical results discussed in the next paragraph also points in this direction. This is further discussed in Appendix \ref{sec: appendix: proof of theorem}.
 % 3) Show experimental results
 
@@ -435,13 +435,13 @@ Second, while do not have a formal proof for it, we strongly believe that the HE
 % 3.0) explain how we obtained the figures
 In \figref{equivariance_error}, we present the equivariance error $\bar{E}_{\b L,C(\ell)}$ \eqref{eq:mean equivariance error} computed numerically as a function of the frequency (degree) $\ell$, for different parameter sets of DeepSphere as well as for graph construction of \citet{khasanova2017sphericalcnn}.
 The error depends of the number of pixels: $12N_{side}^2$ for HEALPix and $4b^2$ for the equiangular sampling. Here $N_{side}$ and $b$ are the sampling parameters determining their precision.
-The frequencies $\ell$ of the monochromatic signals were chosen in the range $(0,\  3N_{side}-1)$ for the Healpix sampling, and in the range $(0, b)$ for the equiangular sampling, to allow for an almost perfect implementation (up to numerical errors) of the operator $\b{R}_\V$ in equation \eqref{eq:mean equivariance error} \citep{gorski1999healpixprimer}. 
+The frequencies $\ell$ of the monochromatic signals were chosen in the range $(0,\  3N_{side}-1)$ for the Healpix sampling, and in the range $(0, b)$ for the equiangular sampling, to allow for an almost perfect implementation (up to numerical errors) of the operator $\b{R}_\V$ in equation \eqref{eq:mean equivariance error} \citep{gorski1999healpixprimer}.
 Using these parameters, the error measured is mostly due to imperfections in the empirical approximation of the Laplace-Beltrami operator and not to the sampling.
 
 % 3.1) explain what the figures tell us
-For 8 neighbors, selecting the optimal value of $t$ already leads to an improvement compared to \citet{perraudin2019deepspherecosmo}, whose graph also was constructed to have at maximum 8 neighbors. 
-With higher the number of neighbors, the equivariance error decreases by more than one order of magnitude. 
-Furthermore, increasing the graph resolution ($N_{side}$) leads to an improvement in the high frequencies as well. 
+For 8 neighbors, selecting the optimal value of $t$ already leads to an improvement compared to \citet{perraudin2019deepspherecosmo}, whose graph also was constructed to have at maximum 8 neighbors.
+With higher the number of neighbors, the equivariance error decreases by more than one order of magnitude.
+Furthermore, increasing the graph resolution ($N_{side}$) leads to an improvement in the high frequencies as well.
 Increasing the graph resolution of the graph of \citet{khasanova2017sphericalcnn} does not seem to improve its equivariance. We note that in our numerical test, this graph was perfectly equivariant to rotations along the horizontal and vertical axis as it should be by design. Nevertheless, it is simply not equivariant along the last rotation. Such equivariance properties might be sufficient for analysing omnidirectional images (that are naturally aligned on the north-south axis).
 
 \begin{figure}
@@ -834,7 +834,7 @@ We start by proving that for smooth functions, for any fixed $t$, the extended g
 \begin{prop}\label{prop:1}
 	For an equal area sampling $\{x_i\in\S^2\}_{i=0}^{n-1}: A_i=A_j \forall i,j$ of the sphere it is true that for all $f: \S^2 \rightarrow \R$ Lipschitz with respect to the Euclidean distance $\|\cdot\|$ with Lipschitz constant $C_f$
 	\begin{equation*}
-	\left| \int_{\S^2}f({ x})\text{d}{\mu(x)} - \frac{1}{n}\sum_i f( x_i)\right|\leq C_f d^{(n)}.	    
+	\left| \int_{\S^2}f({ x})\text{d}{\mu(x)} - \frac{1}{n}\sum_i f( x_i)\right|\leq C_f d^{(n)}.
 	\end{equation*}
 	Furthermore, for all $y\in\S^2$ the Heat Kernel Graph Laplacian operator $L^t_n$ converges pointwise to the functional approximation of the Laplace Beltrami operator $L^t$
 	\begin{equation*}
@@ -845,7 +845,7 @@ We start by proving that for smooth functions, for any fixed $t$, the extended g
 
 	Assuming $f:\mathbb S^2 \rightarrow \R$ is Lipschitz with Lipschitz constant $C_f$, we have
 	\begin{equation*}
-	\left| \int_{\sigma_{i}}f({ x})\text{d}{\mu(x)} - \frac{1}{n}f( x_i)\right| \leq C_fd^{(n)}\frac{1}{n},	    
+	\left| \int_{\sigma_{i}}f({ x})\text{d}{\mu(x)} - \frac{1}{n}f( x_i)\right| \leq C_fd^{(n)}\frac{1}{n},
 	\end{equation*}
 	where $\sigma_i\subset \S^2$ is the subset of the sphere corresponding to the patch around $x_i$. Remember that the sampling is equal area.
 	Hence, using the triangular inequality and summing all the contributions of the $n$ patches, we obtain
@@ -854,10 +854,10 @@ We start by proving that for smooth functions, for any fixed $t$, the extended g
 	\end{equation*}
 	A direct application of this result leads to the following pointwise convergences
 	\begin{equation*}
-	\forall f \text{ Lipschitz,}\quad \forall y\in\S^2,  \quad\quad \frac{1}{n}\sum_i e^{-\frac{\|x_i-y\|^2}{4t}}\rightarrow   \int e^{-\frac{\|x-y\|^2}{4t}}d\mu(x) 
+	\forall f \text{ Lipschitz,}\quad \forall y\in\S^2,  \quad\quad \frac{1}{n}\sum_i e^{-\frac{\|x_i-y\|^2}{4t}}\rightarrow   \int e^{-\frac{\|x-y\|^2}{4t}}d\mu(x)
 	\end{equation*}
     \begin{equation*}
-    \forall f \text{ Lipschitz,}\quad \forall y\in\S^2,  \quad\quad \frac{1}{n}\sum_i e^{-\frac{||x_i-y||^2}{4t}}f(x_i)\rightarrow   \int e^{-\frac{\|x-y\|^2}{4t}}f(x)d\mu(x)        
+    \forall f \text{ Lipschitz,}\quad \forall y\in\S^2,  \quad\quad \frac{1}{n}\sum_i e^{-\frac{||x_i-y||^2}{4t}}f(x_i)\rightarrow   \int e^{-\frac{\|x-y\|^2}{4t}}f(x)d\mu(x)
     \end{equation*}
 	Definitions \ref{eq:Heat Kernel Graph Laplacian operator} and \ref{eq:Functional approximation to the Laplace-Beltrami operator} end the proof.
 \end{proof}
@@ -883,10 +883,10 @@ We start with the following inequality
 	&\leq \max _{y\in \S^2}  \sum_{i=1}^n   \left| \frac{1}{n}  \phi^t(x_i; y)- \int_{\sigma_i} \phi^t(x;y)d\mu(x) \right| \nonumber\\
 	&\leq  d^{(n)} \max _{y\in \S^2} C_{\phi^t_y} , \label{eq:prop3-base-ineq}
 \end{align}
-where $C_{\phi^t_y}$ is the Lipschitz constant of $x \rightarrow \phi^t(x, y)$ and the last inequality follows from Proposition \ref{prop:1}. 
+where $C_{\phi^t_y}$ is the Lipschitz constant of $x \rightarrow \phi^t(x, y)$ and the last inequality follows from Proposition \ref{prop:1}.
 Using the assumption $d^{(n)}\leq \frac{C}{\sqrt{n}}$ we find
 \begin{equation*}
-\|L_n^tf-L^tf\|_\infty  \leq  \frac{C}{\sqrt{n}} \max _{y\in \S^2}  C_{\phi^t_y}  
+\|L_n^tf-L^tf\|_\infty  \leq  \frac{C}{\sqrt{n}} \max _{y\in \S^2}  C_{\phi^t_y}
 \end{equation*}
 We now find the explicit dependence between $t$ and $C_{\phi^t_y}$
 \begin{align*}
@@ -905,7 +905,7 @@ C_{K^t_y} = \norm{\partial_x e^{-\frac{x^2}{4t}}}_\infty = \norm{\frac{x}{2t}e^{
 \end{equation*}
 Hence we have
 \begin{align*}
-	\frac{C}{\sqrt{n}}  \max _{y\in \S^2} C_{\phi^t_y} 
+	\frac{C}{\sqrt{n}}  \max _{y\in \S^2} C_{\phi^t_y}
 	&\leq  \frac{C}{\sqrt{n}} \left( (2et)^{-\frac{1}{2}} \norm{f}_\infty + C_f \right)\\
 	&\leq \frac{C \norm{f}_\infty}{n^\alpha(2et)^{1/2}} +   \frac{C}{n^\alpha} C_f.
 \end{align*}
@@ -914,7 +914,7 @@ Inculding this result in \eqref{eq:prop3-base-ineq} and rescaling by $\linefrac{
 	\norm{\frac{1}{4\pi t^2}\left(L_n^tf-L^tf\right)}_\infty&\leq \frac{1}{4\pi t^2}\norm{\left(L_n^tf-L^tf\right)}_\infty \\
 	&\leq \frac{C}{4\pi}\left[\frac{\norm{f}_\infty}{\sqrt{2e}}\frac{1}{n^\alpha t^{5/2}} + \frac{C_f}{n^\alpha t^2}\right].
 \end{align*}
-In order for $ \frac{C}{4\pi}\left[\frac{\norm{f}_\infty}{\sqrt{2e}}\frac{1}{n^\alpha t^{5/2}} + \frac{C_f}{n^\alpha t^2}\right] \xrightarrow[t\to 0 ]{n\to\infty}0$, 
+In order for $ \frac{C}{4\pi}\left[\frac{\norm{f}_\infty}{\sqrt{2e}}\frac{1}{n^\alpha t^{5/2}} + \frac{C_f}{n^\alpha t^2}\right] \xrightarrow[t\to 0 ]{n\to\infty}0$,
 we need $\begin{cases}
 % t \rightarrow 0\\
 % n \rightarrow \infty\\
@@ -954,13 +954,13 @@ To conclude, we see that the result obtained is of similar form than the result 
 
 \section{Proof of Theorem~\ref{theo:equivariance}}
 \begin{proof}
-Fix $x\in \mathbb S^2$. Since any rotation $\mathcal R_g$ is an isometry, and the Laplacian $\Delta$ commutes with all isometries of a Riemanniann manifold, and defining $\mathcal R_g f =: f'$ for ease of notation, we can write that 
+Fix $x\in \mathbb S^2$. Since any rotation $\mathcal R_g$ is an isometry, and the Laplacian $\Delta$ commutes with all isometries of a Riemanniann manifold, and defining $\mathcal R_g f =: f'$ for ease of notation, we can write that
 	\begin{align*}
 			\seminorm{\Rg \Ln f (x) - \Ln \Rg f(x) } &\leq \seminorm{\Rg \Ln f (x) - \Rg \laplacian f(x)} + \seminorm{\Rg \laplacian f (x) - \Ln \Rg f(x)} =\\
 			& =\seminorm{\Rg (\Ln f - \laplacian f ) (x)} + \seminorm{ \laplacian f' (x) - \Ln f'(x)} \leq \\
 			& \leq \seminorm{(\Ln f - \laplacian f ) (g^{-1}(x))} + \seminorm{ \laplacian f' (x) - \Ln f'(x)}
 	\end{align*}
-	
+
 Since $g^{-1}(x)\in\mathbb{S}^2$ and $f'$ still satisfies hypothesis, we can apply theorem \ref{theo:pointwise convergence for a regular sampling} to say that
 \begin{align*}
  &\seminorm{(\Ln f - \laplacian f ) (g^{-1}(x))} \xrightarrow{n\to\infty}0\\
@@ -1171,7 +1171,7 @@ decoder:\\
 
 % Not similar to Jiang and 4 times the feature maps.
 
-% batch size 64, adam optimizer, constant learning rate of $1 \cdot 10{-3}$, cross-entropy loss, both weighted and non weighted. 
+% batch size 64, adam optimizer, constant learning rate of $1 \cdot 10{-3}$, cross-entropy loss, both weighted and non weighted.
 
 % 30 epochs
 
