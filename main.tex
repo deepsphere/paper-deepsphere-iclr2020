@@ -372,11 +372,11 @@ In this case the weighting scheme is full (every node is connected to every node
 \begin{equation} \label{eqn:weights:belkin}
 w_{ij} = e^{-\frac{1}{4t} \norm{x_i-x_j}^2}
 \end{equation}
-In practice, because of the exponential, most of the weights are very close to $0$. Hence, to optimize for computational efficiency, we limit ourselves to only the $k$ nearest neighbors.
-In~\cite{perraudin2019deepspherecosmo}, the parameter $t$ was heuristically set to $0.5$ times the average squared distances over all connected pixels.
+In practice, because of the exponential, most of the weights are very close to $0$. Hence, to optimize for computational efficiency, we limit ourselves to only a few neighbors.
+In~\cite{perraudin2019deepspherecosmo}, each pixels is connected to their 8 adjacent pixels\footnote{It is slightly more complex than that and we invite the curious reader to read~\cite{perraudin2019deepspherecosmo}.} and the parameter $t$ was heuristically set to $0.5$ times the average squared distances over all connected pixels.
 This heuristic however seems to over-estimate $t$ (see \Figref{kernel_widths}). 
 In this work, we decided to use a more refined method.
-Given $k$, the optimal $t$ is found by searching for the minimizer of \eqref{eq:mean equivariance error}.
+Given the $k$ nearest neighbors, the optimal $t$ is found by searching for the minimizer of \eqref{eq:mean equivariance error}.
 \Figref{kernel_widths} shows the optimal kernel widths found for various resolutions of the HEALPix grid. 
 % We observe that using a small kernel size $t$, \cite{perraudin2019deepspherecosmo} would probably be more equivariant.
 
