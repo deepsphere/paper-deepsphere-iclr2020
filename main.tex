@@ -101,7 +101,6 @@ contributions:\\
 % 	\item adjacency matrix: $A$ instead of $W$? nath: I am for W
 % 	\item anonymize DeepSphere citation - Not doing that
 % 	\item climate spherical figure: inputs with TC and AR labels superimposed [Frédérick]
-	\item citet for inline, citep for parenthesis
 	\item More details on related work? Not sure we have the space. If yes, detailed comparison with related work after method. \nati{I would drop this.}
 	\item PSD of climate data: how does it compare to cosmo and 3D objects?
 	\item align the spheres in figure 1
@@ -259,7 +258,7 @@ Experiments on multiple problems of practical interest show the competitiveness 
 % \begin{figure}
 % 	\centering
 % 	\includegraphics[width=\linewidth]{figure_architecture_v3}
-% 	\caption{Example architecture from \cite{perraudin2019deepspherecosmo}.
+% 	\caption{Example architecture from \citet{perraudin2019deepspherecosmo}.
 % 		Global tasks need a spatial summarization: the FCN variant is rotation invariant (and accepts inputs of varying sizes), while the CNN variant is not.
 % 		Dense tasks (when the output lives on the sphere, like segmentation) are rotation equivariant.
 % 		\todo{Shall we keep this figure? It's very nice, but we could save space. ML people probably have this in mind.}
@@ -332,7 +331,7 @@ While the graph framework offers great flexibility, its ability to faithfully re
 We require $F_\V$ to be a suitable subspace of $L^2(\S^2)$ such that $T_\V$ is invertible, i.e., the function $f \in F_\V$ can be unambiguously reconstructed from its sampled values $\b{f}$.
 The existence of such a subspace depends on the sampling scheme $\V$, and its characterization is a common problem in signal processing \citep{driscoll1994Fouriersphere}.
 For most sampling schemes, it is not known if $F_\V$ exists and hence if $T_\V$ is invertible.
-A special case is the equiangular sampling scheme where a sampling theorem holds, and thus a closed form of $T_\V^{-1}$ is known. % \cite{driscoll1994Fouriersphere}
+A special case is the equiangular sampling scheme where a sampling theorem holds, and thus a closed form of $T_\V^{-1}$ is known. % \citep{driscoll1994Fouriersphere}
 For sampling schemes where no such sampling formula is available, we leverage the discrete SHT to reconstruct $f$ from $\b{f}=T_\V f$, thus approximating $T_\V^{-1}$.
 For all theoretical considerations, we assume that $F_\V$ exists and $f \in F_\V$.
 
@@ -359,7 +358,7 @@ The expected value is obtained by averaging over a finite number of random funct
 
 \subsection{Finding the optimal set of weights}  \label{sec:optimal}
 % 1) summary the work of Khasanova
-Naturally, \cite{khasanova2017sphericalcnn} designed a Laplacian $\b{L}$ that minimizes \eqref{eq:equivariance error} for specific rotations on the longitude and latitude axis. 
+Naturally, \citet{khasanova2017sphericalcnn} designed a Laplacian $\b{L}$ that minimizes \eqref{eq:equivariance error} for specific rotations on the longitude and latitude axis. 
 Working specifically with the equiangular sampling, they consider the set $\mathcal{G}$ of all the possible graphs where each node is connected only to four of its nearest neighbours (North, South, West, East).
 % and propose a weighting scheme $w_{ij}$ that minimizes \eqref{eq:equivariance error} for specific rotations on the longitude latitude axis.
 Their approach leads to weights $w_{ij}$ inversely proportional to the Euclidean distance between vertices:
@@ -368,7 +367,7 @@ Their approach leads to weights $w_{ij}$ inversely proportional to the Euclidean
 \end{equation}
 
 % 2) explain our approach
-We chose a different approach and take inspiration from \cite{belkin2005towards}, which proves that for a random \emph{uniform sampling} scheme the graph Laplacian converges toward the Laplace-Beltrami operator $\Delta_{\mathbb{S}^2}$ as the number of sampling points goes to infinity.
+We chose a different approach and take inspiration from \citet{belkin2005towards}, which proves that for a random \emph{uniform sampling} scheme the graph Laplacian converges toward the Laplace-Beltrami operator $\Delta_{\mathbb{S}^2}$ as the number of sampling points goes to infinity.
 This convergence result is important as a) $\Delta_{\mathbb{S}^2}$ commutes with rotation ($\Delta_{\mathbb{S}^2}R(g) = R(g)\Delta_{\mathbb{S}^2}$) and b) is diagonalized by the spherical harmonics.
 In this case the weighting scheme is full (every node is connected to every node) and is based on the exponential kernel:
 \begin{equation} \label{eqn:weights:belkin}
@@ -411,7 +410,7 @@ Given any rotation $g\in SO(3)$, we define the corresponding rotation operator $
 	\end{equation*} 
 	\label{theo:pointwise convergence for a regular sampling}
 \end{theorem}
-As a direct implication of this theorem, the discrete counterpart of $ \mathbf{\hat L}$ converges pointwise towards the Laplace-Beltrami operator ($\Delta_{\S^2}$) in the sense explained in \cite{belkin2007convergence}. This operator commutes with rotation and hence Theorem \ref{theo:pointwise convergence for a regular sampling} is a strong step toward equivariance. We formalize in the following proposition.
+As a direct implication of this theorem, the discrete counterpart of $ \mathbf{\hat L}$ converges pointwise towards the Laplace-Beltrami operator ($\Delta_{\S^2}$) in the sense explained in \citep{belkin2007convergence}. This operator commutes with rotation and hence Theorem \ref{theo:pointwise convergence for a regular sampling} is a strong step toward equivariance. We formalize in the following proposition.
 %%%%%%%%%%%%%%%%%%%%%%%  link between consistency and equivariance %%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{theorem}\label{theo:equivariance}
 Under the hypothesis of theorem \ref{theo:pointwise convergence for a regular sampling}, the rescaled graph Laplacian commutes with any rotation, in the limit of infinite sampling, i.e.,
@@ -434,16 +433,16 @@ Second, while do not have a formal proof for it, we strongly believe that the HE
 \paragraph{Empirical convergence.}
 
 % 3.0) explain how we obtained the figures
-In \figref{equivariance_error}, we present the equivariance error $\bar{E}_{\b L,C(\ell)}$ \eqref{eq:mean equivariance error} computed numerically as a function of the frequency (degree) $\ell$, for different parameter sets of DeepSphere as well as for graph construction of \cite{khasanova2017sphericalcnn}.
+In \figref{equivariance_error}, we present the equivariance error $\bar{E}_{\b L,C(\ell)}$ \eqref{eq:mean equivariance error} computed numerically as a function of the frequency (degree) $\ell$, for different parameter sets of DeepSphere as well as for graph construction of \citet{khasanova2017sphericalcnn}.
 The error depends of the number of pixels: $12N_{side}^2$ for HEALPix and $4b^2$ for the equiangular sampling. Here $N_{side}$ and $b$ are the sampling parameters determining their precision.
 The frequencies $\ell$ of the monochromatic signals were chosen in the range $(0,\  3N_{side}-1)$ for the Healpix sampling, and in the range $(0, b)$ for the equiangular sampling, to allow for an almost perfect implementation (up to numerical errors) of the operator $\b{R}_\V$ in equation \eqref{eq:mean equivariance error} \citep{gorski1999healpixprimer}. 
 Using these parameters, the error measured is mostly due to imperfections in the empirical approximation of the Laplace-Beltrami operator and not to the sampling.
 
 % 3.1) explain what the figures tell us
-For 8 neighbors, selecting the optimal value of $t$ already leads to an improvement compared to \cite{perraudin2019deepspherecosmo}, whose graph also was constructed to have at maximum 8 neighbors. 
+For 8 neighbors, selecting the optimal value of $t$ already leads to an improvement compared to \citet{perraudin2019deepspherecosmo}, whose graph also was constructed to have at maximum 8 neighbors. 
 With higher the number of neighbors, the equivariance error decreases by more than one order of magnitude. 
 Furthermore, increasing the graph resolution ($N_{side}$) leads to an improvement in the high frequencies as well. 
-Increasing the graph resolution of the graph of \cite{khasanova2017sphericalcnn} does not seem to improve its equivariance. We note that in our numerical test, this graph was perfectly equivariant to rotations along the horizontal and vertical axis as it should be by design. Nevertheless, it is simply not equivariant along the last rotation. Such equivariance properties might be sufficient for analysing omnidirectional images (that are naturally aligned on the north-south axis).
+Increasing the graph resolution of the graph of \citet{khasanova2017sphericalcnn} does not seem to improve its equivariance. We note that in our numerical test, this graph was perfectly equivariant to rotations along the horizontal and vertical axis as it should be by design. Nevertheless, it is simply not equivariant along the last rotation. Such equivariance properties might be sufficient for analysing omnidirectional images (that are naturally aligned on the north-south axis).
 
 \begin{figure}
 	\begin{minipage}{0.6\linewidth}
@@ -489,7 +488,7 @@ While 3D shapes are usually represented as meshes or point clouds, representing 
 %\todo{move to intro?} no, good to motivate each task
 
 The SHREC'17 shape retrieval contest \citep{shrec17} contains 51,300 randomly oriented 3D models from ShapeNet \citep{shapenet}, to be classified in 55 categories (tables, lamps, airplanes, etc.).
-As in \citet{cohen2018sphericalcnn}, objects are represented by 6 spherical maps.
+As in \citep{cohen2018sphericalcnn}, objects are represented by 6 spherical maps.
 At each pixel, a ray is traced towards the center of the sphere.
 The distance from the sphere to the object forms a depth map.
 The $\cos$ and $\sin$ of the surface angle forms two normal maps.
@@ -617,10 +616,10 @@ The learning rate is $1 \cdot 10{-3}$ and the batch size is 64.
 	\toprule
 	& accuracy & mAP \\
 	\midrule
-	%\cite{jiang2019sphericalcnn} (paper) & 94.67 & - \\
-	\cite{jiang2019sphericalcnn} (rerun) & 94.95 & 38.41 \\
-	\cite{cohen2019gauge} (S2R) & 97.5 & 68.6 \\
-	\cite{cohen2019gauge} (R2R) & 97.7 & 75.9 \\
+	%\citet{jiang2019sphericalcnn} (paper) & 94.67 & - \\
+	\citet{jiang2019sphericalcnn} (rerun) & 94.95 & 38.41 \\
+	\citet{cohen2019gauge} (S2R) & 97.5 & 68.6 \\
+	\citet{cohen2019gauge} (R2R) & 97.7 & 75.9 \\
 	DeepSphere (weighted loss) & $97.8\pm 0.3$ & $77.15\pm 1.94$ \\
 	DeepSphere (non-weighted loss) & $87.8\pm 0.5$ & $89.16\pm 1.37$ \\
 	\bottomrule
@@ -725,7 +724,7 @@ Our experiments on 3D shapes (\secref{exp:shrec}) and climate (\secref{exp:clima
 %Works on shape alignment indicates that anisotropic filters achieve better performance \todo{[Bronstein]}.
 Possible explanations for this discrepancy are that NNs somehow compensate for the lack of anisotropic filters, or that some tasks can be solved with isotropic filters.
 % why: icosahedron, can do anisotropy with isotropy + non-linearity + pooling
-The distortions induced by the icosahedral projection in \citet{cohen2019gauge} or the leakage of curvature information in \citet{boscaini2016anisotropicgraphnn} might also alter performance.
+The distortions induced by the icosahedral projection in \citep{cohen2019gauge} or the leakage of curvature information in \citep{boscaini2016anisotropicgraphnn} might also alter performance.
 %Further research is needed to determine if anisotropic filters are an unnecessary price to pay or if they are needed in some applications.
 % As was recently shown for graph NNs used for graph classification, most general might not be the best, when the ultimate goal is generalization [Andreas paper? + previous by xx]
 
@@ -767,7 +766,7 @@ Left blank for anonymity reason.
 \section{Proof of theorem \ref{theo:pointwise convergence for a regular sampling}}\label{sec: appendix: proof of theorem}
 
 \paragraph{Preliminaries.}
-The proof of theorem \ref{theo:pointwise convergence for a regular sampling} is inspired from the work of \cite{belkin2005towards}. As a result, we start by restating some of their results.
+The proof of theorem \ref{theo:pointwise convergence for a regular sampling} is inspired from the work of \citet{belkin2005towards}. As a result, we start by restating some of their results.
 Given a sampling $\V = \{x_i\in\mathcal M\}_{i=0}^{n-1}$ of a closed, compact and infinitely differentiable manifold $\mathcal{M}$, a smooth ($\in\mathcal{C}_\infty(\mathcal{M)}$) function  $f:\mathcal{M} \rightarrow \mathbb{R}$, and defined the vector $\b{f}$ of samples of $f$ as follows: $T_\V f = \b{f} \in \mathbb{R}^n,\ \b{f}_i = f(x_i)$.
 The proof is constructed by leveraging 3 different operators:
 \begin{itemize}
@@ -793,10 +792,10 @@ The proof is constructed by leveraging 3 different operators:
 
 \end{itemize}
 
-Leveraging these three operators \cite{belkin2005towards, belkin2007convergence} have build proofs of both pointwise and spectral convergence of the extended graph Laplacian towards the Laplace-Beltrami operator in the general setting of any compact, closed and infinitely differentiable maniform $\mathcal M$, where the sampling scheme $\V$ is drawn randomly on the manifold. For this reason, their results are all to be interpreted in a probabilistic sense.
+Leveraging these three operators, \citet{belkin2005towards, belkin2007convergence} have build proofs of both pointwise and spectral convergence of the extended graph Laplacian towards the Laplace-Beltrami operator in the general setting of any compact, closed and infinitely differentiable maniform $\mathcal M$, where the sampling scheme $\V$ is drawn randomly on the manifold. For this reason, their results are all to be interpreted in a probabilistic sense.
 Their proofs consist in establishing that \eqref{eq:Heat Kernel Graph Laplacian operator} converges in probability towards \eqref{eq:Functional approximation to the Laplace-Beltrami operator} as $n\rightarrow \infty$ and \eqref{eq:Functional approximation to the Laplace-Beltrami operator} converges toward \eqref{eq:laplace-beltrami} as $t\rightarrow 0$. In particular, this second step is given by the following:
 \begin{prop}
-[\cite{belkin2005towards}, Proposition 4.4]
+[\citet{belkin2005towards}, Proposition 4.4]
 Let $\mathcal{M}$ be a $k$-dimensional compact smooth manifold embedded in some Euclidean space $\mathbb{R}^N$, and fix $y\in\mathcal{M}$. Let $f\in\mathcal{C}_\infty(\mathcal{M)}$. Then
 \begin{equation}
 \frac{1}{t}\frac{1}{(4\pi t)^{k/2}} L^tf(y) \xrightarrow{t\to 0 } \frac{1}{\text{vol}(\mathcal M)}\Delta_{\mathcal M}f(y).
@@ -819,7 +818,7 @@ for a particular class of \emph{deterministic} sampling schemes and b) apply Pro
 % 	$$L_n^tf(y) := \frac{1}{n}\left[ \sum_{i=0}^{n-1} \exp \left\{ {-\frac{||x_i-y||^2}{4t}}\right\}\left(f(y)-f(x_i)\right)\right]$$
 % \end{definition}
 
-% it is known that  (\cite{belkin2005towards}) to prove the convergence of $(\b {L}_n^t \b f) _i$ to $\Delta_{\S^2}f(x_i)$ it is sufficient to prove the convergence of its continuous counterpart $L_n^tf(x)$ to $\Delta_{\S^2}f(x)$
+% it is known that \citep{belkin2005towards} to prove the convergence of $(\b {L}_n^t \b f) _i$ to $\Delta_{\S^2}f(x_i)$ it is sufficient to prove the convergence of its continuous counterpart $L_n^tf(x)$ to $\Delta_{\S^2}f(x)$
 % where $L_n^t$ is defined as follows:
 
 % For the sake of the proof we will need also the following facts:
@@ -829,7 +828,7 @@ for a particular class of \emph{deterministic} sampling schemes and b) apply Pro
 % \end{definition}
 
 % brief introduction:
-% This proof consists in two steps: first, we prove that $L_n^t \rightarrow L^t$, and second, we use proposition \ref{prop:3} to prove \eqref{eq:continuous convergence}. This equation, as already explained in \cite{belkin2007convergence}, directly implies theorem \ref{theo:pointwise convergence for a regular sampling}.
+% This proof consists in two steps: first, we prove that $L_n^t \rightarrow L^t$, and second, we use proposition \ref{prop:3} to prove \eqref{eq:continuous convergence}. This equation, as already explained in \citep{belkin2007convergence}, directly implies theorem \ref{theo:pointwise convergence for a regular sampling}.
 
 We start by proving that for smooth functions, for any fixed $t$, the extended graph Laplacian $L^t_n$ converges towards its continuous counterpart $L^t$ as the sampling increases in size.
 \begin{prop}\label{prop:1}
@@ -949,9 +948,9 @@ Theorem \ref{theo:pointwise convergence for a regular sampling}, is then an imme
 
 % \nati{@martino, actually we do not need $ d^{(n)}\leq \frac{1}{\sqrt{n}}$, we only need $ d^{(n)}\leq \frac{1}{n^\alpha}$, where $\alpha>0$. As the $\S^2$ is of dimension $2$, $\alpha$ cannot be larger than $\linefrac{1}{2}$. If we put that into the theorem, we obtain that $\frac{5}{2}\beta+\alpha>0 \iff \beta>-\frac{2\alpha}{5}$. I think this is important, because we can still have convergence even if we do not have perfect patches... Please confirm ASAP, so we can update the Proposition and the text bellow. For HealPix sampling, we could say that while we have not proof, it make sense that it statisfies the hypothesis probably with $\alpha=\linefrac{1}{2}$.}
 
-In the work of \cite{belkin2005towards} the sampling is drawn form a uniform random distribution on the sphere, and their proof heavily relies on the uniformity properties of the distribution from which the sampling is drawn. In our case the sampling is deterministic, and this is indeed a problem that we need to overcome by imposing the regularity conditions above.
+In \citep{belkin2005towards}, the sampling is drawn from a uniform random distribution on the sphere, and their proof heavily relies on the uniformity properties of the distribution from which the sampling is drawn. In our case the sampling is deterministic, and this is indeed a problem that we need to overcome by imposing the regularity conditions above.
 
-To conclude, we see that the result obtained is of similar form than the result obtained in \cite{belkin2005towards}. Given the kernel density $t(n)=n^\beta$, \cite{belkin2005towards} proved convergence in the random case for $\beta \in (-\frac{1}{4}, 0)$ and we proved convergence in the deterministic case for $\beta \in (-\frac{2\alpha}{5}, 0)$, where $\alpha \in (0, \linefrac{1}{2}]$ (for the spherical Manifold).
+To conclude, we see that the result obtained is of similar form than the result obtained in \citep{belkin2005towards}. Given the kernel density $t(n)=n^\beta$, \citet{belkin2005towards} proved convergence in the random case for $\beta \in (-\frac{1}{4}, 0)$ and we proved convergence in the deterministic case for $\beta \in (-\frac{2\alpha}{5}, 0)$, where $\alpha \in (0, \linefrac{1}{2}]$ (for the spherical manifold).
 
 \section{Proof of Theorem~\ref{theo:equivariance}}
 \begin{proof}
@@ -1033,14 +1032,14 @@ to conclude that $$\forall x\in\mathbb S^2 \quad\seminorm{\Rg \Ln f (x) - \Ln \R
 
 \Tabref{climate:accuracy}, \ref{tab:climate:map}, and \ref{tab:climate:speed} show the accuracy, mAP, and efficiency of all the NNs we ran.
 
-The experiment with the model from \cite{jiang2019sphericalcnn} was rerun in order to obtain the AP metrics, but with a batch size of 64 instead of 256 due to GPU memory limit.
+The experiment with the model from \citet{jiang2019sphericalcnn} was rerun in order to obtain the AP metrics, but with a batch size of 64 instead of 256 due to GPU memory limit.
 
-Several experiments were run with different architectures for DeepSphere (DS). Jiang architecture use a similar one as \cite{jiang2019sphericalcnn}, with only the convolutional operators replaced. DeepSphere only is the original architecture giving the best results, deeper and with four times more feature maps than Jiang architecture. And the wider architecture is the same as the previous one with two times the number of feature maps.
+Several experiments were run with different architectures for DeepSphere (DS). Jiang architecture use a similar one as \citet{jiang2019sphericalcnn}, with only the convolutional operators replaced. DeepSphere only is the original architecture giving the best results, deeper and with four times more feature maps than Jiang architecture. And the wider architecture is the same as the previous one with two times the number of feature maps.
 
 Regarding the weighted loss, the weights are chosen with \texttt{scikit-learn} function \texttt{compute\_class\_weight} on the training set.
 
 % * Jiang rerun with a batch size of 64 instead of 256 due to memory limit.\\
-% * DS-jiang is the similar architecture as \cite{jiang2019sphericalcnn}. \\
+% * DS-jiang is the similar architecture as \citet{jiang2019sphericalcnn}. \\
 % * DS-optimal has 2 times the number of feature maps of DS. \\
 % * \todo{What is DS and DS-Cohen?} DS has 4 times more feature maps and one more layer than DS-Jiang. DS-optimal has still 2 times more feature maps. DS-Cohen should be mostly gauge (based on paper, no code): 4 times more feature maps, but 2 layers less than DS-Jiang. \\
 % * \todo{Is (equi non-weighted) the full resolution?} Yes, but less feature maps and layers. Can run, but not enough GPU memory for an optimal architecture. \\
@@ -1057,11 +1056,11 @@ Regarding the weighted loss, the weights are chosen with \texttt{scikit-learn} f
 		\toprule
         & TC & AR & BG & mean \\
 		\midrule
-		\cite{mudigonda2017climateevents} & 74 & 65 & 97 & 78.67 \\
-		\cite{jiang2019sphericalcnn} (paper) & 94 & 93 & 97 & 94.67 \\
-		\cite{jiang2019sphericalcnn} (rerun) & 93.9 & 95.7 & 95.2 & 94.95 \\
-        \cite{cohen2019gauge} (S2R) & 97.8 & 97.3 & 97.3 & 97.5 \\
-        \cite{cohen2019gauge} (R2R) & 97.9 & 97.8 & 97.4 & 97.7 \\
+		\citet{mudigonda2017climateevents} & 74 & 65 & 97 & 78.67 \\
+		\citet{jiang2019sphericalcnn} (paper) & 94 & 93 & 97 & 94.67 \\
+		\citet{jiang2019sphericalcnn} (rerun) & 93.9 & 95.7 & 95.2 & 94.95 \\
+        \citet{cohen2019gauge} (S2R) & 97.8 & 97.3 & 97.3 & 97.5 \\
+        \citet{cohen2019gauge} (R2R) & 97.9 & 97.8 & 97.4 & 97.7 \\
 		\midrule
 		DS (Jiang architecture, weighted loss) & 97.1 & 97.6 & 96.5 & 97.1 \\
         DS (weighted loss) & $97.4\pm 1.1$ & $97.7\pm 0.7$ & $98.2\pm 0.5$ & $97.8\pm 0.3$ \\
@@ -1091,9 +1090,9 @@ Regarding the weighted loss, the weights are chosen with \texttt{scikit-learn} f
 		\toprule
         & TC & AR & mean \\
 		\midrule
-		\cite{jiang2019sphericalcnn} (rerun) & 11.08 & 65.21 & 38.41 \\
-        \cite{cohen2019gauge} (S2R) & - & -& 68.6 \\
-        \cite{cohen2019gauge} (R2R) & - & -& 75.9 \\
+		\citet{jiang2019sphericalcnn} (rerun) & 11.08 & 65.21 & 38.41 \\
+        \citet{cohen2019gauge} (S2R) & - & -& 68.6 \\
+        \citet{cohen2019gauge} (R2R) & - & -& 75.9 \\
 		\midrule
         DS (Jiang architecture, non-weighted loss) & 46.2 & 93.9 & 70.0 \\
         DS (non-weighted loss) & $80.86\pm 2.42$ & $97.45\pm 0.38$ & $89.16\pm 1.37$ \\
@@ -1125,9 +1124,9 @@ Regarding the weighted loss, the weights are chosen with \texttt{scikit-learn} f
 		& params & inference & training \\
 		\midrule
         %Mudigonda et al. & 97 & 74 & 65 & 78.67 & - & - & - \\
-		\cite{jiang2019sphericalcnn} & 330\,k & 10\,ms & 10\,h \\ % 328'339
-		% \cite{cohen2019gauge} (S2R) & - & - & - \\
-        % \cite{cohen2019gauge} (R2R) & - & - & - \\
+		\citet{jiang2019sphericalcnn} & 330\,k & 10\,ms & 10\,h \\ % 328'339
+		% \citet{cohen2019gauge} (S2R) & - & - & - \\
+        % \citet{cohen2019gauge} (R2R) & - & - & - \\
 		DeepSphere (Jiang architecture) & 590\,k & 5\,ms & 3\,h \\ % 590k
         DeepSphere & 13\,M & 33\,ms & 13\,h \\ % 12'926'432
 		DeepSphere (wider architecture) & 52\,M & 50\,ms & 20\,h \\
