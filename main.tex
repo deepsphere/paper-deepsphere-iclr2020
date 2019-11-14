@@ -433,7 +433,7 @@ Second, while we do not have a formal proof for it, we strongly believe that the
 % 3.0) explain how we obtained the figures
 In \figref{equivariance_error}, we present the equivariance error $\bar{E}_{\b L,C(\ell)}$ \eqref{eq:mean equivariance error} computed numerically as a function of the frequency (degree) $\ell$, for different parameter sets of DeepSphere as well as for graph construction of \citet{khasanova2017sphericalcnn}.
 The error depends of the number of pixels: $12N_{side}^2$ for HEALPix and $4b^2$ for the equiangular sampling. Here $N_{side}$ and $b$ are the sampling parameters determining their precision.
-The frequencies $\ell$ of the monochromatic signals were chosen in the range $(0,\  3N_{side}-1)$ for the Healpix sampling, and in the range $(0, b)$ for the equiangular sampling, to allow for an almost perfect implementation (up to numerical errors) of the operator $\b{R}_\V$ in equation \eqref{eq:mean equivariance error} \citep{gorski1999healpixprimer}.
+The frequencies $\ell$ of the monochromatic signals were chosen in the range $(0,\  3N_{side}-1)$ for the HEALPix sampling, and in the range $(0, b)$ for the equiangular sampling, to allow for an almost perfect implementation (up to numerical errors) of the operator $\b{R}_\V$ in equation \eqref{eq:mean equivariance error} \citep{gorski1999healpixprimer}.
 Using these parameters, the error measured is mostly due to imperfections in the empirical approximation of the Laplace-Beltrami operator and not to the sampling.
 
 % 3.1) explain what the figures tell us
@@ -944,7 +944,7 @@ Theorem \ref{theo:pointwise convergence for a regular sampling}, is then an imme
 
 % I don't really have time to think clearly about this sorry
 
-% \nati{@martino, actually we do not need $ d^{(n)}\leq \frac{1}{\sqrt{n}}$, we only need $ d^{(n)}\leq \frac{1}{n^\alpha}$, where $\alpha>0$. As the $\S^2$ is of dimension $2$, $\alpha$ cannot be larger than $\linefrac{1}{2}$. If we put that into the theorem, we obtain that $\frac{5}{2}\beta+\alpha>0 \iff \beta>-\frac{2\alpha}{5}$. I think this is important, because we can still have convergence even if we do not have perfect patches... Please confirm ASAP, so we can update the Proposition and the text bellow. For HealPix sampling, we could say that while we have not proof, it make sense that it statisfies the hypothesis probably with $\alpha=\linefrac{1}{2}$.}
+% \nati{@martino, actually we do not need $ d^{(n)}\leq \frac{1}{\sqrt{n}}$, we only need $ d^{(n)}\leq \frac{1}{n^\alpha}$, where $\alpha>0$. As the $\S^2$ is of dimension $2$, $\alpha$ cannot be larger than $\linefrac{1}{2}$. If we put that into the theorem, we obtain that $\frac{5}{2}\beta+\alpha>0 \iff \beta>-\frac{2\alpha}{5}$. I think this is important, because we can still have convergence even if we do not have perfect patches... Please confirm ASAP, so we can update the Proposition and the text bellow. For HEALPix sampling, we could say that while we have not proof, it make sense that it statisfies the hypothesis probably with $\alpha=\linefrac{1}{2}$.}
 
 In \citep{belkin2005towards}, the sampling is drawn from a uniform random distribution on the sphere, and their proof heavily relies on the uniformity properties of the distribution from which the sampling is drawn. In our case the sampling is deterministic, and this is indeed a problem that we need to overcome by imposing the regularity conditions above.
 
