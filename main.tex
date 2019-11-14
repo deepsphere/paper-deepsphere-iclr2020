@@ -60,6 +60,7 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 \newcommand{\todo}[1]{{\color[rgb]{.6,.1,.6}{#1}}}
 \newcommand{\nati}[1]{{\color[rgb]{.3,.5,.9}{#1}}}
 \newcommand{\mart}[1]{{\color[rgb]{.9,.5,.3}{#1}}}
+\newcommand{\mdeff}[1]{{\color[rgb]{.3,.8,.3}{#1}}}
 
 \newcommand{\figref}[1]{figure~\ref{fig:#1}}
 \newcommand{\Figref}[1]{Figure~\ref{fig:#1}}
@@ -84,61 +85,62 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 	\item[openreview] \url{https://openreview.net/forum?id=B1e3OlStPB}
 \end{description}
 
-story: there are tradeoffs when designing a spherical CNN -> DS strikes a controllable balance between efficiency / cost and exactitude / equivariance
-% DSv2 has a clear tradeoff between equivariance and computational cost
+story: there are tradeoffs when designing a spherical CNN $\Rightarrow$ DS strikes a controllable balance between efficiency / cost and exactitude / equivariance
+\begin{itemize}
+	\item method development: tool that solve a need (balance btw the desiderata: equiv vs cost)
+	\item research question: anisotropy (highlight from the start or leave it as a dangling question at the end)
+\end{itemize}
 
-* method development: tool that solve a need (balance btw the desiderata: equiv vs cost)\\
-* research question: anisotropy (highlight from the start or leave it as a dangling question in the end)\\
-
-contributions:\\
-* theory $\Rightarrow$ convergence (better graph)\\
-* experiments on relevant problems (not spherical MNIST) $\Rightarrow$ check the desiderata\\
-  * surprising: anisotropy doesn't seem useful\\
+contributions:
+\begin{itemize}
+	\item theory $\Rightarrow$ convergence (better graph)
+	\item experiments on relevant problems (not spherical MNIST) $\Rightarrow$ check the desiderata
+	\item surprising: anisotropy doesn't seem useful
+\end{itemize}
 
 \todo{
+TODO:
 \begin{itemize}
-% 	\item shall we really name it? Or simply reference the general idea of a graph-based spherical CNN. [Yes]
-% 	\item adjacency matrix: $A$ instead of $W$? nath: I am for W
-% 	\item anonymize DeepSphere citation - Not doing that
-% 	\item climate spherical figure: inputs with TC and AR labels superimposed [Frédérick]
-	\item More details on related work? Not sure we have the space. If yes, detailed comparison with related work after method. \nati{I would drop this.}
-	\item PSD of climate data: how does it compare to cosmo and 3D objects?
-	\item align the spheres in figure 1
-	\item mention that \citep{esteves2018sphericalcnn} and \citep{cohen2018sphericalcnn} computed equivariance error
-	\item check footnotes
-	\item climate data on spectrum plot \nati{I would drop this}
-	\item result tables: only what supports the main message in the text, everything we have in the appendix \nati{I think this is done now}
-	\item Unify vocabulary. Sampling, discretization, or pixelization of the sphere? Signal, maps, functions. Irregular, uneven. Coarsening, down-sampling.
+	\item PSD of climate data: how does it compare to cosmo and 3D objects? Climate data on spectrum plot. \nati{I would drop this}
+	\item Unify vocabulary. Sampling, discretization, or pixelization of the sphere? Signal, maps, fields, functions. Irregular, uneven. Coarsening, down-sampling. Sample, vertex, node, pixel, point.
 	\item check English vs American English
-	\item unify enumerations. I like (i), (ii), etc.
-	\item add \citet{bruna2013gnn} in equivariance? They were the first to do a spherical CNN with graphs. Graph is built from a uniform random sampling of the sphere. \nati{Where do you want to add them?}
-	\item figure placements \nati{Good according to me}
-	\item do the experiments on the icosahedral grid with the pooling as defined in the paper \nati{I guess we are not doing that.}
+	\item Explain heuristic used to set the kernel width in v1. Add values to \figref{kernel_widths} for comparison. \nati{Not sure what you mean here.}
 	\item put all the code (learning experiments from Frédérick and equivariance experiments from Martino) in a common reproducible git repository to be linked from the paper
 	\item update pygsp and merge sphere branch
-	\item check that NN architectures and hyper-params are correctly reported
-	\item keep NN architecture and hyper-params in the main text? Move the paragraph to appendix if not enough space. \nati{I think this does not apply anymore}
-	%\item shall we still site adam and batch norm? no, mainstream enough
-	\item check results for ModelNet40 and integrate in text \nati{I would drop this}
-	\item Check that HEALPix is introduced in the introduction
-	\item heuristic used to set the kernel width in v1. Add values to \figref{kernel_widths} for comparison.  \nati{Bit syre what you mean here...}
-% 	\item check experiments section [Frédérick]: all the results numbers and NN + training details
-	\item compute the invariance error of the whole NNs (before and after training, invariance can be learned) \nati{I guess we are not doing that}
-	\item add it with equivariance error of the convolution to \tabref{cosmo}
+	\item Compute the invariance error of the whole NNs (before and after training, invariance can be learned). Add it with equivariance error of the convolution to \tabref{cosmo}. \nati{I guess we are not doing that}
 	\item insert \citet{jiang2019sphericalcnn} in intro: Need a global coordinate system (ok for planets, not projections like cosmo)
+	\item mention that \citep{esteves2018sphericalcnn} and \citep{cohen2018sphericalcnn} computed equivariance error
 \end{itemize}
 }
 
 \todo{
 rebuttal:
 \begin{itemize}
-    \item answer reviewers and commenters [mdeff \& nath]
-    \item update the proof [nath \& martino]
-    \item better link between the proof and equivarian
-    \item publish the code and link it here
-	\item add somewhere: exploit symmetries to reduce sample cost
-	\item proposition 1 -> corollary 3.1?
-	\item \citet{Mudigonda} used Integrated Water Vapor (IWV) only. That most probably is the same as our TMQ, which is most probably the most informative feature. TODO: run ours with TMQ alone.
+    \item answer commenter
+	\item add somewhere (intro?): exploit symmetries to reduce sample cost $\Rightarrow$ we don't discuss symmetries much
+	\item \citet{mudigonda2017climateevents} use Integrated Water Vapor (IWV) only. That most probably is the same as our TMQ, which is most probably the most informative feature. TODO: run ours with TMQ alone.
+	\item Show the three samplings in a figure?
+	\item better abstract (Friday's talk abstract?)
+	\item conclusion: less speculation?
+	\item check feedback from ICLR'20 LTS2 reading group
+	\item \mdeff{check my Telegram notes}
+\end{itemize}
+}
+
+\todo{
+last pass:
+\begin{itemize}
+	\item figure placement
+	\item check footnotes
+\end{itemize}
+}
+
+\todo{
+Not done:
+\begin{itemize}
+	\item Do the experiments on the icosahedral grid with the pooling as defined in the paper (i.e., not Jiang's specialty of taking the value of a pre-chosen sub-pixel). \nati{I guess we are not doing that.} \mdeff{I'm not sure what is the state of this, and Frédérick is not with us anymore. It's quite minor.}
+	\item Check results for ModelNet40 and integrate in text. \nati{I would drop this.} \mdeff{Yeah, those results are not mature enough.}
+	\item Add \citet{bruna2013gnn} in equivariance? They were the first to do a spherical CNN with graphs. Graph is built from a uniform random sampling of the sphere. \nati{Where do you want to add them?} \mdeff{They don't write how their Laplacian was built. Also, they only did MNIST on the sphere...}
 \end{itemize}
 }
 
@@ -148,7 +150,6 @@ rebuttal:
 \maketitle
 
 \begin{abstract}
-% We have to submit soon... The last sentence is a bit disconnected. Yep, better... Let submit... It is time.... Submit Submit Submit Submit 2 minutes... DONE!!!!!
 Designing a convolution for a spherical neural network requires a delicate tradeoff between efficiency and rotation equivariance.
 % exactitude with respect to equivariance.
 DeepSphere, a method based on a graph representation of the discretized sphere, strikes a controllable balance between these two desiderata.
