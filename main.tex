@@ -343,7 +343,7 @@ As a result, to simplify our analysis, we concentrate on the graph Laplacian and
 \begin{equation} \label{eq:equivariance}
 	\b{R}_\V(g) \b{L} \b{f} = \b{L} \b{R}_\V(g) \b{f} \hspace{1cm} \forall f\in F_\V \text{ and } \forall g\in SO(3),
 \end{equation}
-where $\b{R}_\V(g) = T_\V R(g) T_\V^{-1}$. For practical a evaluation of the equivariance, we define the \textit{normalized equivariance error} for a signal $\b{f}$, and a  rotation $g$ as:
+where $\b{R}_\V(g) = T_\V R(g) T_\V^{-1}$. For an empirical evaluation of the equivariance, we define the \textit{normalized equivariance error} for a signal $\b{f}$, and a  rotation $g$ as:
 \begin{equation} \label{eq:equivariance error}
 	E_{\b{L}}(\b{f}, g) = \left(\frac{ \norm {\b{R}_\V(g) \b{L} \b{f} - \b{L} \b{R}_\V(g) \b{f}} }{\norm {\b{L} \b{f}}}\right)^2,
 \end{equation}
@@ -425,7 +425,7 @@ In particular, it gives us insides for how the parameter $t$ needs to be adjuste
 % First, it is \emph{not} a proof of equivariance of the graph convolution for a specific sampling. To construct such a proof, a stronger convergence result is needed, for example spectral convergence (instead of pointwise).
 % \todo{Can we intuitively write what pointwise convergence means, and how it is more limited than spectral or uniform convergence?}
 We note that in the random sampling case, the graph laplacian does \emph{not} converge uniformly in general \cite[Sec. 3]{belkin2007convergence}, but does for a class of Lipschitz functions \cite[Sec. 6]{belkin2005towards}.
-Second, while do not have a formal proof for it, we strongly believe that the HEALPix sampling does satisfy the hypothesis $d^{(n)}\leq \frac{C}{n^\alpha}, \ \alpha\in (0,\linefrac{1}{2}]$ with $\alpha$ very close or equal to $\linefrac{1}{2}$. The empirical results discussed in the next paragraph also points in this direction. This is further discussed in Appendix \ref{sec: appendix: proof of theorem}.
+Second, while we do not have a formal proof for it, we strongly believe that the HEALPix sampling does satisfy the hypothesis $d^{(n)}\leq \frac{C}{n^\alpha}, \ \alpha\in (0,\linefrac{1}{2}]$ with $\alpha$ very close or equal to $\linefrac{1}{2}$. The empirical results discussed in the next paragraph also points in this direction. This is further discussed in Appendix \ref{sec: appendix: proof of theorem}.
 % 3) Show experimental results
 
 \paragraph{Empirical convergence.}
@@ -437,7 +437,7 @@ The frequencies $\ell$ of the monochromatic signals were chosen in the range $(0
 Using these parameters, the error measured is mostly due to imperfections in the empirical approximation of the Laplace-Beltrami operator and not to the sampling.
 
 % 3.1) explain what the figures tell us
-For 8 neighbors, selecting the optimal value of $t$ already leads to an improvement compared to \citet{perraudin2019deepspherecosmo}, whose graph also was constructed to have at maximum 8 neighbors.
+For 8 neighbors, selecting the optimal value of $t$ already leads to an improvement compared to \citet{perraudin2019deepspherecosmo}, whose graph also was constructed to have at most 8 neighbors.
 With higher the number of neighbors, the equivariance error decreases by more than one order of magnitude.
 Furthermore, increasing the graph resolution ($N_{side}$) leads to an improvement in the high frequencies as well.
 Increasing the graph resolution of the graph of \citet{khasanova2017sphericalcnn} does not seem to improve its equivariance. We note that in our numerical test, this graph was perfectly equivariant to rotations along the horizontal and vertical axis as it should be by design. Nevertheless, it is simply not equivariant along the last rotation. Such equivariance properties might be sufficient for analysing omnidirectional images (that are naturally aligned on the north-south axis).
