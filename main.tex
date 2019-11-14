@@ -374,10 +374,11 @@ w_{ij} = e^{-\frac{1}{4t} \norm{x_i-x_j}^2}
 \end{equation}
 In practice, because of the exponential, most of the weights are very close to $0$. Hence, to optimize for computational efficiency, we limit ourselves to only the $k$ nearest neighbors.
 In~\cite{perraudin2019deepspherecosmo}, the parameter $t$ was heuristically set to $0.5$ times the average squared distances over all connected pixels.
+This heuristic however seems to over-estimate $t$ (see \Figref{kernel_widths}). 
 In this work, we decided to use a more refined method.
 Given $k$, the optimal $t$ is found by searching for the minimizer of \eqref{eq:mean equivariance error}.
 \Figref{kernel_widths} shows the optimal kernel widths found for various resolutions of the HEALPix grid. 
-% We observe that with a small kernel size $t$, \cite{perraudin2019deepspherecosmo} would probably be more equivariant.
+% We observe that using a small kernel size $t$, \cite{perraudin2019deepspherecosmo} would probably be more equivariant.
 
 \subsection{Analysis of the proposed weighting scheme}
 We analyse our proposed weighting scheme both theoretically and empirically.
@@ -456,7 +457,7 @@ Increasing the graph resolution of the graph of \citet{khasanova2017sphericalcnn
 	\begin{minipage}{0.35\linewidth}
 		\centering
 		\includegraphics[width=\linewidth]{kernel_widths}
-		\caption{Optimal kernel widths. For comparizon, we added the kernel used by~\cite{perraudin2019deepspherecosmo}}
+		\caption{Optimal kernel widths. For comparizon, we added the kernel widths used by~\cite{perraudin2019deepspherecosmo} (8 neighbors).}
 		\label{fig:kernel_widths}
 		\vspace{1em}
 		\includegraphics[height=4.5em]{lamp_000018}
