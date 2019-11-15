@@ -16,12 +16,11 @@
 %\usepackage{floatrow} % figure and table together
 \usepackage{capt-of} % or \usepackage{caption} % figure and table together
 \usepackage{subfig}
-%\usepackage{wrapfig}
+\usepackage{wrapfig}
 %\usepackage{floatflt}
 \usepackage{amsthm}
 \usepackage{amsmath}
 \usepackage{amssymb}
-\usepackage{wrapfig}
 
 %\title{Which spherical CNN should you use?\\ DeepSphere V2}
 \title{DeepSphere: a graph-based spherical CNN}
@@ -407,13 +406,12 @@ We analyze the proposed weighting scheme both theoretically and empirically.
 	\label{fig:patch}
 \end{wrapfigure}
 We extend the work of \citep{belkin2005towards} to a sufficiently regular, deterministic sampling.
-Following their setting, we will work with the extended graph Laplacian operator as the linear operator $L_n^t: L^{2}(\S^2) \rightarrow L^{2}(\S^2)$ such that
+Following their setting, we work with the \emph{extended graph Laplacian} operator as the linear operator $L_n^t: L^{2}(\S^2) \rightarrow L^{2}(\S^2)$ such that
 \begin{equation} \label{eq:Heat Kernel Graph Laplacian operator}
 	 L_n^t f(y) := \frac{1}{n}\sum_{i=1}^{n} e^{ -\frac{\|x_i-y\|^2}{4t}} \left(f(y)-f(x_i)\right).
 \end{equation}
-This operator extends the graph Laplacian operator previously defined with the weighting scheme \eqnref{weights:belkin} to each point of the the sphere.
-Hence, we have $\b{L}_n^t \b{f} = T_\V L_n^t f$.
-As the radius of the kernel $t$ will be adapted to the number of samples, we scale the extended graph Laplacian operator as $\hat{L}_n^t := \frac{|\mathbb S^2|}{4\pi t^2}L_n^t$.
+This operator extends the graph Laplacian with the weighting scheme \eqnref{weights:belkin} to each point of the sphere (i.e., $\b{L}_n^t \b{f} = T_\V L_n^t f$).
+As the radius of the kernel $t$ will be adapted to the number of samples, we scale the operator as $\hat{L}_n^t := |\S^2| (4\pi t^2)^{-1} L_n^t$.  % \frac{|\S^2|}{4\pi t^2}
 % $\b{\hat L} = \frac{|\mathbb S^2|}{4\pi t^2}\b L_n^t$. \nati{why define this, we are not using it}
 Given a sampling $\V$, we define $\sigma_i$ to be the patch of the surface of the sphere corresponding to $x_i$, $A_i$ its corresponding area, and $d_i$ the largest distance between the center $x_i$ and any point on the surface $\sigma_i$.
 Define $d^{(n)} := \max_{i=1, \dots, n} d_i$ and $A^{(n)} := \max_{i=1, \dots, n} A_i$.
@@ -430,24 +428,29 @@ Define $d^{(n)} := \max_{i=1, \dots, n} d_i$ and $A^{(n)} := \max_{i=1, \dots, n
 	\end{equation*}
 	\label{theo:pointwise convergence for a regular sampling}
 \end{theorem}
-As a direct implication of this theorem, the rescaled graph Laplacian (the discrete counterpart of $\hat L^t_n$) converges pointwise towards the Laplace-Beltrami operator $\Delta_{\S^2}$ in the sense explained in \citep{belkin2007convergence}.
-This is a major step towards equivariance as the Laplace-Beltrami operator does commute with rotation. Based on this property, we show that the graph Laplacian is equivariant to rotation in the limit of infinite sampling.
-
+%As a direct implication of this theorem, the scaled graph Laplacian (the discrete counterpart of $\hat L^t_n$) converges pointwise towards the Laplace-Beltrami operator $\Delta_{\S^2}$.
+This is a major step towards equivariance, as the Laplace-Beltrami operator commutes with rotation.
+Based on this property, we show the equivariance of the scaled extended graph Laplacian.
 \begin{theorem}\label{theo:equivariance}
-Under the hypothesis of theorem~\ref{theo:pointwise convergence for a regular sampling}, the rescaled graph Laplacian commutes with any rotation, in the limit of infinite sampling, i.e.,
+Under the hypothesis of theorem~\ref{theo:pointwise convergence for a regular sampling}, the scaled graph Laplacian commutes with any rotation, in the limit of infinite sampling, i.e.,
 \begin{equation*}
 	\forall y\in\mathbb S^2\quad\left| \Rg \hat L_n^{t_n} f (y) - \hat L_n^{t_n} \Rg f(y) \right| \xrightarrow{n\to\infty}0.
 \end{equation*}
 \end{theorem}
+From this theorem, it follows that the discrete graph Laplacian will be equivariant in the limit of $n \rightarrow \infty$ as by construction $\b{L}_n^t \b{f} = T_\V L_n^t f$ and as the scaling does not affect the equivariance property of $\b{L}_n^t$.
 
 Importantly, the proof of Theorem~\ref{theo:pointwise convergence for a regular sampling} (in Appendix~\ref{sec: appendix: proof of theorem}) inspires our construction of the graph Laplacian.
-In particular, it gives insights on how the parameter $t$ needs to be adjusted with respect to the number of points $n$. Nevertheless, it is important to keep in mind the limits of Theorem \ref{theo:pointwise convergence for a regular sampling} and \ref{theo:equivariance}. Both theorems present asymptotic results, but in practice we will always work with finite samplings. Furthermore, since this method is based on the capability of the eigenvectors of the graph Laplacian to approximate the spherical harmonics, 
+In particular, it tells us that $t$ should scale as $n^\beta$, which has been empirically verified (\figref{kernel_widths}).
+%In particular, it gives insights on how the parameter $t$ needs to be adjusted with respect to the number of points $n$.
+Nevertheless, it is important to keep in mind the limits of Theorem \ref{theo:pointwise convergence for a regular sampling} and \ref{theo:equivariance}.
+Both theorems present asymptotic results, but in practice we will always work with finite samplings.
+Furthermore, since this method is based on the capability of the eigenvectors of the graph Laplacian to approximate the spherical harmonics,
 % maybe erase the previous sentence?
-a stronger type of convergence of the graph Laplacian would be preferable, i.e. spectral convergence (that is proved for a full graph in the case of random sampling for a class of Lipschitz functions in \citep{belkin2007convergence}).
+a stronger type of convergence of the graph Laplacian would be preferable, i.e., spectral convergence (that is proved for a full graph in the case of random sampling for a class of Lipschitz functions in \citep{belkin2007convergence}).
 % First, it is \emph{not} a proof of equivariance of the graph convolution for a specific sampling. To construct such a proof, a stronger convergence result is needed, for example spectral convergence (instead of pointwise).
 % \todo{Can we intuitively write what pointwise convergence means, and how it is more limited than spectral or uniform convergence?}
 %We note that in the random sampling case, the graph laplacian does \emph{not} converge uniformly in general \citep[Sec. 3]{belkin2007convergence}, but does for a class of Lipschitz functions \citep[Sec. 6]{belkin2005towards}.
-While we do not have a formal proof for it, we strongly believe that the HEALPix sampling does satisfy the hypothesis $d^{(n)}\leq \frac{C}{n^\alpha}, \ \alpha\in (0,\linefrac{1}{2}]$, with $\alpha$ very close or equal to $\linefrac{1}{2}$.
+Finally, while we do not have a formal proof for it, we strongly believe that the HEALPix sampling does satisfy the hypothesis $d^{(n)}\leq \frac{C}{n^\alpha}, \ \alpha\in (0,\linefrac{1}{2}]$, with $\alpha$ very close or equal to $\linefrac{1}{2}$.
 The empirical results discussed in the next paragraph also points in this direction.
 This is further discussed in Appendix \ref{sec: appendix: proof of theorem}.
 
