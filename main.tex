@@ -296,9 +296,9 @@ Convolutions are most often performed in the spectral domain through a spherical
 That is the approach taken by \citet{cohen2018sphericalcnn} and \citet{esteves2018sphericalcnn}, which has a computational cost of $\bO(n^{3/2})$ on isolatitude samplings (such as the HEALPix and equiangular samplings) and $\bO(n^2)$ in general.
 On the other hand, following \citet{defferrard2016graphnn}, graph convolutions can be defined as
 \begin{equation} \label{eqn:graph_conv}
-	h(\b{L}) \b{f} = \left(\sum_{i=0}^K \alpha_i \b{L}^i\right) \b{f},
+	h(\b{L}) \b{f} = \left(\sum_{i=0}^P \alpha_i \b{L}^i\right) \b{f},
 \end{equation}
-where $K$ is the polynomial order (which corresponds to the filter's size) and $\alpha_i$ are the coefficients to be optimized during training.\footnote{In practice, training with Chebyshev polynomials (instead of monomials) is slightly more stable. We believe it to be due to their orthogonality and uniformity.}
+where $P$ is the polynomial order (which corresponds to the filter's size) and $\alpha_i$ are the coefficients to be optimized during training.\footnote{In practice, training with Chebyshev polynomials (instead of monomials) is slightly more stable. We believe it to be due to their orthogonality and uniformity.}
 Those convolutions are used by \citet{khasanova2017sphericalcnn} and \citet{perraudin2019deepspherecosmo} and cost $\bO(n)$ operations through a recursive application of $\b{L}$.\footnote{As long as the graph is sparsified such that the number of edges, i.e., the number of non-zeros in $\b{A}$, is proportional to the number of vertices $n$. This can always be done as most weights are very small.}
 
 \paragraph{Pooling.}
@@ -527,7 +527,7 @@ The equiangular graph is built with \eqnref{weights:khasanova} and $k = 4$ neigh
 The HEALPix graph is built with \eqnref{weights:belkin}, $k = 8$, and a kernel width $t$ set to the average of the distances \citep[following][]{perraudin2019deepspherecosmo}.
 The NN is made of $5$ graph convolutional layers, each followed by a max pooling layer which down-samples by $4$.
 A GAP and a fully connected layer with softmax follow.
-The polynomials are all of order $K=3$ and the number of channels per layer is $16, 32, 64, 128, 256$, respectively.
+The polynomials are all of order $P=3$ and the number of channels per layer is $16, 32, 64, 128, 256$, respectively.
 Following \citet{esteves2018sphericalcnn}, the cross-entropy plus a triplet loss is optimized with Adam for 30 epochs on the dataset augmented by 3 random translations.
 The learning rate is $5 \cdot 10^{-2}$ and the batch size is 32.
 
@@ -581,7 +581,7 @@ Convergence maps represent the distribution of over- and under-densities of mass
 Graphs are built with \eqnref{weights:belkin}, $k = 8, 20, 40$ neighbors, and the corresponding optimal kernel widths $t$ given in \secref{optimal}.
 Following \citet{perraudin2019deepspherecosmo}, the NN is made of $5$ graph convolutional layers, each followed by a max pooling layer which down-samples by $4$.
 A GAP and a fully connected layer with softmax follow.
-The polynomials are all of order $K=4$ and the number of channels per layer is $16, 32, 64, 64, 64$, respectively.
+The polynomials are all of order $P=4$ and the number of channels per layer is $16, 32, 64, 64, 64$, respectively.
 The cross-entropy loss is optimized with Adam for 80 epochs.
 The learning rate is $2 \cdot 10^{-4} \cdot 0.999^{\textrm{step}}$ and the batch size is 8.
 
@@ -634,7 +634,7 @@ Details in \secref{climate:appendix}.
 %The encoder is made of $5$ graph convolutional layers, each followed by a \todo{pick-one?} pooling layer which down-samples by $4$.
 %the number of channels per layer is $16, 32, 64, 64, 64$, respectively.
 %The decoder is made of
-The polynomials are all of order $K=3$.
+The polynomials are all of order $P=3$.
 The cross-entropy loss (weighted or non-weighted) is optimized with Adam for 30 epochs.
 The learning rate is $1 \cdot 10{-3}$ and the batch size is 64.
 
@@ -683,7 +683,7 @@ Predicting from temperature is much easier as it has a clear yearly pattern.
 The graph is built with \eqnref{weights:belkin}, $k = 5$ neighbors, and a kernel width $t$ set to the average of the distances.
 The equivariance property of the resulting graph has not been tested, and we don't expect it to be good due to the heavily non-uniform sampling.
 The NN is made of $3$ graph convolutional layers.
-The polynomials are all of order $K=0$ or $4$ and the number of channels per layer is $50, 100, 100$, respectively.
+The polynomials are all of order $P=0$ or $4$ and the number of channels per layer is $50, 100, 100$, respectively.
 For the global regression, a GAP and a fully connected layer follow.
 For the dense regression, a graph convolutional layer follows instead.
 The MSE loss is optimized with RMSprop for 250 epochs.
@@ -706,7 +706,7 @@ The learning rate is $1 \cdot 10^{-3}$ and the batch size is 64.
 		\toprule
 		& \multicolumn{3}{c}{temp. (from past temp.)} & \multicolumn{3}{c}{day (from temperature)} & \multicolumn{3}{c}{day (from precipitations)} \\
 		\cmidrule(lr){2-4} \cmidrule(lr){5-7} \cmidrule(lr){8-10}
-		order $K$ & {MSE} & {MAE} & {R2} & {MSE} & {MAE} & {R2} & {MSE} & {MAE} & {R2} \\
+		order $P$ & {MSE} & {MAE} & {R2} & {MSE} & {MAE} & {R2} & {MSE} & {MAE} & {R2} \\
 		\midrule
 		$0$ & 10.88 & 2.42 & 0.896 & 0.10 & 0.10 & 0.882 & 0.58 & 0.42 & -0.980 \\
 		%%$1$ &  8.91 & 2.20 & 0.906 & - & - & - & - & - & - \\
@@ -722,7 +722,7 @@ The learning rate is $1 \cdot 10^{-3}$ and the batch size is 64.
 \end{table}
 
 Results are shown in \tabref{ghcn}.
-While using a polynomial order $K=0$ is like modeling each time series independently with an MLP, orders $K>0$ integrate neighborhood information.
+While using a polynomial order $P=0$ is like modeling each time series independently with an MLP, orders $P>0$ integrate neighborhood information.
 Results show that using the structure induced by the spherical geometry always yields better performance.
 
 % * increasing order is good until threshold \\
