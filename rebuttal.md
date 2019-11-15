@@ -3,11 +3,10 @@
 ## General comment about revised manuscript
 
 We uploaded an improved manuscript thanks to the reviewers' comments.
-The following has been updated:
-* Slightly (very slightly) different statement of theorem 3.1
-* new proposition (now called prop 1) formalizing the relation between theorem 3.1 and rotation equivariance
 
-A link to a public git repository containing all the code will be added to the camera-ready version.
+The main update is the addition of theorem 3.2 that formalizes the relation between theorem 3.1 and rotation equivariance. Small changes across the text have been made to clarify the exposition further.
+
+A link to a public git repository containing all the code will be added after the blind-review process.
 
 ## Two Questions about Rotation Equivariance
 
