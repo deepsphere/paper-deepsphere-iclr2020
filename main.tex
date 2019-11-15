@@ -404,7 +404,9 @@ Following their setting, we will work with the extended graph Laplacian operator
 \begin{equation} \label{eq:Heat Kernel Graph Laplacian operator}
 	 L_n^t f(y) := \frac{1}{n}\sum_{i=1}^{n} e^{ -\frac{\|x_i-y\|^2}{4t}} \left(f(y)-f(x_i)\right).
 \end{equation}
-This operator extends the graph Laplacian operator previously defined with the weighting scheme \eqnref{weights:belkin} to each point of the sphere.
+
+This operator extends the graph Laplacian operator previously defined with the weighting scheme \eqnref{weights:belkin} to each point of the the sphere.
+% \mdeff{Can we avoid to introduce general manifolds and stay on the sphere?} \nati{yes}
 As the radius of the kernel $t$ will be adapted to the number of samples, we also rescale the graph Laplacian operator as $\hat{L}_n^t := \frac{|\mathbb S^2|}{4\pi t^2}L_n^t$.
 Hence, we have $\b{L}_n^t \b{f} = T_\V L_n^t f$.
 % $\b{\hat L} = \frac{|\mathbb S^2|}{4\pi t^2}\b L_n^t$. \nati{why define this, we are not using it}
@@ -423,8 +425,9 @@ Define $d^{(n)} := \max_{i=1, \dots, n} d_i$ and $A^{(n)} := \max_{i=1, \dots, n
 	\end{equation*}
 	\label{theo:pointwise convergence for a regular sampling}
 \end{theorem}
-As a direct implication of this theorem, the discrete counterpart of $\hat L^t_n$ converges pointwise towards the Laplace-Beltrami operator $\Delta_{\S^2}$ in the sense explained in \citep{belkin2007convergence}.
-This operator commutes with rotation and hence Theorem \ref{theo:pointwise convergence for a regular sampling} is a strong step towards equivariance, that we proved pointwisely in the limit of infinite sampling in the following theorem.
+As a direct implication of this theorem, the rescaled graph Laplacian (the discrete counterpart of $\hat L^t_n$) converges pointwise towards the Laplace-Beltrami operator $\Delta_{\S^2}$ in the sense explained in \citep{belkin2007convergence}.
+This is a major step towards equivariance as the Laplace-Beltrami operator does commute with rotation. Based on this property, we show that the graph Laplacian is equivariant to rotation in the limit of infinite sampling.
+
 \begin{theorem}\label{theo:equivariance}
 Under the hypothesis of theorem~\ref{theo:pointwise convergence for a regular sampling}, the rescaled graph Laplacian commutes with any rotation, in the limit of infinite sampling, i.e.,
 \begin{equation*}
@@ -489,6 +492,7 @@ We however verified that the convolutions are equivariant to longitudinal and la
 		\caption{Power spectral densities.}
 		\label{fig:spectrum}
 	\end{minipage}
+\vspace{-0.5cm}
 \end{figure}
 
 \section{Experiments}
