@@ -399,12 +399,16 @@ This heuristic however seems to over-estimate $t$ (see \figref{kernel_widths}).
 We analyze the proposed weighting scheme both theoretically and empirically.
 
 \paragraph{Theoretical convergence.}
+\begin{wrapfigure}{r}{5cm}
+	\centering
+	\includegraphics[width=\linewidth]{d_iA_i}
+	\caption{The patch around the $i$th sampling point.}
+\end{wrapfigure}
 We extend the work of \citep{belkin2005towards} to a sufficiently regular, deterministic sampling.
 Following their setting, we will work with the extended graph Laplacian operator as the linear operator $L_n^t: L^{2}(\mathcal{M}) \rightarrow L^{2}(\mathcal{M})$ such that
 \begin{equation} \label{eq:Heat Kernel Graph Laplacian operator}
 	 L_n^t f(y) := \frac{1}{n}\sum_{i=1}^{n} e^{ -\frac{\|x_i-y\|^2}{4t}} \left(f(y)-f(x_i)\right).
 \end{equation}
-
 This operator extends the graph Laplacian operator previously defined with the weighting scheme \eqnref{weights:belkin} to each point of the the sphere.
 % \mdeff{Can we avoid to introduce general manifolds and stay on the sphere?} \nati{yes}
 As the radius of the kernel $t$ will be adapted to the number of samples, we also rescale the graph Laplacian operator as $\hat{L}_n^t := \frac{|\mathbb S^2|}{4\pi t^2}L_n^t$.
@@ -854,6 +858,7 @@ for a particular class of \emph{deterministic} samplings, and (ii) apply Proposi
 % This proof consists in two steps: first, we prove that $L_n^t \rightarrow L^t$, and second, we use proposition \ref{prop:3} to prove \eqref{eq:continuous convergence}. This equation, as already explained in \citep{belkin2007convergence}, directly implies theorem \ref{theo:pointwise convergence for a regular sampling}.
 
 We start by proving that for smooth functions, for any fixed $t$, the extended graph Laplacian $L^t_n$ converges towards its continuous counterpart $L^t$ as the sampling increases in size.
+
 \begin{prop}\label{prop:1}
 	For an equal area sampling $\{x_i\in\S^2\}_{i=1}^n: A_i=A_j \forall i,j$ of the sphere it is true that for all $f: \S^2 \rightarrow \R$ Lipschitz with respect to the Euclidean distance $\|\cdot\|$ with Lipschitz constant $C_f$
 	\begin{equation*}
