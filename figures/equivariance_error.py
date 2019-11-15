@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 
 
-plt.rcParams['figure.figsize'] = (9,9)
+fig, ax = plt.subplots(figsize=(9, 9))
 
 font = {'family': 'serif',
         'color':  'black',
@@ -28,19 +28,19 @@ bw = 64
 lmax = bw
 degrees = np.arange(0, lmax, degree_step[bw])
 degrees = degrees[1:]
-l1, = plt.loglog(degrees, equiv_error_KF[bw][1:], 'mv-')
+l1, = ax.loglog(degrees, equiv_error_KF[bw][1:], 'mv-')
 
 bw = 128
 lmax = bw
 degrees = np.arange(0, lmax, degree_step[bw])
 degrees = degrees[1:]
-plt.loglog(degrees, equiv_error_KF[bw][1:], 'mx-', )
+ax.loglog(degrees, equiv_error_KF[bw][1:], 'mx-', )
 
 bw = 256
 lmax = bw
 degrees = np.arange(0, lmax, degree_step[bw])
 degrees = degrees[1:]
-plt.loglog(degrees, equiv_error_KF[bw][1:], 'mo-', )
+ax.loglog(degrees, equiv_error_KF[bw][1:], 'mo-', )
 
 
 # ----------------- healpix ----------------------
@@ -64,39 +64,38 @@ nside = 32
 lmax = 3*nside-1
 degrees = np.arange(0, lmax+1, degree_step[nside])
 degrees = degrees[1:]
-l2, = plt.loglog(degrees, equiv_error_V1[nside][1:], 'gv-', label='V1')
-l3, = plt.loglog(degrees, equiv_error_8[nside][1:], 'cv-', label='8 neighbors')
-l4, = plt.loglog(degrees, equiv_error_20[nside][1:], 'rv-', label='20 neighbors')
-l5, = plt.loglog(degrees, equiv_error_40[nside][1:], 'bv-', label='40 neighbors')
+l2, = ax.loglog(degrees, equiv_error_V1[nside][1:], 'gv-', label='V1')
+l3, = ax.loglog(degrees, equiv_error_8[nside][1:], 'cv-', label='8 neighbors')
+l4, = ax.loglog(degrees, equiv_error_20[nside][1:], 'rv-', label='20 neighbors')
+l5, = ax.loglog(degrees, equiv_error_40[nside][1:], 'bv-', label='40 neighbors')
 
 nside = 64
 lmax = 3*nside-1
 degrees = np.arange(0, lmax+1, degree_step[nside])
 degrees = degrees[1:]
-plt.loglog(degrees, equiv_error_V1[nside][1:], 'gx-', )
-plt.loglog(degrees, equiv_error_8[nside][1:], 'cx-', )
-plt.loglog(degrees, equiv_error_20[nside][1:], 'rx-', )
-plt.loglog(degrees, equiv_error_40[nside][1:], 'bx-', )
+ax.loglog(degrees, equiv_error_V1[nside][1:], 'gx-', )
+ax.loglog(degrees, equiv_error_8[nside][1:], 'cx-', )
+ax.loglog(degrees, equiv_error_20[nside][1:], 'rx-', )
+ax.loglog(degrees, equiv_error_40[nside][1:], 'bx-', )
 
 nside = 128
 lmax = 3*nside-1
 degrees = np.arange(0, lmax+1, degree_step[nside])
 degrees = degrees[1:]
-plt.loglog(degrees, equiv_error_V1[nside][1:], 'go-')
-plt.loglog(degrees, equiv_error_8[nside][1:], 'co-', )
-plt.loglog(degrees, equiv_error_20[nside][1:], 'ro-', )
-plt.loglog(degrees, equiv_error_40[nside][1:], 'bo-', )
+ax.loglog(degrees, equiv_error_V1[nside][1:], 'go-')
+ax.loglog(degrees, equiv_error_8[nside][1:], 'co-', )
+ax.loglog(degrees, equiv_error_20[nside][1:], 'ro-', )
+ax.loglog(degrees, equiv_error_40[nside][1:], 'bo-', )
 
 # -------------- final parameters ------------------
 
-plt.xlabel(r'spherical harmonic degree $\ell$', fontdict=font,)
-#plt.ylabel(r'mean equivariance error $\overline{E}_{\mathbf{L}, C}$', fontdict=font, )
-plt.ylabel(r'mean equivariance error $\overline{E}_{L, C}$', fontdict=font, )
-plt.tick_params(axis='both', which='major')
-plt.grid()
-plt.xlim([10,np.max(degrees)])
-# plt.legend(prop={'size': 20})
-ax =plt.gca()
+ax.set_xlabel(r'spherical harmonic degree $\ell$', fontdict=font,)
+#ax.set_ylabel(r'mean equivariance error $\overline{E}_{\mathbf{L}, C}$', fontdict=font, )
+ax.set_ylabel(r'mean equivariance error $\overline{E}_{L, C}$', fontdict=font, )
+ax.tick_params(axis='both', which='major')
+ax.grid()
+ax.set_xlim([10,np.max(degrees)])
+# ax.legend(prop={'size': 20})
 legend_elements_1 = [Line2D([0], [0], color='m', marker='', markersize=8),
                      Line2D([0], [0], color='g', marker='', markersize=8),
                      Line2D([0], [0], color='c', marker='', markersize=8),
@@ -117,6 +116,6 @@ leg2 = ax.legend(legend_elements_2, [rf'$n \propto {s}^2$' for s in [32, 64, 128
 # Manually add the first legend back
 ax.add_artist(leg1)
 
-plt.tight_layout()
+fig.tight_layout()
 filename = path.splitext(path.basename(__file__))[0] + '.pdf'
-plt.savefig(filename)
+fig.savefig(filename)
