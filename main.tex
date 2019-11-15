@@ -400,10 +400,11 @@ This heuristic however over-estimates $t$ (\figref{kernel_widths}) and leads to 
 We analyze the proposed weighting scheme both theoretically and empirically.
 
 \paragraph{Theoretical convergence.}
-\begin{wrapfigure}{r}{5cm}
+\begin{wrapfigure}[10]{r}{3cm}
 	\centering
-	\includegraphics[width=\linewidth]{patch}
-	\caption{The patch around the $i$th sampling point.}
+	\includegraphics[width=0.9\linewidth]{patch}
+	\caption{Patch.}
+	\label{fig:patch}
 \end{wrapfigure}
 We extend the work of \citep{belkin2005towards} to a sufficiently regular, deterministic sampling.
 Following their setting, we will work with the extended graph Laplacian operator as the linear operator $L_n^t: L^{2}(\S^2) \rightarrow L^{2}(\S^2)$ such that
