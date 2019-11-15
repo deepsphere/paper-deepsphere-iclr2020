@@ -8,14 +8,14 @@ import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 
 
-fig, ax = plt.subplots(figsize=(9, 9))
+plt.rc('font', family='Latin Modern Roman')  # Latin Modern for text
+plt.rc('mathtext', fontset='cm')  # Computer Modern for math (default is dejavusans)
+#plt.rc('text', usetex=True)
+#plt.rc('text.latex', preamble=r'\usepackage{lmodern}')
 
-font = {'family': 'serif',
-        'color':  'black',
-        'weight': 'normal',
-        'size': 20,
-        }
-plt.rcParams.update({'font.size': 18})
+fig, ax = plt.subplots(figsize=(5, 5))
+
+params = dict(linewidth=0.8, markersize=3)
 
 # -------------- khasanova-Frossard ------------------
 
@@ -34,7 +34,7 @@ for bw, marker in zip([64, 128, 256], markers):
     lmax = bw
     degrees = np.arange(0, lmax, degree_step[bw])
     degrees = degrees[1:]
-    ax.loglog(degrees, equiv_error_KF[bw][1:], f'm{marker}-')
+    ax.loglog(degrees, equiv_error_KF[bw][1:], f'm{marker}-', **params)
 
 # ----------------- healpix ----------------------
 
@@ -58,29 +58,29 @@ for nside, marker in zip(nsides, markers):
     lmax = 3 * nside - 1
     degrees = np.arange(0, lmax+1, degree_step[nside])
     degrees = degrees[1:]
-    ax.loglog(degrees, equiv_error_V1[nside][1:], f'g{marker}-')
-    ax.loglog(degrees, equiv_error_8[nside][1:], f'c{marker}-')
-    ax.loglog(degrees, equiv_error_20[nside][1:], f'r{marker}-')
-    ax.loglog(degrees, equiv_error_40[nside][1:], f'b{marker}-')
+    ax.loglog(degrees, equiv_error_V1[nside][1:], f'g{marker}-', **params)
+    ax.loglog(degrees, equiv_error_8[nside][1:], f'c{marker}-', **params)
+    ax.loglog(degrees, equiv_error_20[nside][1:], f'r{marker}-', **params)
+    ax.loglog(degrees, equiv_error_40[nside][1:], f'b{marker}-', **params)
 
 # -------------- final parameters ------------------
 
-ax.set_xlabel(r'spherical harmonic degree $\ell$', fontdict=font,)
-#ax.set_ylabel(r'mean equivariance error $\overline{E}_{\mathbf{L}, C}$', fontdict=font, )
-ax.set_ylabel(r'mean equivariance error $\overline{E}_{L, C}$', fontdict=font, )
+ax.set_xlabel(r'spherical harmonic degree $\ell$')
+#ax.set_ylabel(r'mean equivariance error $\overline{E}_{\mathbf{L}, C}$')
+ax.set_ylabel(r'mean equivariance error $\overline{E}_{L, C}$')
 
-ax.tick_params(axis='both', which='major')
-ax.grid()
+#ax.tick_params(axis='y', which='major')
+ax.grid(axis='y', which='major')
 ax.set_xlim([10, np.max(degrees)])
 
 # Add first legend: only labeled data is included
 # ax.legend(prop={'size': 20})
 handles = [  # Some fake handles.
-    Line2D([0], [0], color='m', marker='', markersize=8),
-    Line2D([0], [0], color='g', marker='', markersize=8),
-    Line2D([0], [0], color='c', marker='', markersize=8),
-    Line2D([0], [0], color='r', marker='', markersize=8),
-    Line2D([0], [0], color='b', marker='', markersize=8),
+    Line2D([0], [0], color='m', marker='', **params),
+    Line2D([0], [0], color='g', marker='', **params),
+    Line2D([0], [0], color='c', marker='', **params),
+    Line2D([0], [0], color='r', marker='', **params),
+    Line2D([0], [0], color='b', marker='', **params),
 ]
 labels = ['Khasanova & Frossard, $k=4$', 'Perraudin et al., $k=8$']
 labels.extend([f'$k$-NN graph, $k={k}$ neighbors' for k in [8, 20, 40]])
@@ -89,9 +89,9 @@ ax.add_artist(legend)  # Manually add the first legend back
 
 # Add second legend for the maxes and mins.
 handles = [  # Some fake handles.
-    Line2D([0], [0], color='k', marker='v', markersize=8),
-    Line2D([0], [0], color='k', marker='x', markersize=8),
-    Line2D([0], [0], color='k', marker='o', markersize=8),
+    Line2D([0], [0], color='k', marker='v', **params),
+    Line2D([0], [0], color='k', marker='x', **params),
+    Line2D([0], [0], color='k', marker='o', **params),
 ]
 labels = [rf'$n \propto {s}^2$' for s in [32, 64, 128]]
 ax.legend(handles, labels, loc='upper right')
