@@ -31,12 +31,24 @@ Thank you for your interest and questions.
 
 1. First of all, the operator needs to be a Laplacian (why?), excluding the single-parameter variant of GCN. The two-parameter variant is ChebNet with a polynomial order of K=1. The method scales linearly with K, which is an hyper-parameter to be set (analogous to the kernel size in classical CNNs).
 TODO(mdeff): check GCN paper for the variants
-TODO(nati) my version:
-Practically, we believe that any graph neural network variant may work and some might even slightly beat ChebyNet.
+TODO(nati version):
+1. Practically, we believe that any graph neural network variant may work and some might even slightly beat ChebyNet.
 However, our equivariance theory utilizes the graph Laplacian as a base building block.
 Hence, we do not know the theoretical properties of other GCNs such as the single parameter variant from T.K. Kipf.
 Note that the two-parameter variant from T.K. Kipf is ChebNet with a polynomial order of K=1.
 Eventually, the method we use scales linearly with K, which is an hyper-parameter to be set (analogous to the kernel size in classical CNNs).
+2. Regarding the sentence 
+"It is, however, possible to construct a CNN in which the activations transform in a predictable and reversible way,",
+we read in the same paper, two sensences above:
+"It can be shown that one cannot construct a CNN for images that behaves in a quasi-invariant way with respect to both translations and rotations unless every filter is directionless.".
+In the case of our contribution, the graph convolution we use can be considered as directionless (isotropic convolution kernel). Hence, we do not need any special activation functions to be invariant. 
+
+Note also that on the sphere and the plane the meaning of rotation is different. 
+The plane has 2 axes for translation and 1 axis for rotation, while the sphere has only 3 axes of rotation. 
+In the context of this question, we assume that the axes of rotation on the sphere correspond to both rotation and translation on the plane. 
+
+
+
 
 2. TODO(mdeff): Don't understand the question. Read the CCN paper.
 
