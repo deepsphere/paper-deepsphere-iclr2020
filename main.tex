@@ -370,7 +370,7 @@ Their solution gives weights inversely proportional to Euclidean distances:
 	w_{ij} = \frac{1}{\norm{x_i-x_j}}.
 \end{equation}
 %leading to a high mean equivariance error if the mean is computed over rotations in SO(3).
-Note that while the resulting convolution is not equivariant to the whole of $SO(3)$, that is enough for omnidirectional imaging because, as gravity consistently orients the sphere, objects only rotate longitudinally or latitudinally.
+While the resulting convolution is not equivariant to the whole of $SO(3)$ (\figref{equivariance_error}), it is enough for omnidirectional imaging because, as gravity consistently orients the sphere, objects only rotate longitudinally or latitudinally.
 
 % 2) explain our approach
 To achieve equivariance to all rotations, we take inspiration from \citet{belkin2005towards}.
@@ -381,16 +381,16 @@ They prove that for a \emph{random uniform sampling}, the graph Laplacian $\b{L}
 converges to the Laplace-Beltrami operator $\Delta_{\mathbb{S}^2}$ as the number of samples grows to infinity.
 This result is a good starting point as $\Delta_{\mathbb{S}^2}$ commutes with rotation, i.e., $\Delta_{\mathbb{S}^2}\Rg = \Rg\Delta_{\mathbb{S}^2}$.
 % and (ii) is diagonalized by the spherical harmonics.
-While the weighting scheme is full (i.e., every vertex is connected to every vertex), most weights are small due to the exponential.
-We hence make an approximation to limit the cost of the convolution \eqnref{graph_conv} by only considering the $k$ nearest neighbors to each vertex.
+While the weighting scheme is full (i.e., every vertex is connected to every other vertex), most weights are small due to the exponential.
+We hence make an approximation to limit the cost of the convolution \eqnref{graph_conv} by only considering the $k$ nearest neighbors ($k$-NN) of each vertex.
 %In practice, the tricky part is to set $t$ in a non-asymptotic regime.
 Given $k$, the optimal kernel width $t$ is found by searching for the minimizer of \eqref{eq:mean equivariance error}.
 \Figref{kernel_widths} shows the optimal kernel widths found for various resolutions of the HEALPix sampling.
 As predicted by the theory, $t_n \propto n^\beta, \beta \in \R$.
 Importantly however, the optimal $t$ also depends on the number of neighbors $k$.
 
-Considering the HEALPix sampling, \citet{perraudin2019deepspherecosmo} connected each vertex to their 8 adjacent vertices, computed the weights with \eqnref{weights:belkin}, and heuristically set $t$ to half the average squared Euclidean distance between connected vertices.
-This heuristic however seems to over-estimate $t$ (see \figref{kernel_widths}).
+Considering the HEALPix sampling, \citet{perraudin2019deepspherecosmo} connected each vertex to their 8 adjacent vertices in the tiling of the sphere, computed the weights with \eqnref{weights:belkin}, and heuristically set $t$ to half the average squared Euclidean distance between connected vertices.
+This heuristic however over-estimates $t$ (\figref{kernel_widths}) and leads to an increased equivariance error (\figref{equivariance_error}).
 % We observe that using a small kernel size $t$, \cite{perraudin2019deepspherecosmo} would probably be more equivariant.
 
 \subsection{Analysis of the proposed weighting scheme}
@@ -461,12 +461,11 @@ To allow for an almost perfect implementation (up to numerical errors) of the op
 Using these parameters, the measured error is mostly due to imperfections in the empirical approximation of the Laplace-Beltrami operator and not to the sampling.
 
 % 3.1) explain what the figure tells us
-For $k=8$ neighbors, selecting the optimal value of $t$ improves on \citet{perraudin2019deepspherecosmo}, whose graph also was constructed to have at most 8 neighbors.
-The equivariance error further decreases by connecting more neighbors,  at the expense of computations.
-Increasing the resolution decreases the equivariance error in the high frequencies.
-% Increasing the graph resolution of the graph of \citet{khasanova2017sphericalcnn} does not seem to improve its equivariance.
-Moreover, we observe that the weighting scheme \eqnref{weights:khasanova} does indeed not lead to convolutions that are equivariant to all rotations $g \in SO(3)$.
-We however verified that the convolutions are equivariant to longitudinal and latitudinal rotations, as intended.
+\Figref{equivariance_error} shows that the weighting scheme \eqnref{weights:khasanova} from \citep{khasanova2017sphericalcnn} does indeed not lead to a convolution that is equivariant to all rotations $g \in SO(3)$.\footnote{We however verified that the convolution is equivariant to longitudinal and latitudinal rotations, as intended.}
+For $k=8$ neighbors, selecting the optimal kernel width $t$ improves on \citep{perraudin2019deepspherecosmo} at no cost, highlighting the importance of this parameter.
+Increasing the resolution decreases the equivariance error in the high frequencies, an effect most probably due to the sampling.
+Most importantly, the equivariance error decreases when connecting more neighbors.
+Hence, the number of neighbors $k$ gives us a precise control of the tradeoff between cost and equivariance.
 
 \begin{figure}
 	\begin{minipage}{0.6\linewidth}
@@ -474,7 +473,7 @@ We however verified that the convolutions are equivariant to longitudinal and la
 		\includegraphics[width=\linewidth]{equivariance_error}
 		\caption{
 			Mean equivariance error \eqref{eq:mean equivariance error}.
-			The number of pixels is $n = 4 s^2$ for the equiangular sampling and $n = 12 s^2$ for the HEALPix.
+			There is a clear tradeoff between equivariance and computational cost, governed by the number of vertices $n$ and edges $kn$.
 		}
 		\label{fig:equivariance_error}
 	\end{minipage}
