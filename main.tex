@@ -49,7 +49,7 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 \newcommand{\V}{\mathcal{V}}  % vertex set
 \newcommand{\E}{\mathcal{E}}  % edge set
 \newcommand{\laplacian}{\Delta_{\mathbb S^2}}
-\newcommand{\Rg}{\mathcal R_g}
+\newcommand{\Rg}{\mathcal R (g)}
 \newcommand{\seminorm}[1]{\left|#1\right|}
 \newcommand{\Ln}{\hat L_n^{t_n}}
 
@@ -278,8 +278,7 @@ The main idea is to model the sampled sphere as a graph of connected pixels: the
 We use the graph CNN formulation introduced in \citep{defferrard2016graphnn} and a pooling strategy that exploits hierarchical samplings of the sphere.
 
 \paragraph{Sampling.}
-Given a sampling $\V = \{x_i \in \S^2\}_{i=1}^n$, a function $f : \S^2 \supset F_\V \to \R$ is sampled as $T_\V(f) = \b{f}$ by the sampling operator $T_\V: L^2(\S^2) \supset F_\V \to \R^n$ defined as $\b{f}: f_i=f(x_i)$, where $F_\V$ will be specified in \secref{equivariance}.
-As there is no analogue of uniform sampling on the sphere, many samplings have been proposed with different tradeoffs.
+A sampling scheme $\V = \{x_i \in \S^2\}_{i=1}^n$ is defined to be the discrete subset of the sphere containing the $n$ points where the values of the signals that we want to analyse are known. For a given continuous signal $f$, we represent such values in a vector $\b{f}\in\mathbb R^n$. As there is no analogue of uniform sampling on the sphere, many samplings have been proposed with different tradeoffs.
 In this work, depending on the considered application, we will use the equiangular \citep{driscoll1994Fouriersphere}, HEALPix \citep{gorski2005healpix}, and icosahedral \citep{baumgardner1985icosahedral} samplings.
 
 \paragraph{Graph.}
@@ -333,8 +332,7 @@ While the graph framework offers great flexibility, its ability to faithfully re
 \subsection{Problem formulation}
 % 0.1 Explain the sampling problem
 %As the graph convolution acts on a sampled version of the function $\b{f}$ and the rotation on its continuous counterpart $f$, a sampling operator is needed.
-
-We require $F_\V$ to be a suitable subspace of $L^2(\S^2)$ such that $T_\V$ is invertible, i.e., the function $f \in F_\V$ can be unambiguously reconstructed from its sampled values $\b{f}$.
+A continuous function $f : \mathcal C(\S^2) \supset F_\V \to \R$ is sampled as $T_\V(f) = \b{f}$ by the sampling operator $T_\V: C(\S^2) \supset F_\V \to \R^n$ defined as $\b{f}: f_i=f(x_i)$. We require $F_\V$ to be a suitable subspace of continuous functions such that $T_\V$ is invertible, i.e., the function $f \in F_\V$ can be unambiguously reconstructed from its sampled values $\b{f}$.
 The existence of such a subspace depends on the sampling $\V$, and its characterization is a common problem in signal processing \citep{driscoll1994Fouriersphere}.
 For most samplings, it is not known if $F_\V$ exists and hence if $T_\V$ is invertible.
 A special case is the equiangular sampling where a sampling theorem holds, and thus a closed-form of $T_\V^{-1}$ is known. % \citep{driscoll1994Fouriersphere}
@@ -406,8 +404,7 @@ Following their setting, we will work with the extended graph Laplacian operator
 \begin{equation} \label{eq:Heat Kernel Graph Laplacian operator}
 	 L_n^t f(y) := \frac{1}{n}\sum_{i=1}^{n} e^{ -\frac{\|x_i-y\|^2}{4t}} \left(f(y)-f(x_i)\right).
 \end{equation}
-This operator extends the graph Laplacian operator previously defined with the weighting scheme \eqnref{weights:belkin} to each point of the manifold, i.e., the sphere.
-\mdeff{Can we avoid to introduce general manifolds and stay on the sphere?}
+This operator extends the graph Laplacian operator previously defined with the weighting scheme \eqnref{weights:belkin} to each point of the sphere.
 As the radius of the kernel $t$ will be adapted to the number of samples, we also rescale the graph Laplacian operator as $\hat{L}_n^t := \frac{|\mathbb S^2|}{4\pi t^2}L_n^t$.
 Hence, we have $\b{L}_n^t \b{f} = T_\V L_n^t f$.
 % $\b{\hat L} = \frac{|\mathbb S^2|}{4\pi t^2}\b L_n^t$. \nati{why define this, we are not using it}
@@ -426,24 +423,22 @@ Define $d^{(n)} := \max_{i=1, \dots, n} d_i$ and $A^{(n)} := \max_{i=1, \dots, n
 	\end{equation*}
 	\label{theo:pointwise convergence for a regular sampling}
 \end{theorem}
-As a direct implication of this theorem, the discrete counterpart of $\mathbf{\hat L}$ \mdeff{(that's already discrete no?)} converges pointwise towards the Laplace-Beltrami operator $\Delta_{\S^2}$ in the sense explained in \citep{belkin2007convergence}.
-This operator commutes with rotation and hence Theorem \ref{theo:pointwise convergence for a regular sampling} is a strong step towards equivariance. We formalize it in the following theorem.
-\mdeff{This transition should be done better.}
+As a direct implication of this theorem, the discrete counterpart of $\hat L^t_n$ converges pointwise towards the Laplace-Beltrami operator $\Delta_{\S^2}$ in the sense explained in \citep{belkin2007convergence}.
+This operator commutes with rotation and hence Theorem \ref{theo:pointwise convergence for a regular sampling} is a strong step towards equivariance, that we proved pointwisely in the limit of infinite sampling in the following theorem.
 \begin{theorem}\label{theo:equivariance}
 Under the hypothesis of theorem~\ref{theo:pointwise convergence for a regular sampling}, the rescaled graph Laplacian commutes with any rotation, in the limit of infinite sampling, i.e.,
 \begin{equation*}
-	\forall y\in\mathbb S^2\quad\left| \mathcal R_g \hat L_n^{t_n} f (y) - \hat L_n^{t_n} \mathcal R_g f(y) \right| \xrightarrow{n\to\infty}0.
+	\forall y\in\mathbb S^2\quad\left| \mathcal R(g) \hat L_n^{t_n} f (y) - \hat L_n^{t_n} \mathcal R(g) f(y) \right| \xrightarrow{n\to\infty}0.
 \end{equation*}
 \end{theorem}
 
 Importantly, the proof of Theorem~\ref{theo:pointwise convergence for a regular sampling} (in Appendix~\ref{sec: appendix: proof of theorem}) inspires our construction of the graph Laplacian.
 In particular, it gives insights on how the parameter $t$ needs to be adjusted with respect to the number of points $n$.
 
-% Nevertheless, it is important to keep in mind the limits of Theorem \ref{theo:pointwise convergence for a regular sampling}.
+Nevertheless, it is important to keep in mind the limits of Theorem \ref{theo:pointwise convergence for a regular sampling} and \ref{theo:equivariance}. Both theorems present asymptotic results, and in practice we will always test them on finite samplings. Furthermore, since this method is based on the capability of the eigenvectors of the graph Laplacian to approximate the spherical harmonics, a stronger type of convergence of the graph Laplacian would be preferable, i.e. spectral convergence (that is proved for a full graph in the case of random sampling for a class of Lipschitz functions in \citep{belkin2007convergence}).
 % First, it is \emph{not} a proof of equivariance of the graph convolution for a specific sampling. To construct such a proof, a stronger convergence result is needed, for example spectral convergence (instead of pointwise).
 % \todo{Can we intuitively write what pointwise convergence means, and how it is more limited than spectral or uniform convergence?}
-
-We note that in the random sampling case, the graph laplacian does \emph{not} converge uniformly in general \citep[Sec. 3]{belkin2007convergence}, but does for a class of Lipschitz functions \citep[Sec. 6]{belkin2005towards}.
+%We note that in the random sampling case, the graph laplacian does \emph{not} converge uniformly in general \citep[Sec. 3]{belkin2007convergence}, but does for a class of Lipschitz functions \citep[Sec. 6]{belkin2005towards}.
 Second, while we do not have a formal proof for it, we strongly believe that the HEALPix sampling does satisfy the hypothesis $d^{(n)}\leq \frac{C}{n^\alpha}, \ \alpha\in (0,\linefrac{1}{2}]$, with $\alpha$ very close or equal to $\linefrac{1}{2}$.
 The empirical results discussed in the next paragraph also points in this direction.
 This is further discussed in Appendix \ref{sec: appendix: proof of theorem}.
