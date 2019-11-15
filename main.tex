@@ -394,6 +394,35 @@ Considering the HEALPix sampling, \citet{perraudin2019deepspherecosmo} connected
 This heuristic however over-estimates $t$ (\figref{kernel_widths}) and leads to an increased equivariance error (\figref{equivariance_error}).
 % We observe that using a small kernel size $t$, \cite{perraudin2019deepspherecosmo} would probably be more equivariant.
 
+\begin{figure}
+	\begin{minipage}{0.6\linewidth}
+		\centering
+		\includegraphics[width=\linewidth]{equivariance_error}
+		\caption{
+			Mean equivariance error \eqref{eq:mean equivariance error}.
+			There is a clear tradeoff between equivariance and computational cost, governed by the number of vertices $n$ and edges $kn$.
+		}
+		\label{fig:equivariance_error}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.35\linewidth}
+		\centering
+		\includegraphics[width=\linewidth]{kernel_widths}
+		\caption{Kernel widths.}
+		\label{fig:kernel_widths}
+		\vspace{1em}
+		\includegraphics[height=4.5em]{lamp_000018}
+		\hfill
+		\includegraphics[height=4.5em]{lamp_000018_sphere_nobar}
+		\caption{3D object represented as a spherical depth map.}
+		\label{fig:depthmap}
+		\vspace{1em}
+		\includegraphics[width=\linewidth]{spectrum}
+		\caption{Power spectral densities.}
+		\label{fig:spectrum}
+	\end{minipage}
+\end{figure}
+
 \subsection{Analysis of the proposed weighting scheme}
 
 We analyze the proposed weighting scheme both theoretically and empirically.
@@ -471,36 +500,6 @@ For $k=8$ neighbors, selecting the optimal kernel width $t$ improves on \citep{p
 Increasing the resolution decreases the equivariance error in the high frequencies, an effect most probably due to the sampling.
 Most importantly, the equivariance error decreases when connecting more neighbors.
 Hence, the number of neighbors $k$ gives us a precise control of the tradeoff between cost and equivariance.
-
-\begin{figure}
-	\begin{minipage}{0.6\linewidth}
-		\centering
-		\includegraphics[width=\linewidth]{equivariance_error}
-		\caption{
-			Mean equivariance error \eqref{eq:mean equivariance error}.
-			There is a clear tradeoff between equivariance and computational cost, governed by the number of vertices $n$ and edges $kn$.
-		}
-		\label{fig:equivariance_error}
-	\end{minipage}
-	\hfill
-	\begin{minipage}{0.35\linewidth}
-		\centering
-		\includegraphics[width=\linewidth]{kernel_widths}
-		\caption{Kernel widths.}
-		\label{fig:kernel_widths}
-		\vspace{1em}
-		\includegraphics[height=4.5em]{lamp_000018}
-		\hfill
-		\includegraphics[height=4.5em]{lamp_000018_sphere_nobar}
-		\caption{3D object represented as a spherical depth map.}
-		\label{fig:depthmap}
-		\vspace{1em}
-		\includegraphics[width=\linewidth]{spectrum}
-		\caption{Power spectral densities.}
-		\label{fig:spectrum}
-	\end{minipage}
-% \vspace{-0.5cm}
-\end{figure}
 
 \section{Experiments}
 
@@ -771,7 +770,6 @@ Our ultimate goal is for practitioners to be able to work directly on their meas
 
 % beyond scalar fields => simplicial complexes
 
-\newpage
 \subsubsection*{Author Contributions}
 Left blank for anonymity reason.
 % If you'd like to, you may include a section for author contributions as is done
