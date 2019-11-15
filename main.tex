@@ -49,7 +49,7 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 \newcommand{\V}{\mathcal{V}}  % vertex set
 \newcommand{\E}{\mathcal{E}}  % edge set
 \newcommand{\laplacian}{\Delta_{\mathbb S^2}}
-\newcommand{\Rg}{\mathcal R (g)}
+\newcommand{\Rg}{\mathcal{R}(g)}
 \newcommand{\seminorm}[1]{\left|#1\right|}
 \newcommand{\Ln}{\hat L_n^{t_n}}
 
@@ -120,7 +120,6 @@ TODO:
 \todo{
 rebuttal:
 \begin{itemize}
-	\item \mdeff{Why two definitions of rotations, $R(g)$ and $\mathcal{R}_g$?} [Martino]
     \item answer commenter
 	\item add somewhere (intro?): exploit symmetries to reduce sample cost $\Rightarrow$ we don't discuss symmetries much
 	\item \citet{mudigonda2017climateevents} use Integrated Water Vapor (IWV) only. That most probably is the same as our TMQ, which is most probably the most informative feature. TODO: run ours with TMQ alone.
@@ -296,9 +295,9 @@ Convolutions are most often performed in the spectral domain through a spherical
 That is the approach taken by \citet{cohen2018sphericalcnn} and \citet{esteves2018sphericalcnn}, which has a computational cost of $\bO(n^{3/2})$ on isolatitude samplings (such as the HEALPix and equiangular samplings) and $\bO(n^2)$ in general.
 On the other hand, following \citet{defferrard2016graphnn}, graph convolutions can be defined as
 \begin{equation} \label{eqn:graph_conv}
-	h(\b{L}) \b{f} = \left(\sum_{i=0}^K \alpha_i \b{L}^i\right) \b{f},
+	h(\b{L}) \b{f} = \left(\sum_{i=0}^P \alpha_i \b{L}^i\right) \b{f},
 \end{equation}
-where $K$ is the polynomial order (which corresponds to the filter's size) and $\alpha_i$ are the coefficients to be optimized during training.\footnote{In practice, training with Chebyshev polynomials (instead of monomials) is slightly more stable. We believe it to be due to their orthogonality and uniformity.}
+where $P$ is the polynomial order (which corresponds to the filter's size) and $\alpha_i$ are the coefficients to be optimized during training.\footnote{In practice, training with Chebyshev polynomials (instead of monomials) is slightly more stable. We believe it to be due to their orthogonality and uniformity.}
 Those convolutions are used by \citet{khasanova2017sphericalcnn} and \citet{perraudin2019deepspherecosmo} and cost $\bO(n)$ operations through a recursive application of $\b{L}$.\footnote{As long as the graph is sparsified such that the number of edges, i.e., the number of non-zeros in $\b{A}$, is proportional to the number of vertices $n$. This can always be done as most weights are very small.}
 
 \paragraph{Pooling.}
@@ -340,15 +339,15 @@ For samplings where no such sampling formula is available, we leverage the discr
 For all theoretical considerations, we assume that $F_\V$ exists and $f \in F_\V$.
 
 % 0.2 Explain why the Laplacian is so important...
-By definition, the (spherical) graph convolution is rotation equivariant if and only if it commutes with the rotation operator defined as $R(g), g\in SO(3)$: $R(g) f(x) = f\left(g^{-1} x \right)$.
+By definition, the (spherical) graph convolution is rotation equivariant if and only if it commutes with the rotation operator defined as $\Rg, g\in SO(3)$: $\Rg f(x) = f\left(g^{-1} x \right)$.
 In the context of this work, graph convolution is performed by recursive applications of the graph Laplacian (\eqnref{graph_conv}).
-Hence, if $R(g)$ commutes with $\b{L}$, then, by recursion, it will also commute with the convolution $h(\b{L})$.
+Hence, if $\Rg$ commutes with $\b{L}$, then, by recursion, it will also commute with the convolution $h(\b{L})$.
 As a result, $h(\b{L})$ is rotation equivariant if and only if
 % 0.3 Formulate the problem
 \begin{equation*} %\label{eq:equivariance}
 	\b{R}_\V(g) \b{L} \b{f} = \b{L} \b{R}_\V(g) \b{f}, \hspace{1cm} \forall f\in F_\V \text{ and } \forall g\in SO(3),
 \end{equation*}
-where $\b{R}_\V(g) = T_\V R(g) T_\V^{-1}$.
+where $\b{R}_\V(g) = T_\V \Rg T_\V^{-1}$.
 For an empirical evaluation of equivariance, we define the \textit{normalized equivariance error} for a signal $\b{f}$ and a  rotation $g$ as
 \begin{equation} \label{eq:equivariance error}
 	E_{\b{L}}(\b{f}, g) = \left(\frac{ \norm {\b{R}_\V(g) \b{L} \b{f} - \b{L} \b{R}_\V(g) \b{f}} }{\norm {\b{L} \b{f}}}\right)^2.
@@ -380,7 +379,7 @@ They prove that for a \emph{random uniform sampling}, the graph Laplacian $\b{L}
 	w_{ij} = e^{- \frac{1}{4t} \norm{x_i - x_j}^2}
 \end{equation}
 converges to the Laplace-Beltrami operator $\Delta_{\mathbb{S}^2}$ as the number of samples grows to infinity.
-This result is a good starting point as $\Delta_{\mathbb{S}^2}$ commutes with rotation, i.e., $\Delta_{\mathbb{S}^2}R(g) = R(g)\Delta_{\mathbb{S}^2}$.
+This result is a good starting point as $\Delta_{\mathbb{S}^2}$ commutes with rotation, i.e., $\Delta_{\mathbb{S}^2}\Rg = \Rg\Delta_{\mathbb{S}^2}$.
 % and (ii) is diagonalized by the spherical harmonics.
 While the weighting scheme is full (i.e., every vertex is connected to every vertex), most weights are small due to the exponential.
 We hence make an approximation to limit the cost of the convolution \eqnref{graph_conv} by only considering the $k$ nearest neighbors to each vertex.
@@ -401,7 +400,7 @@ We analyze the proposed weighting scheme both theoretically and empirically.
 \paragraph{Theoretical convergence.}
 \begin{wrapfigure}{r}{5cm}
 	\centering
-	\includegraphics[width=\linewidth]{d_iA_i}
+	\includegraphics[width=\linewidth]{patch}
 	\caption{The patch around the $i$th sampling point.}
 \end{wrapfigure}
 We extend the work of \citep{belkin2005towards} to a sufficiently regular, deterministic sampling.
@@ -416,10 +415,10 @@ Hence, we have $\b{L}_n^t \b{f} = T_\V L_n^t f$.
 % $\b{\hat L} = \frac{|\mathbb S^2|}{4\pi t^2}\b L_n^t$. \nati{why define this, we are not using it}
 Given a sampling $\V$, we define $\sigma_i$ to be the patch of the surface of the sphere corresponding to $x_i$, $A_i$ its corresponding area, and $d_i$ the largest distance between the center $x_i$ and any point on the surface $\sigma_i$.
 Define $d^{(n)} := \max_{i=1, \dots, n} d_i$ and $A^{(n)} := \max_{i=1, \dots, n} A_i$.
-%Given any rotation $g\in SO(3)$, we define the corresponding rotation operator $\mathcal R_g$ such that for any function $f$ on the sphere
+%Given any rotation $g\in SO(3)$, we define the corresponding rotation operator $\Rg$ such that for any function $f$ on the sphere
 %\mdeff{Already defined in problem formulation.}
 %\begin{equation} \label{eq:rotation operator}
-%	\mathcal R_g f(x) := f(g^{-1}(x)).
+%	\Rg f(x) := f(g^{-1}(x)).
 %\end{equation}
 \begin{theorem}
 	For a sampling $\V$ of the sphere that is equi-area and such that $d^{(n)} \leq \frac{C}{n^\alpha}, \ \alpha\in (0,\linefrac{1}{2}]$, for all $f: \S^2 \rightarrow \R$ Lipschitz with respect to the Euclidean distance in $\R^3$, for all $y\in\S^2$, there exists a sequence $t_n = n^\beta$, $\beta\in\mathbb R$ such that
@@ -435,7 +434,7 @@ This is a major step towards equivariance as the Laplace-Beltrami operator does 
 \begin{theorem}\label{theo:equivariance}
 Under the hypothesis of theorem~\ref{theo:pointwise convergence for a regular sampling}, the rescaled graph Laplacian commutes with any rotation, in the limit of infinite sampling, i.e.,
 \begin{equation*}
-	\forall y\in\mathbb S^2\quad\left| \mathcal R(g) \hat L_n^{t_n} f (y) - \hat L_n^{t_n} \mathcal R(g) f(y) \right| \xrightarrow{n\to\infty}0.
+	\forall y\in\mathbb S^2\quad\left| \Rg \hat L_n^{t_n} f (y) - \hat L_n^{t_n} \Rg f(y) \right| \xrightarrow{n\to\infty}0.
 \end{equation*}
 \end{theorem}
 
@@ -527,7 +526,7 @@ The equiangular graph is built with \eqnref{weights:khasanova} and $k = 4$ neigh
 The HEALPix graph is built with \eqnref{weights:belkin}, $k = 8$, and a kernel width $t$ set to the average of the distances \citep[following][]{perraudin2019deepspherecosmo}.
 The NN is made of $5$ graph convolutional layers, each followed by a max pooling layer which down-samples by $4$.
 A GAP and a fully connected layer with softmax follow.
-The polynomials are all of order $K=3$ and the number of channels per layer is $16, 32, 64, 128, 256$, respectively.
+The polynomials are all of order $P=3$ and the number of channels per layer is $16, 32, 64, 128, 256$, respectively.
 Following \citet{esteves2018sphericalcnn}, the cross-entropy plus a triplet loss is optimized with Adam for 30 epochs on the dataset augmented by 3 random translations.
 The learning rate is $5 \cdot 10^{-2}$ and the batch size is 32.
 
@@ -581,7 +580,7 @@ Convergence maps represent the distribution of over- and under-densities of mass
 Graphs are built with \eqnref{weights:belkin}, $k = 8, 20, 40$ neighbors, and the corresponding optimal kernel widths $t$ given in \secref{optimal}.
 Following \citet{perraudin2019deepspherecosmo}, the NN is made of $5$ graph convolutional layers, each followed by a max pooling layer which down-samples by $4$.
 A GAP and a fully connected layer with softmax follow.
-The polynomials are all of order $K=4$ and the number of channels per layer is $16, 32, 64, 64, 64$, respectively.
+The polynomials are all of order $P=4$ and the number of channels per layer is $16, 32, 64, 64, 64$, respectively.
 The cross-entropy loss is optimized with Adam for 80 epochs.
 The learning rate is $2 \cdot 10^{-4} \cdot 0.999^{\textrm{step}}$ and the batch size is 8.
 
@@ -634,7 +633,7 @@ Details in \secref{climate:appendix}.
 %The encoder is made of $5$ graph convolutional layers, each followed by a \todo{pick-one?} pooling layer which down-samples by $4$.
 %the number of channels per layer is $16, 32, 64, 64, 64$, respectively.
 %The decoder is made of
-The polynomials are all of order $K=3$.
+The polynomials are all of order $P=3$.
 The cross-entropy loss (weighted or non-weighted) is optimized with Adam for 30 epochs.
 The learning rate is $1 \cdot 10{-3}$ and the batch size is 64.
 
@@ -683,7 +682,7 @@ Predicting from temperature is much easier as it has a clear yearly pattern.
 The graph is built with \eqnref{weights:belkin}, $k = 5$ neighbors, and a kernel width $t$ set to the average of the distances.
 The equivariance property of the resulting graph has not been tested, and we don't expect it to be good due to the heavily non-uniform sampling.
 The NN is made of $3$ graph convolutional layers.
-The polynomials are all of order $K=0$ or $4$ and the number of channels per layer is $50, 100, 100$, respectively.
+The polynomials are all of order $P=0$ or $4$ and the number of channels per layer is $50, 100, 100$, respectively.
 For the global regression, a GAP and a fully connected layer follow.
 For the dense regression, a graph convolutional layer follows instead.
 The MSE loss is optimized with RMSprop for 250 epochs.
@@ -706,7 +705,7 @@ The learning rate is $1 \cdot 10^{-3}$ and the batch size is 64.
 		\toprule
 		& \multicolumn{3}{c}{temp. (from past temp.)} & \multicolumn{3}{c}{day (from temperature)} & \multicolumn{3}{c}{day (from precipitations)} \\
 		\cmidrule(lr){2-4} \cmidrule(lr){5-7} \cmidrule(lr){8-10}
-		order $K$ & {MSE} & {MAE} & {R2} & {MSE} & {MAE} & {R2} & {MSE} & {MAE} & {R2} \\
+		order $P$ & {MSE} & {MAE} & {R2} & {MSE} & {MAE} & {R2} & {MSE} & {MAE} & {R2} \\
 		\midrule
 		$0$ & 10.88 & 2.42 & 0.896 & 0.10 & 0.10 & 0.882 & 0.58 & 0.42 & -0.980 \\
 		%%$1$ &  8.91 & 2.20 & 0.906 & - & - & - & - & - & - \\
@@ -722,7 +721,7 @@ The learning rate is $1 \cdot 10^{-3}$ and the batch size is 64.
 \end{table}
 
 Results are shown in \tabref{ghcn}.
-While using a polynomial order $K=0$ is like modeling each time series independently with an MLP, orders $K>0$ integrate neighborhood information.
+While using a polynomial order $P=0$ is like modeling each time series independently with an MLP, orders $P>0$ integrate neighborhood information.
 Results show that using the structure induced by the spherical geometry always yields better performance.
 
 % * increasing order is good until threshold \\
@@ -982,7 +981,7 @@ To conclude, we see that the result obtained is of similar form than the result 
 
 \section{Proof of Theorem~\ref{theo:equivariance}}
 \begin{proof}
-Fix $x\in \mathbb S^2$. Since any rotation $\mathcal R_g$ is an isometry, and the Laplacian $\Delta$ commutes with all isometries of a Riemanniann manifold, and defining $\mathcal R_g f =: f'$ for ease of notation, we can write that
+Fix $x\in \mathbb S^2$. Since any rotation $\Rg$ is an isometry, and the Laplacian $\Delta$ commutes with all isometries of a Riemanniann manifold, and defining $\Rg f =: f'$ for ease of notation, we can write that
 	\begin{align*}
 			\seminorm{\Rg \Ln f (x) - \Ln \Rg f(x) } &\leq \seminorm{\Rg \Ln f (x) - \Rg \laplacian f(x)} + \seminorm{\Rg \laplacian f (x) - \Ln \Rg f(x)} =\\
 			& =\seminorm{\Rg (\Ln f - \laplacian f ) (x)} + \seminorm{ \laplacian f' (x) - \Ln f'(x)} \leq \\
