@@ -404,14 +404,13 @@ We analyze the proposed weighting scheme both theoretically and empirically.
 	\caption{The patch around the $i$th sampling point.}
 \end{wrapfigure}
 We extend the work of \citep{belkin2005towards} to a sufficiently regular, deterministic sampling.
-Following their setting, we will work with the extended graph Laplacian operator as the linear operator $L_n^t: L^{2}(\mathcal{M}) \rightarrow L^{2}(\mathcal{M})$ such that
+Following their setting, we will work with the extended graph Laplacian operator as the linear operator $L_n^t: L^{2}(\S^2) \rightarrow L^{2}(\S^2)$ such that
 \begin{equation} \label{eq:Heat Kernel Graph Laplacian operator}
 	 L_n^t f(y) := \frac{1}{n}\sum_{i=1}^{n} e^{ -\frac{\|x_i-y\|^2}{4t}} \left(f(y)-f(x_i)\right).
 \end{equation}
 This operator extends the graph Laplacian operator previously defined with the weighting scheme \eqnref{weights:belkin} to each point of the the sphere.
-% \mdeff{Can we avoid to introduce general manifolds and stay on the sphere?} \nati{yes}
-As the radius of the kernel $t$ will be adapted to the number of samples, we also rescale the graph Laplacian operator as $\hat{L}_n^t := \frac{|\mathbb S^2|}{4\pi t^2}L_n^t$.
 Hence, we have $\b{L}_n^t \b{f} = T_\V L_n^t f$.
+As the radius of the kernel $t$ will be adapted to the number of samples, we scale the extended graph Laplacian operator as $\hat{L}_n^t := \frac{|\mathbb S^2|}{4\pi t^2}L_n^t$.
 % $\b{\hat L} = \frac{|\mathbb S^2|}{4\pi t^2}\b L_n^t$. \nati{why define this, we are not using it}
 Given a sampling $\V$, we define $\sigma_i$ to be the patch of the surface of the sphere corresponding to $x_i$, $A_i$ its corresponding area, and $d_i$ the largest distance between the center $x_i$ and any point on the surface $\sigma_i$.
 Define $d^{(n)} := \max_{i=1, \dots, n} d_i$ and $A^{(n)} := \max_{i=1, \dots, n} A_i$.
