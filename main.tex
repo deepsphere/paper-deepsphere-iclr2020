@@ -49,7 +49,7 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 \newcommand{\V}{\mathcal{V}}  % vertex set
 \newcommand{\E}{\mathcal{E}}  % edge set
 \newcommand{\laplacian}{\Delta_{\mathbb S^2}}
-\newcommand{\Rg}{\mathcal R (g)}
+\newcommand{\Rg}{\mathcal{R}(g)}
 \newcommand{\seminorm}[1]{\left|#1\right|}
 \newcommand{\Ln}{\hat L_n^{t_n}}
 
@@ -120,7 +120,6 @@ TODO:
 \todo{
 rebuttal:
 \begin{itemize}
-	\item \mdeff{Why two definitions of rotations, $R(g)$ and $\mathcal{R}_g$?} [Martino]
     \item answer commenter
 	\item add somewhere (intro?): exploit symmetries to reduce sample cost $\Rightarrow$ we don't discuss symmetries much
 	\item \citet{mudigonda2017climateevents} use Integrated Water Vapor (IWV) only. That most probably is the same as our TMQ, which is most probably the most informative feature. TODO: run ours with TMQ alone.
@@ -340,15 +339,15 @@ For samplings where no such sampling formula is available, we leverage the discr
 For all theoretical considerations, we assume that $F_\V$ exists and $f \in F_\V$.
 
 % 0.2 Explain why the Laplacian is so important...
-By definition, the (spherical) graph convolution is rotation equivariant if and only if it commutes with the rotation operator defined as $R(g), g\in SO(3)$: $R(g) f(x) = f\left(g^{-1} x \right)$.
+By definition, the (spherical) graph convolution is rotation equivariant if and only if it commutes with the rotation operator defined as $\Rg, g\in SO(3)$: $\Rg f(x) = f\left(g^{-1} x \right)$.
 In the context of this work, graph convolution is performed by recursive applications of the graph Laplacian (\eqnref{graph_conv}).
-Hence, if $R(g)$ commutes with $\b{L}$, then, by recursion, it will also commute with the convolution $h(\b{L})$.
+Hence, if $\Rg$ commutes with $\b{L}$, then, by recursion, it will also commute with the convolution $h(\b{L})$.
 As a result, $h(\b{L})$ is rotation equivariant if and only if
 % 0.3 Formulate the problem
 \begin{equation*} %\label{eq:equivariance}
 	\b{R}_\V(g) \b{L} \b{f} = \b{L} \b{R}_\V(g) \b{f}, \hspace{1cm} \forall f\in F_\V \text{ and } \forall g\in SO(3),
 \end{equation*}
-where $\b{R}_\V(g) = T_\V R(g) T_\V^{-1}$.
+where $\b{R}_\V(g) = T_\V \Rg T_\V^{-1}$.
 For an empirical evaluation of equivariance, we define the \textit{normalized equivariance error} for a signal $\b{f}$ and a  rotation $g$ as
 \begin{equation} \label{eq:equivariance error}
 	E_{\b{L}}(\b{f}, g) = \left(\frac{ \norm {\b{R}_\V(g) \b{L} \b{f} - \b{L} \b{R}_\V(g) \b{f}} }{\norm {\b{L} \b{f}}}\right)^2.
@@ -380,7 +379,7 @@ They prove that for a \emph{random uniform sampling}, the graph Laplacian $\b{L}
 	w_{ij} = e^{- \frac{1}{4t} \norm{x_i - x_j}^2}
 \end{equation}
 converges to the Laplace-Beltrami operator $\Delta_{\mathbb{S}^2}$ as the number of samples grows to infinity.
-This result is a good starting point as $\Delta_{\mathbb{S}^2}$ commutes with rotation, i.e., $\Delta_{\mathbb{S}^2}R(g) = R(g)\Delta_{\mathbb{S}^2}$.
+This result is a good starting point as $\Delta_{\mathbb{S}^2}$ commutes with rotation, i.e., $\Delta_{\mathbb{S}^2}\Rg = \Rg\Delta_{\mathbb{S}^2}$.
 % and (ii) is diagonalized by the spherical harmonics.
 While the weighting scheme is full (i.e., every vertex is connected to every vertex), most weights are small due to the exponential.
 We hence make an approximation to limit the cost of the convolution \eqnref{graph_conv} by only considering the $k$ nearest neighbors to each vertex.
@@ -416,10 +415,10 @@ Hence, we have $\b{L}_n^t \b{f} = T_\V L_n^t f$.
 % $\b{\hat L} = \frac{|\mathbb S^2|}{4\pi t^2}\b L_n^t$. \nati{why define this, we are not using it}
 Given a sampling $\V$, we define $\sigma_i$ to be the patch of the surface of the sphere corresponding to $x_i$, $A_i$ its corresponding area, and $d_i$ the largest distance between the center $x_i$ and any point on the surface $\sigma_i$.
 Define $d^{(n)} := \max_{i=1, \dots, n} d_i$ and $A^{(n)} := \max_{i=1, \dots, n} A_i$.
-%Given any rotation $g\in SO(3)$, we define the corresponding rotation operator $\mathcal R_g$ such that for any function $f$ on the sphere
+%Given any rotation $g\in SO(3)$, we define the corresponding rotation operator $\Rg$ such that for any function $f$ on the sphere
 %\mdeff{Already defined in problem formulation.}
 %\begin{equation} \label{eq:rotation operator}
-%	\mathcal R_g f(x) := f(g^{-1}(x)).
+%	\Rg f(x) := f(g^{-1}(x)).
 %\end{equation}
 \begin{theorem}
 	For a sampling $\V$ of the sphere that is equi-area and such that $d^{(n)} \leq \frac{C}{n^\alpha}, \ \alpha\in (0,\linefrac{1}{2}]$, for all $f: \S^2 \rightarrow \R$ Lipschitz with respect to the Euclidean distance in $\R^3$, for all $y\in\S^2$, there exists a sequence $t_n = n^\beta$, $\beta\in\mathbb R$ such that
@@ -435,7 +434,7 @@ This is a major step towards equivariance as the Laplace-Beltrami operator does 
 \begin{theorem}\label{theo:equivariance}
 Under the hypothesis of theorem~\ref{theo:pointwise convergence for a regular sampling}, the rescaled graph Laplacian commutes with any rotation, in the limit of infinite sampling, i.e.,
 \begin{equation*}
-	\forall y\in\mathbb S^2\quad\left| \mathcal R(g) \hat L_n^{t_n} f (y) - \hat L_n^{t_n} \mathcal R(g) f(y) \right| \xrightarrow{n\to\infty}0.
+	\forall y\in\mathbb S^2\quad\left| \Rg \hat L_n^{t_n} f (y) - \hat L_n^{t_n} \Rg f(y) \right| \xrightarrow{n\to\infty}0.
 \end{equation*}
 \end{theorem}
 
@@ -982,7 +981,7 @@ To conclude, we see that the result obtained is of similar form than the result 
 
 \section{Proof of Theorem~\ref{theo:equivariance}}
 \begin{proof}
-Fix $x\in \mathbb S^2$. Since any rotation $\mathcal R_g$ is an isometry, and the Laplacian $\Delta$ commutes with all isometries of a Riemanniann manifold, and defining $\mathcal R_g f =: f'$ for ease of notation, we can write that
+Fix $x\in \mathbb S^2$. Since any rotation $\Rg$ is an isometry, and the Laplacian $\Delta$ commutes with all isometries of a Riemanniann manifold, and defining $\Rg f =: f'$ for ease of notation, we can write that
 	\begin{align*}
 			\seminorm{\Rg \Ln f (x) - \Ln \Rg f(x) } &\leq \seminorm{\Rg \Ln f (x) - \Rg \laplacian f(x)} + \seminorm{\Rg \laplacian f (x) - \Ln \Rg f(x)} =\\
 			& =\seminorm{\Rg (\Ln f - \laplacian f ) (x)} + \seminorm{ \laplacian f' (x) - \Ln f'(x)} \leq \\
