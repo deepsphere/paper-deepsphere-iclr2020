@@ -1,5 +1,13 @@
-import matplotlib
+#!/usr/bin/env python3
+
+from os import path
+import pickle
+
+import numpy as np
+import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
+
+
 plt.rcParams['figure.figsize'] = (9,9)
 
 font = {'family': 'serif',
@@ -7,9 +15,9 @@ font = {'family': 'serif',
         'weight': 'normal',
         'size': 20,
         }
-matplotlib.rcParams.update({'font.size': 18})
+plt.rcParams.update({'font.size': 18})
 # -------------- khasanova-Frossard ------------------
-equiv_error_KF = pickle.load(open('khasanova_frossard.pickle', 'rb'))
+equiv_error_KF = pickle.load(open('equivariance_error/khasanova_frossard.pickle', 'rb'))
 degree_step = {
     32: 3,
     64: 6,
@@ -47,10 +55,10 @@ degree_step = {
             1024: 200,
 }
 
-equiv_error_V1 = pickle.load(open('V1 - ||Lf||.pickle', 'rb'))
-equiv_error_8 = pickle.load(open('V2 - 8 neighbors - ||Lf||.pickle', 'rb'))
-equiv_error_20 = pickle.load(open('V2 - 20 neighbors - ||Lf||.pickle', 'rb'))
-equiv_error_40 = pickle.load(open('V2 - 40 neighbors - ||Lf||.pickle', 'rb'))
+equiv_error_V1 = pickle.load(open('equivariance_error/V1 - ||Lf||.pickle', 'rb'))
+equiv_error_8 = pickle.load(open('equivariance_error/V2 - 8 neighbors - ||Lf||.pickle', 'rb'))
+equiv_error_20 = pickle.load(open('equivariance_error/V2 - 20 neighbors - ||Lf||.pickle', 'rb'))
+equiv_error_40 = pickle.load(open('equivariance_error/V2 - 40 neighbors - ||Lf||.pickle', 'rb'))
 
 nside = 32
 lmax = 3*nside-1
@@ -101,11 +109,10 @@ legend_elements_2 = [Line2D([0], [0], color='k', marker='v', markersize=8),
                    Line2D([0], [0], color='k', marker='x', markersize=8),
                    Line2D([0], [0], color='k', marker='o', markersize=8)]
 
-leg2 = ax.legend(legend_elements, ['$s=32$', '$s=64$', '$s=128$'],loc='upper right')
+leg2 = ax.legend(legend_elements_2, ['$s=32$', '$s=64$', '$s=128$'],loc='upper right')
 # Manually add the first legend back
 ax.add_artist(leg1)
-plt.tight_layout()
-plt.savefig("all_in_one.pdf")
-plt.show()
 
-matplotlib.rcParams.update({'font.size': 10})
+plt.tight_layout()
+filename = path.splitext(path.basename(__file__))[0] + '.pdf'
+plt.savefig(filename)

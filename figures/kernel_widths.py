@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
 from os import path
-import numpy as np
 
+import numpy as np
 from matplotlib import pyplot as plt
+
 
 plt.rc('font', family='Latin Modern Roman')  # Latin Modern for text
 plt.rc('mathtext', fontset='cm')  # Computer Modern for math (default is dejavusans)
