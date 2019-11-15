@@ -89,8 +89,9 @@ plt.loglog(degrees, equiv_error_40[nside][1:], 'bo-', )
 
 # -------------- final parameters ------------------
 
-plt.xlabel('Degree $\ell$', fontdict=font,)
-plt.ylabel('Equivariance Error', fontdict=font, )
+plt.xlabel(r'spherical harmonic degree $\ell$', fontdict=font,)
+#plt.ylabel(r'mean equivariance error $\overline{E}_{\mathbf{L}, C}$', fontdict=font, )
+plt.ylabel(r'mean equivariance error $\overline{E}_{L, C}$', fontdict=font, )
 plt.tick_params(axis='both', which='major')
 plt.grid()
 plt.xlim([10,np.max(degrees)])
@@ -102,14 +103,17 @@ legend_elements_1 = [Line2D([0], [0], color='m', marker='', markersize=8),
                    Line2D([0], [0], color='r', marker='', markersize=8),
                    Line2D([0], [0], color='b', marker='', markersize=8)]
 # Add first legend:  only labeled data is included
-leg1 = ax.legend(legend_elements_1,['Khasanova, Frossard','Perraudin et al.', 'This paper - 8 neighbors', 'This paper - 20 neighbors', 'This paper - 40 neighbors'], loc='lower left')
+leg1 = ['Khasanova & Frossard, $k=4$', 'Perraudin et al., $k=8$']
+leg1.extend([f'$k$-NN graph, $k={k}$ neighbors' for k in [8, 20, 40]])
+leg1 = ax.legend(legend_elements_1, leg1, loc='lower left')
 # Add second legend for the maxes and mins.
 # leg1 will be removed from figure
 legend_elements_2 = [Line2D([0], [0], color='k', marker='v', markersize=8),
                    Line2D([0], [0], color='k', marker='x', markersize=8),
                    Line2D([0], [0], color='k', marker='o', markersize=8)]
 
-leg2 = ax.legend(legend_elements_2, ['$s=32$', '$s=64$', '$s=128$'],loc='upper right')
+#leg2 = ax.legend(legend_elements_2, ['$s=32$', '$s=64$', '$s=128$'],loc='upper right')
+leg2 = ax.legend(legend_elements_2, [rf'$n \propto {s}^2$' for s in [32, 64, 128]], loc='upper right')
 # Manually add the first legend back
 ax.add_artist(leg1)
 
