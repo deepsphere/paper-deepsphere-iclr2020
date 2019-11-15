@@ -440,13 +440,13 @@ Under the hypothesis of theorem~\ref{theo:pointwise convergence for a regular sa
 \end{theorem}
 
 Importantly, the proof of Theorem~\ref{theo:pointwise convergence for a regular sampling} (in Appendix~\ref{sec: appendix: proof of theorem}) inspires our construction of the graph Laplacian.
-In particular, it gives insights on how the parameter $t$ needs to be adjusted with respect to the number of points $n$.
-
-Nevertheless, it is important to keep in mind the limits of Theorem \ref{theo:pointwise convergence for a regular sampling} and \ref{theo:equivariance}. Both theorems present asymptotic results, and in practice we will always test them on finite samplings. Furthermore, since this method is based on the capability of the eigenvectors of the graph Laplacian to approximate the spherical harmonics, a stronger type of convergence of the graph Laplacian would be preferable, i.e. spectral convergence (that is proved for a full graph in the case of random sampling for a class of Lipschitz functions in \citep{belkin2007convergence}).
+In particular, it gives insights on how the parameter $t$ needs to be adjusted with respect to the number of points $n$. Nevertheless, it is important to keep in mind the limits of Theorem \ref{theo:pointwise convergence for a regular sampling} and \ref{theo:equivariance}. Both theorems present asymptotic results, but in practice we will always work with finite samplings. Furthermore, since this method is based on the capability of the eigenvectors of the graph Laplacian to approximate the spherical harmonics, 
+% maybe erase the previous sentence?
+a stronger type of convergence of the graph Laplacian would be preferable, i.e. spectral convergence (that is proved for a full graph in the case of random sampling for a class of Lipschitz functions in \citep{belkin2007convergence}).
 % First, it is \emph{not} a proof of equivariance of the graph convolution for a specific sampling. To construct such a proof, a stronger convergence result is needed, for example spectral convergence (instead of pointwise).
 % \todo{Can we intuitively write what pointwise convergence means, and how it is more limited than spectral or uniform convergence?}
 %We note that in the random sampling case, the graph laplacian does \emph{not} converge uniformly in general \citep[Sec. 3]{belkin2007convergence}, but does for a class of Lipschitz functions \citep[Sec. 6]{belkin2005towards}.
-Second, while we do not have a formal proof for it, we strongly believe that the HEALPix sampling does satisfy the hypothesis $d^{(n)}\leq \frac{C}{n^\alpha}, \ \alpha\in (0,\linefrac{1}{2}]$, with $\alpha$ very close or equal to $\linefrac{1}{2}$.
+While we do not have a formal proof for it, we strongly believe that the HEALPix sampling does satisfy the hypothesis $d^{(n)}\leq \frac{C}{n^\alpha}, \ \alpha\in (0,\linefrac{1}{2}]$, with $\alpha$ very close or equal to $\linefrac{1}{2}$.
 The empirical results discussed in the next paragraph also points in this direction.
 This is further discussed in Appendix \ref{sec: appendix: proof of theorem}.
 
