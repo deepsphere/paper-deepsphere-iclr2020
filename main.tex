@@ -79,78 +79,78 @@ Swiss Data Science Center (SDSC), Zurich, Switzerland \\
 %\iclrfinalcopy % Uncomment for camera-ready version, but NOT for submission.
 \begin{document}
 
-%\begin{description}
-%	\item[git] \url{https://github.com/nperraud/deepsphere_v2_paper}
-%	\item[overleaf] \url{https://www.overleaf.com/project/5d31d2fbd6859d54cb707212}
-%	\item[openreview] \url{https://openreview.net/forum?id=B1e3OlStPB}
-%\end{description}
-%
-%story: there are tradeoffs when designing a spherical CNN $\Rightarrow$ DS strikes a controllable balance between efficiency / cost and exactitude / equivariance
-%\begin{itemize}
-%	\item method development: tool that solve a need (balance btw the desiderata: equiv vs cost)
-%	\item research question: anisotropy (highlight from the start or leave it as a dangling question at the end)
-%\end{itemize}
-%
-%contributions:
-%\begin{itemize}
-%	\item theory $\Rightarrow$ convergence (better graph)
-%	\item experiments on relevant problems (not spherical MNIST) $\Rightarrow$ check the desiderata
-%	\item surprising: anisotropy doesn't seem useful
-%\end{itemize}
-%
-%\todo{
-%TODO:
-%\begin{itemize}
-%	\item Unify vocabulary and avoid synonyms.
-%		Sampling, grid, discretization, pixelization $\Rightarrow$ sampling (sampling schemes when not a particular set of vertices?)
-%		Signal, maps, fields, functions.
-%		Irregular, uneven, non-uniform.
-%		Coarsening, down-sampling.
-%		Sample, vertex, node, pixel, point $\Rightarrow$ vertex
-%	\item check English vs American English
-%	\item put all the code (learning experiments from Frédérick and equivariance experiments from Martino) in a common reproducible git repository to be linked from the paper
-%	\item update pygsp and merge sphere branch
-%	\item Compute the invariance error of the whole NNs (before and after training, invariance can be learned). Add it with equivariance error of the convolution to \tabref{cosmo}. \nati{I guess we are not doing that}
-%	\item insert \citet{jiang2019sphericalcnn} in intro: Need a global coordinate system (ok for planets, not projections like cosmo)
-%	\item mention that \citep{esteves2018sphericalcnn} and \citep{cohen2018sphericalcnn} computed equivariance error
-%\end{itemize}
-%}
-%
-%\todo{
-%rebuttal:
-%\begin{itemize}
-%    \item answer commenter
-%	\item add somewhere (intro?): exploit symmetries to reduce sample cost $\Rightarrow$ we don't discuss symmetries much
-%	\item \citet{mudigonda2017climateevents} use Integrated Water Vapor (IWV) only. That most probably is the same as our TMQ, which is most probably the most informative feature. TODO: run ours with TMQ alone.
-%	\item Show the three samplings in a figure?
-%	\item better abstract (Friday's talk abstract?)
-%	\item conclusion: less speculation?
-%	\item check feedback from ICLR'20 LTS2 reading group
-%	\item \mdeff{check my Telegram notes}
-%	\item argue against more generality
-%	\item figure that show the three samplings? (suggested by reviewer \#2)
-%\end{itemize}
-%}
-%
-%\todo{
-%last pass:
-%\begin{itemize}
-%	\item figure placement
-%	\item check footnotes
-%\end{itemize}
-%}
-%
-%\todo{
-%Not done:
-%\begin{itemize}
-%	\item Do the experiments on the icosahedral sampling with the pooling as defined in the paper (i.e., not Jiang's specialty of taking the value of a pre-chosen sub-pixel). \nati{I guess we are not doing that.} \mdeff{I'm not sure what is the state of this, and Frédérick is not with us anymore. It's quite minor.}
-%	\item Check results for ModelNet40 and integrate in text. \nati{I would drop this.} \mdeff{Yeah, those results are not mature enough.}
-%	\item Add \citet{bruna2013gnn} in equivariance? They were the first to do a spherical CNN with graphs. Graph is built from a uniform random sampling of the sphere. \nati{Where do you want to add them?} \mdeff{They don't write how their Laplacian was built. Also, they only did MNIST on the sphere...}
-%\end{itemize}
-%}
-%
-%\clearpage
-%\newpage
+\begin{description}
+	\item[git] \url{https://github.com/nperraud/deepsphere_v2_paper}
+	\item[overleaf] \url{https://www.overleaf.com/project/5d31d2fbd6859d54cb707212}
+	\item[openreview] \url{https://openreview.net/forum?id=B1e3OlStPB}
+\end{description}
+
+story: there are tradeoffs when designing a spherical CNN $\Rightarrow$ DS strikes a controllable balance between efficiency / cost and exactitude / equivariance
+\begin{itemize}
+	\item method development: tool that solve a need (balance btw the desiderata: equiv vs cost)
+	\item research question: anisotropy (highlight from the start or leave it as a dangling question at the end)
+\end{itemize}
+
+contributions:
+\begin{itemize}
+	\item theory $\Rightarrow$ convergence (better graph)
+	\item experiments on relevant problems (not spherical MNIST) $\Rightarrow$ check the desiderata
+	\item surprising: anisotropy doesn't seem useful
+\end{itemize}
+
+\todo{
+TODO:
+\begin{itemize}
+	\item Unify vocabulary and avoid synonyms.
+		Sampling, grid, discretization, pixelization $\Rightarrow$ sampling (sampling schemes when not a particular set of vertices?)
+		Signal, maps, fields, functions.
+		Irregular, uneven, non-uniform.
+		Coarsening, down-sampling.
+		Sample, vertex, node, pixel, point $\Rightarrow$ vertex
+	\item check English vs American English
+	\item put all the code (learning experiments from Frédérick and equivariance experiments from Martino) in a common reproducible git repository to be linked from the paper
+	\item update pygsp and merge sphere branch
+	\item Compute the invariance error of the whole NNs (before and after training, invariance can be learned). Add it with equivariance error of the convolution to \tabref{cosmo}. \nati{I guess we are not doing that}
+	\item insert \citet{jiang2019sphericalcnn} in intro: Need a global coordinate system (ok for planets, not projections like cosmo)
+	\item mention that \citep{esteves2018sphericalcnn} and \citep{cohen2018sphericalcnn} computed equivariance error
+\end{itemize}
+}
+
+\todo{
+rebuttal:
+\begin{itemize}
+    \item answer commenter
+	\item add somewhere (intro?): exploit symmetries to reduce sample cost $\Rightarrow$ we don't discuss symmetries much
+	\item \citet{mudigonda2017climateevents} use Integrated Water Vapor (IWV) only. That most probably is the same as our TMQ, which is most probably the most informative feature. TODO: run ours with TMQ alone.
+	\item Show the three samplings in a figure?
+	\item better abstract (Friday's talk abstract?)
+	\item conclusion: less speculation?
+	\item check feedback from ICLR'20 LTS2 reading group
+	\item \mdeff{check my Telegram notes}
+	\item argue against more generality
+	\item figure that show the three samplings? (suggested by reviewer \#2)
+\end{itemize}
+}
+
+\todo{
+last pass:
+\begin{itemize}
+	\item figure placement
+	\item check footnotes
+\end{itemize}
+}
+
+\todo{
+Not done:
+\begin{itemize}
+	\item Do the experiments on the icosahedral sampling with the pooling as defined in the paper (i.e., not Jiang's specialty of taking the value of a pre-chosen sub-pixel). \nati{I guess we are not doing that.} \mdeff{I'm not sure what is the state of this, and Frédérick is not with us anymore. It's quite minor.}
+	\item Check results for ModelNet40 and integrate in text. \nati{I would drop this.} \mdeff{Yeah, those results are not mature enough.}
+	\item Add \citet{bruna2013gnn} in equivariance? They were the first to do a spherical CNN with graphs. Graph is built from a uniform random sampling of the sphere. \nati{Where do you want to add them?} \mdeff{They don't write how their Laplacian was built. Also, they only did MNIST on the sphere...}
+\end{itemize}
+}
+
+\clearpage
+\newpage
 
 \maketitle
 
