@@ -30,8 +30,7 @@ Thank you for your interest and questions.
 
 1. The two-parameter variant of GCN is ChebNet with a polynomial order of P=1. The method scales linearly with P, and that is an hyper-parameter to be set (analogous to the kernel size in classical CNNs). Note that the single-parameter variant of GCN doesn't fit our theory as we rely on the convergence of the operator to the Laplace-Beltrami to prove its equivariance.
 
-2. What should be predictable and revertible is the transformation applied to the output activations given a transformation applied to the input activations. In our case, both transformations are 3D rotations.
-That is, if the input activations are rotated by R, the output will be rotated by the same R.
+2. What should be predictable and revertible is the transformation applied to the output activations given a transformation applied to the input activations. In our case, both transformations are 3D rotations. That is, if the input activations are rotated by R, the output will be rotated by the same R.
 
 ## Official Blind Review #2
 
