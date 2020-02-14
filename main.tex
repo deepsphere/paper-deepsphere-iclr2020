@@ -338,8 +338,9 @@ While the graph framework offers great flexibility, its ability to faithfully re
 \subsection{Problem formulation}
 % 0.1 Explain the sampling problem
 %As the graph convolution acts on a sampled version of the function $\b{f}$ and the rotation on its continuous counterpart $f$, a sampling operator is needed.
-A continuous function $f : \mathcal C(\S^2) \supset F_\V \to \R$ is sampled as $T_\V(f) = \b{f}$ by the sampling operator $T_\V: C(\S^2) \supset F_\V \to \R^n$ defined as $\b{f}: f_i=f(x_i)$. We require $F_\V$ to be a suitable subspace of continuous functions such that $T_\V$ is invertible, i.e., the function $f \in F_\V$ can be unambiguously reconstructed from its sampled values $\b{f}$.
-The existence of such a subspace depends on the sampling $\V$, and its characterization is a common problem in signal processing \citep{driscoll1994Fouriersphere}.
+A continuous function $f : \mathcal C(\S^2) \supset F_\V \to \R$ is sampled as $T_\V(f) = \b{f}$ by the sampling operator $T_\V: C(\S^2) \supset F_\V \to \R^n$ defined as $\b{f}: f_i=f(x_i)$.
+We require $F_\V$ to be a suitable subspace of continuous functions such that $T_\V$ is invertible, i.e., the function $f \in F_\V$ can be unambiguously reconstructed from its sampled values $\b{f}$.
+The existence of such a subspace depends on the sampling $\V$ and its characterization is a common problem in signal processing \citep{driscoll1994Fouriersphere}.
 For most samplings, it is not known if $F_\V$ exists and hence if $T_\V$ is invertible.
 A special case is the equiangular sampling where a sampling theorem holds, and thus a closed-form of $T_\V^{-1}$ is known. % \citep{driscoll1994Fouriersphere}
 For samplings where no such sampling formula is available, we leverage the discrete SHT to reconstruct $f$ from $\b{f}=T_\V f$, thus approximating $T_\V^{-1}$.
@@ -347,7 +348,7 @@ For all theoretical considerations, we assume that $F_\V$ exists and $f \in F_\V
 
 % 0.2 Explain why the Laplacian is so important...
 By definition, the (spherical) graph convolution is rotation equivariant if and only if it commutes with the rotation operator defined as $\Rg, g\in SO(3)$: $\Rg f(x) = f\left(g^{-1} x \right)$.
-In the context of this work, graph convolution is performed by recursive applications of the graph Laplacian (\eqnref{graph_conv}).
+In the context of this work, graph convolution is performed by recursive applications of the graph Laplacian \eqnref{graph_conv}.
 Hence, if $\Rg$ commutes with $\b{L}$, then, by recursion, it will also commute with the convolution $h(\b{L})$.
 As a result, $h(\b{L})$ is rotation equivariant if and only if
 % 0.3 Formulate the problem
