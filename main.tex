@@ -113,22 +113,28 @@ TODO:
 	\item Compute the invariance error of the whole NNs (before and after training, invariance can be learned). Add it with equivariance error of the convolution to \tabref{cosmo}. \nati{I guess we are not doing that}
 	\item insert \citet{jiang2019sphericalcnn} in intro: Need a global coordinate system (ok for planets, not projections like cosmo)
 	\item mention that \citep{esteves2018sphericalcnn} and \citep{cohen2018sphericalcnn} computed equivariance error
-\end{itemize}
-}
-
-\todo{
-rebuttal:
-\begin{itemize}
-    \item answer commenter
 	\item add somewhere (intro?): exploit symmetries to reduce sample cost $\Rightarrow$ we don't discuss symmetries much
 	\item \citet{mudigonda2017climateevents} use Integrated Water Vapor (IWV) only. That most probably is the same as our TMQ, which is most probably the most informative feature. TODO: run ours with TMQ alone.
 	\item Show the three samplings in a figure?
 	\item better abstract (Friday's talk abstract?)
+	\item abstract: tackle impactful / important problems in cosmology and climatology (Earth sciences)
 	\item conclusion: less speculation?
 	\item check feedback from ICLR'20 LTS2 reading group
 	\item \mdeff{check my Telegram notes}
 	\item argue against more generality
 	\item figure that show the three samplings? (suggested by reviewer \#2)
+	\item add the eigenfunction alignment in the appendix
+	\item Shouldn't theorem 3.2 be a corollary?
+	\item Experiments: organize per problem or desideratum?
+	\item Articulate the story around the desiderata. Add "most general / powerful" as one (for isotropy).
+	\item Better motivate the method (i.e., don't present our work as just the analysis of one method). Why is it a good method? It allows for a linear time implementation of operators on scalar fields. Need to show that functions of the Laplace-Beltrami $h(\Delta)$ can indeed implement any equivariant (gauge invariant \citep{cohen2019gauge}) linear operations on scalar fields. Restructure the method section to show how the cost is reduced to $\bO(pkn)$: (i) discretization ($n$ vertices), (ii) sparsification ($k$ neighbors), (iii) reduction of the class of operators / filters (polynomial order $p$).
+	\item A filter operating on scalar fields has to be isotropic / directionless to be equivariant \citep{cohen2019gauge}) [Kondor CCN]
+		A cheap solution: if the domain can be globally oriented (e.g., by gravity for 2D or omnidirectional images), then the spatial dimension can be factorized (think of the up, down, right, left directions in 2D images). The sphere could be factorized has two oriented lines for the vertical axis, and a circle horizontally. That is exploited by Khasanova to create anisotropic filters on the sphere for omnidirectional imaging. That of course reduces the symmetry group the NN is to be equivariant to.
+		Otherwise there is a price to pay.
+		If not but the domain has global symmetries, activations can be lifted to the symmetry group \citep{cohen2018sphericalcnn} [Kondor CCN]. That is however memory and computationally expensive, as the activations must have the size of the symmetry group.
+		Without global symmetries, tensor activations are needed \citep{cohen2019gauge}.
+	\item Paragraph about cost reduction strategies (discretize, sparsify, polynomial). C.f. notes.
+	\item Write why we don't tackle omnidirectional imaging. Same reason as images. Factor the manifold. For some samplings their graph discretization can be factored, yielding anisotropic filters. (c.f. answer to reviewer 1)
 \end{itemize}
 }
 
