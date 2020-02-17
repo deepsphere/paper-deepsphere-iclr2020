@@ -1,4 +1,4 @@
-TEX = main.tex # $(wildcard *.tex)
+TEX = $(wildcard *.tex)
 PDF = $(TEX:.tex=.pdf)
 BBL = $(TEX:.tex=.bbl)
 BIB = $(wildcard *.bib)
