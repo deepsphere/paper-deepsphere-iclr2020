@@ -32,3 +32,7 @@ Compile the latex source into a PDF with `make`.
 
 All the figures, along with the code and data to reproduce them, are in the [`figure`](figures/) folder.
 While the PDFs are stored, they can be regenerated with `make figures`.
+
+## Reviews and rebuttal
+
+The conference reviews and rebuttal are found in [`rebuttal.md`](rebuttal.md) and [openreview].
