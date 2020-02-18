@@ -31,7 +31,7 @@ Run `make clean` to remove temporary files and `make arxiv.zip` to prepare an ar
 
 ## Figures
 
-All the figures, along with the code and data to reproduce them, are in the [`figure`](figures/) folder.
+All the figures, along with the code and data to reproduce them, are in the [`figures`](figures/) folder.
 While the PDFs are stored, they can be regenerated with `make figures`.
 
 ## Reviews and rebuttal
