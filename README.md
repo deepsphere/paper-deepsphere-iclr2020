@@ -1,10 +1,10 @@
 # DeepSphere: a graph-based spherical CNN
 
-[Michaël Defferrard][mdeff], Martino Milani, Frédérick Gusset, [Nathanaël Perraudin][nath]\
+[Michaël Defferrard](https://deff.ch),
+[Martino Milani](https://www.linkedin.com/in/martino-milani-11258350),
+[Frédérick Gusset](https://www.linkedin.com/in/frédérick-gusset-a42485191),
+[Nathanaël Perraudin](https://perraudin.info) \
 International Conference on Learning Representations (ICLR), 2020
-
-[nath]: https://perraudin.info
-[mdeff]: https://deff.ch
 
 > Designing a convolution for a spherical neural network requires a delicate tradeoff between efficiency and rotation equivariance.
 > DeepSphere, a method based on a graph representation of the discretized sphere, strikes a controllable balance between these two desiderata.
