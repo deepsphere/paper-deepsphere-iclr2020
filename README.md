@@ -16,13 +16,14 @@ International Conference on Learning Representations (ICLR), 2020
 > Our code is available at https://github.com/deepsphere.
 
 **PDF available at [openreview], [arxiv], [infoscience].**\
-Related: [code], [poster].
+Related: [code], [slides], [video].
 
 [openreview]: https://openreview.net/forum?id=B1e3OlStPB
 [arxiv]: https://arxiv.org
 [infoscience]: https://infoscience.epfl.ch
 [code]: https://github.com/deepsphere/deepsphere-tf1
-[poster]: https://doi.org/10.5281/zenodo
+[slides]: https://doi.org/10.5281/zenodo.3777976
+[video]: https://youtu.be/NC_XLbbCevk
 
 ## Compilation
 
