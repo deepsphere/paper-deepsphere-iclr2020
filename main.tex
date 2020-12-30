@@ -502,7 +502,8 @@ For the same reason, using the more uniform HEALPix sampling or lowering the res
 \subsection{Cosmological model classification} \label{sec:exp:cosmo}
 
 Given observations, cosmologists estimate the posterior probability of cosmological parameters, such as the matter density $\Omega_m$ and the normalization of the matter power spectrum $\sigma_8$.
-Those parameters are typically estimated by likelihood-free inference, which requires a function to predict the parameters from simulations.
+Those parameters are estimated by likelihood-free inference, which requires a method to extract summary statistics to compare simulations and observations.
+As the sufficient and most concise summary statistics are the parameters themselves, one desires a method to predict them from simulations.
 % such as Approximate Bayesian computation (ABC)
 As that is complicated to setup, prediction methods are typically benchmarked on the classification of spherical maps instead \citep{schmelze2017cosmologicalmodel}.
 We used the same task, data, and setup as \citet{perraudin2019deepspherecosmo}: the classification of $720$ partial convergence maps made of $n \approx 10^6$ pixels ($1/12 \approx 8\%$ of a sphere at $N_{side} = 1024$) from two $\Lambda$CDM cosmological models, ($\Omega_m = 0.31$, $\sigma_8 = 0.82)$ and ($\Omega_m = 0.26$, $\sigma_8 = 0.91)$, at a relative noise level of $3.5$ (i.e., the signal is hidden in noise of $3.5$ times higher standard deviation).
