@@ -43,6 +43,8 @@ contributions:
 * add the eigenfunction alignment in the appendix
 * Shouldn't theorem 3.2 be a corollary?
 * Experiments: organize per problem or desideratum?
+	* per desideratum is better to show that we check them
+	* per problem is better to emphasize their relevance (climate, cosmo)
 * Articulate the story around the desiderata. Add "most general / powerful" as one (for isotropy).
 * Better motivate the method (i.e., don't present our work as just the analysis of one method). Why is it a good method? It allows for a linear time implementation of operators on scalar fields. Need to show that functions of the Laplace-Beltrami $h(\Delta)$ can indeed implement any equivariant (gauge invariant \citep{cohen2019gauge}) linear operations on scalar fields.
 * Restructure the method section to show how the cost is reduced to $\bO(pkn)$: (i) discretization ($n$ vertices), (ii) sparsification ($k$ neighbors), (iii) reduction of the class of operators / filters (polynomial order $p$).

@@ -268,6 +268,8 @@ A special case is the equiangular sampling where a sampling theorem holds, and t
 For samplings where no such sampling formula is available, we leverage the discrete SHT to reconstruct $f$ from $\b{f}=T_\V f$, thus approximating $T_\V^{-1}$.
 For all theoretical considerations, we assume that $F_\V$ exists and $f \in F_\V$.
 
+%\mdeff{we need $T_\V^{-1}$ as we are concerned with continuous rotations}
+
 % 0.2 Explain why the Laplacian is so important...
 By definition, the (spherical) graph convolution is rotation equivariant if and only if it commutes with the rotation operator defined as $\Rg, g\in SO(3)$: $\Rg f(x) = f\left(g^{-1} x \right)$.
 In the context of this work, graph convolution is performed by recursive applications of the graph Laplacian \eqnref{graph_conv}.
@@ -551,6 +553,7 @@ This experiment moreover demonstrates DeepSphere's flexibility (using partial sp
 
 \subsection{Climate event segmentation} \label{sec:exp:climate}
 
+%TODO: motivate -> summarize climate simulations to enable decisions
 We evaluate our method on a task proposed by \citep{mudigonda2017climateevents}: the segmentation of extreme climate events, Tropical Cyclones (TC) and Atmospheric Rivers (AR), in global climate simulations (\figref{examples:climate}).
 The data was produced by a 20-year run of the Community Atmospheric Model v5 (CAM5) and consists of 16 channels such as temperature, wind, humidity, and pressure at multiple altitudes.
 We used the pre-processed dataset from \citep{jiang2019sphericalcnn}.\footnote{Available at \url{http://island.me.berkeley.edu/ugscnn/data}.}
