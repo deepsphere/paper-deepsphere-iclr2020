@@ -15,11 +15,11 @@ International Conference on Learning Representations (ICLR), 2020
 > Perhaps surprisingly, comparison with previous work suggests that anisotropic filters might be an unnecessary price to pay.
 > Our code is available at https://github.com/deepsphere.
 
-**PDF available at [openreview], [arxiv], [infoscience].**\
+**PDF available on [arXiv], [OpenReview], [infoscience].**\
 Related: [code], [slides], [video].
 
-[openreview]: https://openreview.net/forum?id=B1e3OlStPB
-[arxiv]: https://arxiv.org
+[arXiv]: https://arxiv.org/abs/2012.15000
+[OpenReview]: https://openreview.net/forum?id=B1e3OlStPB
 [infoscience]: https://infoscience.epfl.ch
 [code]: https://github.com/deepsphere/deepsphere-tf1
 [slides]: https://doi.org/10.5281/zenodo.3777976
