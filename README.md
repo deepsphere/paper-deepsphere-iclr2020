@@ -41,7 +41,7 @@ The conference reviews and rebuttal are found in [`rebuttal.md`](rebuttal.md) an
 
 ## History
 
-* 2020-12-30: uploaded on arXiv (tag `arxiv`)
-* 2020-02-15: published at ICLR'20 (tag `camera-ready`)
-* 2019-11-12: updated with reviewers' feedback (tag `rebuttal`)
-* 2019-09-25: submitted to ICLR'20 (tag `submitted`)
+* 2020-12-30: uploaded on arXiv (git tag `arxiv`)
+* 2020-02-15: published at ICLR'20 (git tag `camera-ready`)
+* 2019-11-12: updated with reviewers' feedback (git tag `rebuttal`)
+* 2019-09-25: submitted to ICLR'20 (git tag `submitted`)
