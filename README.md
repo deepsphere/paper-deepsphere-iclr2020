@@ -15,15 +15,30 @@ International Conference on Learning Representations (ICLR), 2020
 > Perhaps surprisingly, comparison with previous work suggests that anisotropic filters might be an unnecessary price to pay.
 > Our code is available at https://github.com/deepsphere.
 
-**PDF available on [arXiv], [OpenReview], [infoscience].**\
-Related: [code], [slides], [video].
+```
+@inproceedings{deepsphere_iclr,
+  title = {{DeepSphere}: a graph-based spherical {CNN}},
+  author = {Defferrard, Michaël and Milani, Martino and Gusset, Frédérick and Perraudin, Nathanaël},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year = {2020},
+  archiveprefix = {arXiv},
+  eprint = {2012.15000},
+  url = {https://arxiv.org/abs/2012.15000},
+}
+```
+
+## Resources
+
+PDF available at [arXiv] and [OpenReview].
+
+Related: [code], [slides], [video], [ICLR].
 
 [arXiv]: https://arxiv.org/abs/2012.15000
 [OpenReview]: https://openreview.net/forum?id=B1e3OlStPB
-[infoscience]: https://infoscience.epfl.ch
 [code]: https://github.com/deepsphere/deepsphere-tf1
 [slides]: https://doi.org/10.5281/zenodo.3777976
 [video]: https://youtu.be/NC_XLbbCevk
+[ICLR]: https://iclr.cc/virtual_2020/poster_B1e3OlStPB.html
 
 ## Compilation
 
@@ -37,7 +52,7 @@ While the PDFs are stored, they can be regenerated with `make figures`.
 
 ## Reviews and rebuttal
 
-The conference reviews and rebuttal are found in [`rebuttal.md`](rebuttal.md) and [openreview].
+The conference reviews and rebuttal are found in [`rebuttal.md`](rebuttal.md) and [OpenReview].
 
 ## History
 
