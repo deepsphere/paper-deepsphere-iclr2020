@@ -50,9 +50,9 @@ Run `make clean` to remove temporary files and `make arxiv.zip` to prepare an ar
 All the figures, along with the code and data to reproduce them, are in the [`figures`](figures/) folder.
 While the PDFs are stored, they can be regenerated with `make figures`.
 
-## Reviews and rebuttal
+## Peer-review
 
-The conference reviews and rebuttal are found in [`rebuttal.md`](rebuttal.md) and [OpenReview].
+The conference reviews and rebuttal are in [`rebuttal.md`](rebuttal.md) and [OpenReview].
 
 ## History
 
